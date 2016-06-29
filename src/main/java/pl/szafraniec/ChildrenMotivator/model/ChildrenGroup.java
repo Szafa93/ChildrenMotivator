@@ -3,18 +3,19 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package model;
+package pl.szafraniec.ChildrenMotivator.model;
+
 import java.util.ArrayList;
 import java.util.List;
+
 /**
- *
  * @author Maciek
  */
 public class ChildrenGroup {
     private int id;
     private String name;
     private List<Children> listOfChildren = new ArrayList<>();
-    
+
     public int getId() {
         return id;
     }
@@ -39,5 +40,4 @@ public class ChildrenGroup {
         this.listOfChildren = listOfChildren;
     }
 
-    
 }

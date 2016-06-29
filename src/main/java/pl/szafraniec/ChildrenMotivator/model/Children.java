@@ -3,16 +3,17 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package model;
+package pl.szafraniec.ChildrenMotivator.model;
 
 /**
- *
  * @author Maciek
  */
-public class Worker {
+public class Children {
     private int id;
     private String name;
     private String surname;
+    private int pesel;
+    private String parentEmail;
 
     public int getId() {
         return id;
@@ -37,6 +38,21 @@ public class Worker {
     public void setSurname(String surname) {
         this.surname = surname;
     }
-    
-    
+
+    public int getPesel() {
+        return pesel;
+    }
+
+    public void setPesel(int pesel) {
+        this.pesel = pesel;
+    }
+
+    public String getParentEmail() {
+        return parentEmail;
+    }
+
+    public void setParentEmail(String parentEmail) {
+        this.parentEmail = parentEmail;
+    }
+
 }

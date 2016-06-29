@@ -3,19 +3,15 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package model;
-
-import java.util.ArrayList;
-import java.util.List;
+package pl.szafraniec.ChildrenMotivator.model;
 
 /**
- *
  * @author Maciek
  */
-public class ActivitiesTableScheme {
+public class Reward {
     private int id;
     private String name;
-    private List<Activity> listOfActivities = new ArrayList<>();
+    private int quantity;
 
     public int getId() {
         return id;
@@ -33,12 +29,12 @@ public class ActivitiesTableScheme {
         this.name = name;
     }
 
-    public List<Activity> getListOfActivities() {
-        return listOfActivities;
+    public int getQuantity() {
+        return quantity;
     }
 
-    public void setListOfActivities(List<Activity> listOfActivities) {
-        this.listOfActivities = listOfActivities;
+    public void setQuantity(int quantity) {
+        this.quantity = quantity;
     }
-    
+
 }

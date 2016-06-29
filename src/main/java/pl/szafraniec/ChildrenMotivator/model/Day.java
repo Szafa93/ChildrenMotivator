@@ -3,17 +3,17 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package model;
-
-import java.util.ArrayList;
-import java.util.List;
+package pl.szafraniec.ChildrenMotivator.model;
 
 /**
- *
  * @author Maciek
  */
-public class BehaviorTable {
-    private int id;
-    private List<Children> listOfChildren = new ArrayList<>();
-    
+public enum Day {
+    SUNDAY,
+    MONDAY,
+    TUESDAY,
+    WEDNESDAY,
+    THURSDAY,
+    FRIDAY,
+    SATURDAY
 }

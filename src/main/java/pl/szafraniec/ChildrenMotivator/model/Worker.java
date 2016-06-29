@@ -3,16 +3,15 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package model;
+package pl.szafraniec.ChildrenMotivator.model;
 
 /**
- *
  * @author Maciek
  */
-public class Reward {
+public class Worker {
     private int id;
     private String name;
-    private int quantity;
+    private String surname;
 
     public int getId() {
         return id;
@@ -30,12 +29,12 @@ public class Reward {
         this.name = name;
     }
 
-    public int getQuantity() {
-        return quantity;
+    public String getSurname() {
+        return surname;
     }
 
-    public void setQuantity(int quantity) {
-        this.quantity = quantity;
+    public void setSurname(String surname) {
+        this.surname = surname;
     }
-    
+
 }

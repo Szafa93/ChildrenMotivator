@@ -3,10 +3,9 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package model;
+package pl.szafraniec.ChildrenMotivator.model;
 
 /**
- *
  * @author Maciek
  */
 public class Grade {
@@ -37,6 +36,5 @@ public class Grade {
     public void setImage(byte[] image) {
         this.image = image;
     }
-    
-    
+
 }
