@@ -10,23 +10,30 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+import java.util.List;
 
 /**
  * @author Maciek
  */
 @Entity
-public class TableCell {
+public class Child {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
-    @ManyToOne
-    private GradeScheme gradeScheme;
+    private String name;
+
+    private String surname;
+
+    private int pesel;
+
+    private String parentEmail;
+
+    @OneToMany
+    private List<ChildActivitiesTable> activitiesTableList;
 
     @ManyToOne
-    private Worker worker;
-
-    private String gradeComment;
-
+    private ChildrenGroup childrenGroup;
 }

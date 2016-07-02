@@ -5,14 +5,27 @@
  */
 package pl.szafraniec.ChildrenMotivator.model;
 
-import java.util.ArrayList;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import java.util.List;
 
 /**
  * @author Maciek
  */
+@Entity
 public class BehaviorTable {
-    private int id;
-    private List<Children> listOfChildren = new ArrayList<>();
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private int id;
+
+    @OneToOne
+    private ChildrenGroup childrenGroup;
+
+    @OneToMany
+    private List<BehaviorTableDay> days;
 }

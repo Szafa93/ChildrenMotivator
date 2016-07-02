@@ -8,7 +8,7 @@ package pl.szafraniec.ChildrenMotivator.model;
 /**
  * @author Maciek
  */
-public enum Day {
+public enum DayOfWeek {
     SUNDAY,
     MONDAY,
     TUESDAY,

@@ -9,24 +9,20 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.ManyToOne;
+import javax.persistence.Lob;
 
 /**
  * @author Maciek
  */
 @Entity
-public class TableCell {
+public class GradeScheme {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
-    @ManyToOne
-    private GradeScheme gradeScheme;
+    private double weight;
 
-    @ManyToOne
-    private Worker worker;
-
-    private String gradeComment;
-
+    @Lob
+    private byte[] image;
 }
