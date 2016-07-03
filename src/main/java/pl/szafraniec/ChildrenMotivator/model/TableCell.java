@@ -29,4 +29,35 @@ public class TableCell {
 
     private String gradeComment;
 
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public GradeScheme getGradeScheme() {
+        return gradeScheme;
+    }
+
+    public void setGradeScheme(GradeScheme gradeScheme) {
+        this.gradeScheme = gradeScheme;
+    }
+
+    public Worker getWorker() {
+        return worker;
+    }
+
+    public void setWorker(Worker worker) {
+        this.worker = worker;
+    }
+
+    public String getGradeComment() {
+        return gradeComment;
+    }
+
+    public void setGradeComment(String gradeComment) {
+        this.gradeComment = gradeComment;
+    }
 }

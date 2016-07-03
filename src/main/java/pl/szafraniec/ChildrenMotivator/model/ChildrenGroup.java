@@ -37,4 +37,36 @@ public class ChildrenGroup {
 
     @OneToOne(optional = false, cascade = CascadeType.ALL, mappedBy = "childrenGroup")
     private BehaviorTable behaviorTable;
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public List<Child> getChildren() {
+        return children;
+    }
+
+    public void setChildren(List<Child> children) {
+        this.children = children;
+    }
+
+    public BehaviorTable getBehaviorTable() {
+        return behaviorTable;
+    }
+
+    public void setBehaviorTable(BehaviorTable behaviorTable) {
+        this.behaviorTable = behaviorTable;
+    }
 }

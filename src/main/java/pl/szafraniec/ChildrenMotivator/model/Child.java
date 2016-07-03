@@ -43,4 +43,60 @@ public class Child {
 
     @ManyToOne(optional = false)
     private ChildrenGroup childrenGroup;
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getSurname() {
+        return surname;
+    }
+
+    public void setSurname(String surname) {
+        this.surname = surname;
+    }
+
+    public int getPesel() {
+        return pesel;
+    }
+
+    public void setPesel(int pesel) {
+        this.pesel = pesel;
+    }
+
+    public String getParentEmail() {
+        return parentEmail;
+    }
+
+    public void setParentEmail(String parentEmail) {
+        this.parentEmail = parentEmail;
+    }
+
+    public List<ChildActivitiesTable> getActivitiesTableList() {
+        return activitiesTableList;
+    }
+
+    public void setActivitiesTableList(List<ChildActivitiesTable> activitiesTableList) {
+        this.activitiesTableList = activitiesTableList;
+    }
+
+    public ChildrenGroup getChildrenGroup() {
+        return childrenGroup;
+    }
+
+    public void setChildrenGroup(ChildrenGroup childrenGroup) {
+        this.childrenGroup = childrenGroup;
+    }
 }

@@ -28,4 +28,28 @@ public class BehaviorTableDay {
             inverseJoinColumns = @JoinColumn(name = "TableCell"))
     @MapKeyJoinColumn(name = "Child")
     private Map<Child, TableCell> grades;
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public Date getDate() {
+        return date;
+    }
+
+    public void setDate(Date date) {
+        this.date = date;
+    }
+
+    public Map<Child, TableCell> getGrades() {
+        return grades;
+    }
+
+    public void setGrades(Map<Child, TableCell> grades) {
+        this.grades = grades;
+    }
 }

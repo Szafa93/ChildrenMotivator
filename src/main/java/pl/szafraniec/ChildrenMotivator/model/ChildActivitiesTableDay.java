@@ -28,4 +28,28 @@ public class ChildActivitiesTableDay {
             inverseJoinColumns = @JoinColumn(name = "TableCell"))
     @MapKeyJoinColumn(name = "Activity")
     private Map<Activity, TableCell> grades;
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public Date getDate() {
+        return date;
+    }
+
+    public void setDate(Date date) {
+        this.date = date;
+    }
+
+    public Map<Activity, TableCell> getGrades() {
+        return grades;
+    }
+
+    public void setGrades(Map<Activity, TableCell> grades) {
+        this.grades = grades;
+    }
 }
