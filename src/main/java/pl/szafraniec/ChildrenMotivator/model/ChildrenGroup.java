@@ -12,9 +12,9 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
+import javax.persistence.PrimaryKeyJoinColumn;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -35,7 +35,7 @@ public class ChildrenGroup {
     private List<Child> children = new ArrayList<>();
 
     @OneToOne(optional = false, cascade = CascadeType.ALL)
-    @JoinColumn(name = "ChildrenGroup_id", referencedColumnName = "id")
+    @PrimaryKeyJoinColumn
     private BehaviorTable behaviorTable;
 
     public int getId() {

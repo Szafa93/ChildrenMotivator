@@ -8,7 +8,6 @@ package pl.szafraniec.ChildrenMotivator.model;
 import org.hibernate.validator.constraints.NotBlank;
 
 import javax.persistence.CascadeType;
-import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -33,8 +32,8 @@ public class Child {
     @NotBlank
     private String surname;
 
-    @Column(nullable = false)
-    private int pesel;
+    @NotBlank
+    private String pesel;
 
     private String parentEmail;
 
@@ -68,11 +67,11 @@ public class Child {
         this.surname = surname;
     }
 
-    public int getPesel() {
+    public String getPesel() {
         return pesel;
     }
 
-    public void setPesel(int pesel) {
+    public void setPesel(String pesel) {
         this.pesel = pesel;
     }
 
