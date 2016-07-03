@@ -5,10 +5,12 @@
 */
 package pl.szafraniec.ChildrenMotivator.model;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import java.util.List;
@@ -23,12 +25,13 @@ public class ChildActivitiesTable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
-    @ManyToOne
+    @ManyToOne(optional = false)
     private ActivitiesTableScheme activitiesTableScheme;
 
-    @ManyToOne
+    @ManyToOne(optional = false)
     private Child child;
 
-    @OneToMany
+    @OneToMany(cascade = CascadeType.ALL)
+    @JoinColumn(name = "ChildActivitiesTable_id", referencedColumnName = "id")
     private List<ChildActivitiesTableDay> days;
 }

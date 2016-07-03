@@ -21,10 +21,10 @@ public class TableCell {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
-    @ManyToOne
+    @ManyToOne(optional = false)
     private GradeScheme gradeScheme;
 
-    @ManyToOne
+    @ManyToOne(optional = false)
     private Worker worker;
 
     private String gradeComment;

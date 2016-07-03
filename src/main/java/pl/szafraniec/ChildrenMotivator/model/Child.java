@@ -5,6 +5,10 @@
  */
 package pl.szafraniec.ChildrenMotivator.model;
 
+import org.hibernate.validator.constraints.NotBlank;
+
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -23,17 +27,20 @@ public class Child {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
+    @NotBlank
     private String name;
 
+    @NotBlank
     private String surname;
 
+    @Column(nullable = false)
     private int pesel;
 
     private String parentEmail;
 
-    @OneToMany
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "child")
     private List<ChildActivitiesTable> activitiesTableList;
 
-    @ManyToOne
+    @ManyToOne(optional = false)
     private ChildrenGroup childrenGroup;
 }

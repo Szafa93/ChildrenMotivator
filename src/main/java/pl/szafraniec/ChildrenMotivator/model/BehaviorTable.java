@@ -5,10 +5,12 @@
  */
 package pl.szafraniec.ChildrenMotivator.model;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import java.util.List;
@@ -23,9 +25,10 @@ public class BehaviorTable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
-    @OneToOne
+    @OneToOne(optional = false)
     private ChildrenGroup childrenGroup;
 
-    @OneToMany
+    @OneToMany(orphanRemoval = true, cascade = CascadeType.ALL)
+    @JoinColumn(name = "BehaviorTable_id", referencedColumnName = "id")
     private List<BehaviorTableDay> days;
 }

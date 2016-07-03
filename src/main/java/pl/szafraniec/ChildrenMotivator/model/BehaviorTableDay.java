@@ -1,11 +1,13 @@
 package pl.szafraniec.ChildrenMotivator.model;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.MapKey;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.MapKeyJoinColumn;
 import javax.persistence.OneToMany;
 import java.util.Date;
 import java.util.Map;
@@ -17,9 +19,13 @@ public class BehaviorTableDay {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
+    @Column(nullable = false)
     private Date date;
 
-    @OneToMany(targetEntity = TableCell.class, fetch = FetchType.LAZY)
-    @MapKey(name = "id")
+    @OneToMany   // unidirectional
+    @JoinTable(name = "BehaviorTableDay_Grades",
+            joinColumns = @JoinColumn(name = "BehaviorTableDay"),
+            inverseJoinColumns = @JoinColumn(name = "TableCell"))
+    @MapKeyJoinColumn(name = "Child")
     private Map<Child, TableCell> grades;
 }
