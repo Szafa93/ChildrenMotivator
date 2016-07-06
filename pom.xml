@@ -13,8 +13,19 @@
         <hsqldb-version>2.3.4</hsqldb-version>
         <spring-version>4.3.0.RELEASE</spring-version>
         <spring-data-version>1.10.2.RELEASE</spring-data-version>
-        <apache-connection-pooling-version></apache-connection-pooling-version>
+        <apache-connection-pooling-version>2.1.1</apache-connection-pooling-version>
+        <swt-version>4.6</swt-version>
     </properties>
+    <repositories>
+        <repository>
+            <id>maven-eclipse-repo</id>
+            <url>http://maven-eclipse.github.io/maven</url>
+        </repository>
+        <repository>
+            <id>545ch4</id>
+            <url>https://raw.githubusercontent.com/545ch4/maven-eclipse.github.io/master/maven</url>
+        </repository>
+    </repositories>
     <dependencies>
         <!-- Spring -->
         <dependency>
@@ -56,8 +67,30 @@
         <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-dbcp2</artifactId>
-            <version>2.1.1</version>
+            <version>${apache-connection-pooling-version}</version>
         </dependency>
+
+        <!-- SWT -->
+        <dependency>
+            <groupId>org.eclipse.swt</groupId>
+            <artifactId>org.eclipse.swt.win32.win32.x86_64</artifactId>
+            <version>${swt-version}</version>
+            <classifier>debug</classifier>
+        </dependency>
+        <!-- JFace dependencies -->
+        <dependency>
+            <groupId>org.eclipse.jface</groupId>
+            <artifactId>org.eclipse.jface</artifactId>
+            <version>3.11.0</version>
+        </dependency>
+        <!--
+        <dependency>
+            <groupId>org.eclipse.swt</groupId>
+            <artifactId>org.eclipse.swt.win32.win32.x86</artifactId>
+            <version>${swt-version}</version>
+        </dependency>
+        -->
+
 
         <!--testing-->
         <dependency>

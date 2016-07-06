@@ -32,7 +32,7 @@ public class ChildrenGroup {
     private String name;
 
     @OneToMany(mappedBy = "childrenGroup", cascade = { CascadeType.PERSIST, CascadeType.REFRESH, CascadeType.MERGE })
-    private List<Child> children = new ArrayList<>();
+    private List<Child> children;
 
     @OneToOne(optional = false, cascade = CascadeType.ALL)
     @PrimaryKeyJoinColumn
@@ -68,5 +68,15 @@ public class ChildrenGroup {
 
     public void setBehaviorTable(BehaviorTable behaviorTable) {
         this.behaviorTable = behaviorTable;
+    }
+
+    public static class ChildrenGroupFactory {
+        public static ChildrenGroup create(String name) {
+            ChildrenGroup childrenGroup = new ChildrenGroup();
+            childrenGroup.name = name;
+            childrenGroup.behaviorTable = new BehaviorTable();
+            childrenGroup.children = new ArrayList<>();
+            return childrenGroup;
+        }
     }
 }
