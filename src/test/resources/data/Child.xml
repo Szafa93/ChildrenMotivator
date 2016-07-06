@@ -1,0 +1,25 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<dataset>
+    <ACTIVITIESTABLESCHEME/>
+    <ACTIVITY/>
+    <ACTIVITIESTABLESCHEME_ACTIVITY/>
+    <BEHAVIORTABLE/>
+    <BehaviorTable id="1"/>
+    <BehaviorTable id="2"/>
+    <BEHAVIORTABLEDAY/>
+    <CHILDRENGROUP/>
+    <ChildrenGroup id="1" name="name1"/>
+    <ChildrenGroup id="2" name="name2"/>
+    <CHILD/>
+    <Child id="1" name="name1" surname="surname1" childrenGroup_id="1" pesel="1"/>
+    <Child id="2" name="name2" surname="surname2" childrenGroup_id="1" pesel="2"/>
+    <Child id="3" name="name3" surname="surname3" childrenGroup_id="1" pesel="3"/>
+    <GRADESCHEME/>
+    <WORKER/>
+    <TABLECELL/>
+    <BEHAVIORTABLEDAY_GRADES/>
+    <CHILDACTIVITIESTABLE/>
+    <CHILDACTIVITIESTABLEDAY/>
+    <CHILDACTIVITIESTABLEDAY_GRADES/>
+    <REWARD/>
+</dataset>

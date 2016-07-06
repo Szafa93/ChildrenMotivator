@@ -24,7 +24,7 @@ import java.lang.annotation.Target;
 @Transactional
 @Rollback
 @DbUnitConfiguration(databaseConnection = "dbUnitDatabaseConnection")
-@DatabaseSetup(value = { "classpath:data/ChildrenGroup/empty.xml" })
+@DatabaseSetup(value = { "classpath:data/empty.xml" })
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ ElementType.TYPE })
 public @interface DaoTest {

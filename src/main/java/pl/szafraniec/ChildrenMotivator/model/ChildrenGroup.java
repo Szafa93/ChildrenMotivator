@@ -31,7 +31,7 @@ public class ChildrenGroup {
     @NotBlank
     private String name;
 
-    @OneToMany(mappedBy = "childrenGroup")
+    @OneToMany(mappedBy = "childrenGroup", cascade = { CascadeType.PERSIST, CascadeType.REFRESH, CascadeType.MERGE })
     private List<Child> children = new ArrayList<>();
 
     @OneToOne(optional = false, cascade = CascadeType.ALL)

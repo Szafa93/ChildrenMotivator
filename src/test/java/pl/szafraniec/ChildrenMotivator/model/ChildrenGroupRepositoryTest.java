@@ -9,7 +9,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.orm.jpa.JpaSystemException;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import pl.szafraniec.ChildrenMotivator.model.annotation.DaoTest;
-import pl.szafraniec.ChildrenMotivator.repository.ChildRepository;
 import pl.szafraniec.ChildrenMotivator.repository.ChildrenGroupRepository;
 
 import java.sql.SQLException;
@@ -25,11 +24,8 @@ public class ChildrenGroupRepositoryTest {
     @Autowired
     private ChildrenGroupRepository childrenGroupRepository;
 
-    @Autowired
-    private ChildRepository childRepository;
-
     @Test
-    @DatabaseSetup({ "classpath:data/ChildrenGroup/read.xml" })
+    @DatabaseSetup(value = { "classpath:data/ChildrenGroup.xml" })
     public void readTest() throws SQLException, DataSetException {
         Assert.assertEquals(2, childrenGroupRepository.count());
         ChildrenGroup first = childrenGroupRepository.findOne(1);
@@ -82,7 +78,7 @@ public class ChildrenGroupRepositoryTest {
     }
 
     @Test
-    @DatabaseSetup(value = { "classpath:data/ChildrenGroup/read.xml" })
+    @DatabaseSetup(value = { "classpath:data/ChildrenGroup.xml" })
     public void updateNameTest() {
         int id = 1;
         String newName = "new_name";
@@ -96,8 +92,8 @@ public class ChildrenGroupRepositoryTest {
     }
 
     @Test
-    @DatabaseSetup(value = { "classpath:data/ChildrenGroup/read.xml" })
-    public void updateChildrenTest() {
+    @DatabaseSetup(value = { "classpath:data/ChildrenGroup.xml" })
+    public void addChildrenTest() {
         int id = 1;
         ChildrenGroup group = childrenGroupRepository.findOne(id);
         int previousSize = group.getChildren().size();
@@ -111,10 +107,14 @@ public class ChildrenGroupRepositoryTest {
 
         group = childrenGroupRepository.findOne(id);
         Assert.assertEquals(previousSize + 1, group.getChildren().size());
+        Child savedChild = group.getChildren().get(0);
+        Assert.assertEquals(child.getName(), savedChild.getName());
+        Assert.assertEquals(child.getSurname(), savedChild.getSurname());
+        Assert.assertEquals(child.getPesel(), savedChild.getPesel());
     }
 
     @Test
-    @DatabaseSetup(value = { "classpath:data/ChildrenGroup/read.xml" })
+    @DatabaseSetup(value = { "classpath:data/ChildrenGroup.xml" })
     public void deleteEmptyGroupTest() {
         childrenGroupRepository.delete(1);
         childrenGroupRepository.flush();
@@ -122,7 +122,7 @@ public class ChildrenGroupRepositoryTest {
     }
 
     @Test(expected = JpaSystemException.class)
-    @DatabaseSetup(value = { "classpath:data/ChildrenGroup/read.xml" })
+    @DatabaseSetup(value = { "classpath:data/ChildrenGroup.xml" })
     public void impossibleDeleteGroupWithChildrenTest() {
         childrenGroupRepository.delete(2);
         childrenGroupRepository.flush();
