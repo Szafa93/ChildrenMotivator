@@ -7,22 +7,21 @@ import org.eclipse.swt.widgets.Shell;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import pl.szafraniec.ChildrenMotivator.ui.groups.ChildrenGroupsComposite;
+import pl.szafraniec.ChildrenMotivator.ui.menus.MenuBar;
 
 public class Program {
-    private ApplicationContext ctx;
-
-    Program() {
-        ctx = new ClassPathXmlApplicationContext("META-INF/applicationContext.xml");
-    }
+    public static final ApplicationContext CTX = new ClassPathXmlApplicationContext("META-INF/applicationContext.xml");
 
     public void start() {
-        Display display = new Display();
-        Shell shell = new Shell(display);
+        Display display = CTX.getBean(Display.class);
+        Shell shell = CTX.getBean(Shell.class);
         shell.setLayout(new FillLayout());
         shell.setSize(500, 500);
         shell.setMinimumSize(500, 500);
-        ctx.getBean(ChildrenGroupsComposite.class, (Composite) shell);
-        shell.pack();
+        MenuBar menuBar = CTX.getBean(MenuBar.class);
+        shell.setMenuBar(menuBar.getMenuBar());
+        CTX.getBean(ChildrenGroupsComposite.class, (Composite) shell);
+        shell.layout(true, true);
         shell.open();
         while (!shell.isDisposed()) {
             if (!display.readAndDispatch())

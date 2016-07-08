@@ -6,12 +6,15 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.ScrolledComposite;
 import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.MenuItem;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
@@ -19,8 +22,10 @@ import org.springframework.stereotype.Component;
 import pl.szafraniec.ChildrenMotivator.model.ChildrenGroup;
 import pl.szafraniec.ChildrenMotivator.repository.ChildrenGroupRepository;
 import pl.szafraniec.ChildrenMotivator.ui.groups.dialog.AddGroupDialog;
+import pl.szafraniec.ChildrenMotivator.ui.menus.MenuBar;
 
 import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -31,9 +36,14 @@ public class ChildrenGroupsComposite extends Composite {
     @Autowired
     private ChildrenGroupRepository childrenGroupRepository;
 
+    @Autowired
+    private MenuBar menuBar;
+
     private Composite childrenGroupComposite;
 
     private ScrolledComposite scrolledComposite;
+
+    private MenuItem exitItem;
 
     public ChildrenGroupsComposite(Composite parent) {
         super(parent, SWT.NONE);
@@ -47,7 +57,27 @@ public class ChildrenGroupsComposite extends Composite {
         createChildrenGroupsComposite(childrenGroupRepository.findAll(), this);
         createControlsButtonsComposite(this);
 
+        createMenuItems();
+
         layout(true, true);
+    }
+
+    private void createMenuItems() {
+        exitItem = new MenuItem(menuBar.getEditMenu(), SWT.PUSH);
+        exitItem.setText("Add group");
+        exitItem.addSelectionListener(new SelectionAdapter() {
+            @Override
+            public void widgetSelected(SelectionEvent e) {
+                addGroup();
+            }
+        });
+    }
+
+    @Override
+    @PreDestroy
+    public void dispose() {
+        exitItem.dispose();
+        super.dispose();
     }
 
     private Composite createChildrenGroupsComposite(List<ChildrenGroup> childrenGroups, Composite parent) {
@@ -89,17 +119,7 @@ public class ChildrenGroupsComposite extends Composite {
         addGroupButton.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseUp(MouseEvent e) {
-                AddGroupDialog dialog = new AddGroupDialog(Display.getCurrent().getActiveShell());
-                if (Window.OK == dialog.open()) {
-                    ChildrenGroup childrenGroup = addChildrenGroup(dialog.getGroupName());
-
-                    // add new button to button list
-                    createChildrenGroupButton(childrenGroup, childrenGroupComposite);
-
-                    scrolledComposite.setMinSize(childrenGroupComposite.computeSize(SWT.DEFAULT, SWT.DEFAULT));
-                    scrolledComposite.layout(true, true);
-                }
-
+                addGroup();
             }
         });
         return controlsButtonsComposite;
@@ -108,5 +128,18 @@ public class ChildrenGroupsComposite extends Composite {
     private ChildrenGroup addChildrenGroup(String groupName) {
         ChildrenGroup childrenGroup = ChildrenGroup.ChildrenGroupFactory.create(groupName);
         return childrenGroupRepository.saveAndFlush(childrenGroup);
+    }
+
+    private void addGroup() {
+        AddGroupDialog dialog = new AddGroupDialog(Display.getCurrent().getActiveShell());
+        if (Window.OK == dialog.open()) {
+            ChildrenGroup childrenGroup = addChildrenGroup(dialog.getGroupName());
+
+            // add new button to button list
+            createChildrenGroupButton(childrenGroup, childrenGroupComposite);
+
+            scrolledComposite.setMinSize(childrenGroupComposite.computeSize(SWT.DEFAULT, SWT.DEFAULT));
+            scrolledComposite.layout(true, true);
+        }
     }
 }

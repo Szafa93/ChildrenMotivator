@@ -17,6 +17,11 @@
         <context:exclude-filter type="annotation" expression="org.springframework.stereotype.Repository"/>
     </context:component-scan>
 
+    <bean id="display" class="org.eclipse.swt.widgets.Display"/>
+    <bean id="shell" class="org.eclipse.swt.widgets.Shell">
+        <constructor-arg name="display" ref="display"/>
+    </bean>
+
     <bean id="propertyConfigurer" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
         <property name="ignoreUnresolvablePlaceholders" value="true"/>
         <property name="ignoreResourceNotFound" value="true"/>
