@@ -6,8 +6,7 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
-import pl.szafraniec.ChildrenMotivator.ui.groups.ChildrenGroupsComposite;
-import pl.szafraniec.ChildrenMotivator.ui.menus.MenuBar;
+import pl.szafraniec.ChildrenMotivator.ui.start.StartComposite;
 
 public class Program {
     public static final ApplicationContext CTX = new ClassPathXmlApplicationContext("META-INF/applicationContext.xml");
@@ -16,11 +15,12 @@ public class Program {
         Display display = CTX.getBean(Display.class);
         Shell shell = CTX.getBean(Shell.class);
         shell.setLayout(new FillLayout());
-        shell.setSize(500, 500);
-        shell.setMinimumSize(500, 500);
-        MenuBar menuBar = CTX.getBean(MenuBar.class);
-        shell.setMenuBar(menuBar.getMenuBar());
-        CTX.getBean(ChildrenGroupsComposite.class, (Composite) shell);
+        shell.setSize(750, 500);
+        shell.setMinimumSize(750, 500);
+        //MenuBar menuBar = CTX.getBean(MenuBar.class);
+        //shell.setMenuBar(menuBar.getMenuBar());
+        //CTX.getBean(ChildrenGroupsComposite.class, (Composite) shell);
+        CTX.getBean(StartComposite.class, (Composite) shell);
         shell.layout(true, true);
         shell.open();
         while (!shell.isDisposed()) {

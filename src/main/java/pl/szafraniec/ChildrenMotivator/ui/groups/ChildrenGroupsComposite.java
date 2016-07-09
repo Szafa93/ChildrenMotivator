@@ -1,83 +1,59 @@
 package pl.szafraniec.ChildrenMotivator.ui.groups;
 
 import org.eclipse.jface.layout.GridDataFactory;
+import org.eclipse.jface.layout.GridLayoutFactory;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.ScrolledComposite;
 import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.MenuItem;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import pl.szafraniec.ChildrenMotivator.model.ChildrenGroup;
 import pl.szafraniec.ChildrenMotivator.repository.ChildrenGroupRepository;
+import pl.szafraniec.ChildrenMotivator.ui.AbstractMainComposite;
 import pl.szafraniec.ChildrenMotivator.ui.groups.dialog.AddGroupDialog;
-import pl.szafraniec.ChildrenMotivator.ui.menus.MenuBar;
 
-import javax.annotation.PostConstruct;
-import javax.annotation.PreDestroy;
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Component
 @Scope(scopeName = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
-public class ChildrenGroupsComposite extends Composite {
+public class ChildrenGroupsComposite extends AbstractMainComposite {
 
     @Autowired
     private ChildrenGroupRepository childrenGroupRepository;
-
-    @Autowired
-    private MenuBar menuBar;
 
     private Composite childrenGroupComposite;
 
     private ScrolledComposite scrolledComposite;
 
-    private MenuItem exitItem;
-
     public ChildrenGroupsComposite(Composite parent) {
         super(parent, SWT.NONE);
     }
 
-    @PostConstruct
-    public void postConstruct() {
-        setLayout(new GridLayout(2, false));
-        // TODO add layout to this
+    @Override
+    protected void createTopPart() {
+        Composite topPart = new Composite(this, SWT.NONE);
+        topPart.setLayout(GridLayoutFactory.swtDefaults().numColumns(2).equalWidth(false).create());
+        topPart.setLayoutData(GridDataFactory.swtDefaults().grab(true, false).align(SWT.FILL, SWT.CENTER).create());
 
-        createChildrenGroupsComposite(childrenGroupRepository.findAll(), this);
-        createControlsButtonsComposite(this);
-
-        createMenuItems();
-
-        layout(true, true);
-    }
-
-    private void createMenuItems() {
-        exitItem = new MenuItem(menuBar.getEditMenu(), SWT.PUSH);
-        exitItem.setText("Add group");
-        exitItem.addSelectionListener(new SelectionAdapter() {
-            @Override
-            public void widgetSelected(SelectionEvent e) {
-                addGroup();
-            }
-        });
+        createLabel(topPart, "Grupy");
+        createBackButton(topPart, applicationContext, shell);
     }
 
     @Override
-    @PreDestroy
-    public void dispose() {
-        exitItem.dispose();
-        super.dispose();
+    protected void createDownPart() {
+        createChildrenGroupsComposite(childrenGroupRepository.findAll(), this);
+        createControlsButtonsComposite(this);
     }
 
     private Composite createChildrenGroupsComposite(List<ChildrenGroup> childrenGroups, Composite parent) {
@@ -94,7 +70,6 @@ public class ChildrenGroupsComposite extends Composite {
         childrenGroups.stream().map(group -> createChildrenGroupButton(group, childrenGroupComposite)).collect(Collectors.toList());
         childrenGroupComposite.setSize(childrenGroupComposite.computeSize(SWT.DEFAULT, SWT.DEFAULT));
 
-        //not sure about this line, was optional in my case
         scrolledComposite.setContent(childrenGroupComposite);
         scrolledComposite.setMinSize(childrenGroupComposite.computeSize(SWT.DEFAULT, SWT.DEFAULT));
         return childrenGroupComposite;
@@ -142,4 +117,5 @@ public class ChildrenGroupsComposite extends Composite {
             scrolledComposite.layout(true, true);
         }
     }
+
 }
