@@ -53,7 +53,7 @@ public class StartComposite extends AbstractMainComposite {
                 .span(SWT.DEFAULT, 10)
                 .create());
         button.setText(text);
-        button.setFont(FontDescriptor.createFrom(Fonts.DEFAULT_FONT_DATA).setHeight(16).createFont(button.getDisplay()));
+        button.setFont(FontDescriptor.createFrom(Fonts.DEFAULT_FONT_DATA).createFont(button.getDisplay()));
         button.addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(SelectionEvent e) {

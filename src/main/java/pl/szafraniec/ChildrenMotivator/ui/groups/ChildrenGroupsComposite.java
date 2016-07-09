@@ -2,13 +2,17 @@ package pl.szafraniec.ChildrenMotivator.ui.groups;
 
 import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.layout.GridLayoutFactory;
+import org.eclipse.jface.layout.RowDataFactory;
+import org.eclipse.jface.layout.RowLayoutFactory;
+import org.eclipse.jface.resource.FontDescriptor;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.ScrolledComposite;
+import org.eclipse.swt.events.ControlAdapter;
+import org.eclipse.swt.events.ControlEvent;
 import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
-import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
@@ -20,9 +24,9 @@ import org.springframework.stereotype.Component;
 import pl.szafraniec.ChildrenMotivator.model.ChildrenGroup;
 import pl.szafraniec.ChildrenMotivator.repository.ChildrenGroupRepository;
 import pl.szafraniec.ChildrenMotivator.ui.AbstractMainComposite;
-import pl.szafraniec.ChildrenMotivator.ui.groups.dialog.AddGroupDialog;
+import pl.szafraniec.ChildrenMotivator.ui.Fonts;
+import pl.szafraniec.ChildrenMotivator.ui.groups.dialog.EditChildrenGroupDialog;
 
-import java.util.List;
 import java.util.stream.Collectors;
 
 @Component
@@ -47,75 +51,89 @@ public class ChildrenGroupsComposite extends AbstractMainComposite {
         topPart.setLayoutData(GridDataFactory.swtDefaults().grab(true, false).align(SWT.FILL, SWT.CENTER).create());
 
         createLabel(topPart, "Grupy");
-        createBackButton(topPart, applicationContext, shell);
-    }
-
-    @Override
-    protected void createDownPart() {
-        createChildrenGroupsComposite(childrenGroupRepository.findAll(), this);
-        createControlsButtonsComposite(this);
-    }
-
-    private Composite createChildrenGroupsComposite(List<ChildrenGroup> childrenGroups, Composite parent) {
-
-        scrolledComposite = new ScrolledComposite(parent, SWT.H_SCROLL | SWT.V_SCROLL);
-        scrolledComposite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
-        scrolledComposite.setExpandVertical(true);
-        scrolledComposite.setExpandHorizontal(true);
-        childrenGroupComposite = new Composite(scrolledComposite, SWT.NONE);
-
-        childrenGroupComposite.setLayout(new GridLayout());
-        // TODO add layout
-
-        childrenGroups.stream().map(group -> createChildrenGroupButton(group, childrenGroupComposite)).collect(Collectors.toList());
-        childrenGroupComposite.setSize(childrenGroupComposite.computeSize(SWT.DEFAULT, SWT.DEFAULT));
-
-        scrolledComposite.setContent(childrenGroupComposite);
-        scrolledComposite.setMinSize(childrenGroupComposite.computeSize(SWT.DEFAULT, SWT.DEFAULT));
-        return childrenGroupComposite;
-    }
-
-    private Control createChildrenGroupButton(ChildrenGroup childrenGroup, Composite parent) {
-        Button groupButton = new Button(parent, SWT.NONE);
-        groupButton.setText(childrenGroup.getName());
-        groupButton.setLayoutData(GridDataFactory.fillDefaults().grab(true, false).create());
-        return groupButton;
+        createControlsButtonsComposite(topPart);
     }
 
     private Composite createControlsButtonsComposite(Composite parent) {
         Composite controlsButtonsComposite = new Composite(parent, SWT.NONE);
-        controlsButtonsComposite.setLayoutData(GridDataFactory.fillDefaults().align(SWT.CENTER, SWT.TOP).create());
-        controlsButtonsComposite.setLayout(new GridLayout());
-        // TODO add layout
+        controlsButtonsComposite.setLayoutData(GridDataFactory.swtDefaults().align(SWT.CENTER, SWT.TOP).create());
+        controlsButtonsComposite.setLayout(GridLayoutFactory.swtDefaults().numColumns(1).create());
 
-        Button addGroupButton = new Button(controlsButtonsComposite, SWT.NONE);
+        createBackButton(controlsButtonsComposite, applicationContext, shell);
+        createAddGroupButton(controlsButtonsComposite);
+        return controlsButtonsComposite;
+    }
 
+    private void createAddGroupButton(Composite parent) {
+        Button addGroupButton = new Button(parent, SWT.PUSH);
+        addGroupButton.setLayoutData(DEFAULT_CONTROL_BUTTON_FACTORY.create());
         addGroupButton.setText("Dodaj grupę");
+        addGroupButton.setFont(FontDescriptor.createFrom(Fonts.DEFAULT_FONT_DATA).createFont(addGroupButton.getDisplay()));
         addGroupButton.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseUp(MouseEvent e) {
                 addGroup();
             }
         });
-        return controlsButtonsComposite;
-    }
-
-    private ChildrenGroup addChildrenGroup(String groupName) {
-        ChildrenGroup childrenGroup = ChildrenGroup.ChildrenGroupFactory.create(groupName);
-        return childrenGroupRepository.saveAndFlush(childrenGroup);
     }
 
     private void addGroup() {
-        AddGroupDialog dialog = new AddGroupDialog(Display.getCurrent().getActiveShell());
+        EditChildrenGroupDialog dialog = new EditChildrenGroupDialog(Display.getCurrent().getActiveShell());
         if (Window.OK == dialog.open()) {
             ChildrenGroup childrenGroup = addChildrenGroup(dialog.getGroupName());
 
             // add new button to button list
             createChildrenGroupButton(childrenGroup, childrenGroupComposite);
 
-            scrolledComposite.setMinSize(childrenGroupComposite.computeSize(SWT.DEFAULT, SWT.DEFAULT));
             scrolledComposite.layout(true, true);
         }
     }
 
+    // TODO move to service
+    private ChildrenGroup addChildrenGroup(String groupName) {
+        ChildrenGroup childrenGroup = ChildrenGroup.ChildrenGroupFactory.create(groupName);
+        return childrenGroupRepository.saveAndFlush(childrenGroup);
+    }
+
+    @Override
+    protected void createDownPart() {
+        Composite downPart = new Composite(this, SWT.NONE);
+        downPart.setLayout(GridLayoutFactory.swtDefaults().numColumns(1).create());
+        downPart.setLayoutData(GridDataFactory.swtDefaults().grab(true, true).align(SWT.FILL, SWT.FILL).create());
+        createChildrenGroupsComposite(downPart);
+    }
+
+    private Composite createChildrenGroupsComposite(Composite parent) {
+        scrolledComposite = new ScrolledComposite(parent, SWT.V_SCROLL | SWT.H_SCROLL | SWT.BORDER);
+        scrolledComposite.setLayoutData(GridDataFactory.swtDefaults().grab(true, true).align(SWT.FILL, SWT.FILL).create());
+        scrolledComposite.setExpandVertical(true);
+        scrolledComposite.setExpandHorizontal(true);
+
+        childrenGroupComposite = new Composite(scrolledComposite, SWT.NONE);
+        childrenGroupComposite.setLayoutData(GridDataFactory.swtDefaults().grab(true, true).align(SWT.FILL, SWT.FILL).create());
+        childrenGroupComposite.setLayout(RowLayoutFactory.swtDefaults().pack(false).spacing(25).wrap(true).type(SWT.HORIZONTAL).create());
+
+        childrenGroupRepository.findAll().stream().map(group -> createChildrenGroupButton(group, childrenGroupComposite)).collect(
+                Collectors.toList());
+
+        childrenGroupComposite.pack(true);
+        scrolledComposite.setContent(childrenGroupComposite);
+        scrolledComposite.addControlListener(new ControlAdapter() {
+            public void controlResized(ControlEvent e) {
+                Rectangle r = scrolledComposite.getClientArea();
+                scrolledComposite.setMinSize(childrenGroupComposite.computeSize(r.width, SWT.DEFAULT));
+            }
+        });
+        scrolledComposite.layout(true, true);
+        return childrenGroupComposite;
+    }
+
+    private Control createChildrenGroupButton(ChildrenGroup childrenGroup, Composite parent) {
+        Button groupButton = new Button(parent, SWT.WRAP);
+        groupButton.setText(childrenGroup.getName());
+        groupButton.setFont(FontDescriptor.createFrom(Fonts.DEFAULT_FONT_DATA).createFont(groupButton.getDisplay()));
+
+        groupButton.setLayoutData(RowDataFactory.swtDefaults().hint(150, 150).create());
+        return groupButton;
+    }
 }

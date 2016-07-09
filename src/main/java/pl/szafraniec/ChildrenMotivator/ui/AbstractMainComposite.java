@@ -18,6 +18,10 @@ import pl.szafraniec.ChildrenMotivator.ui.start.StartComposite;
 import javax.annotation.PostConstruct;
 
 public abstract class AbstractMainComposite extends Composite {
+    protected static final GridDataFactory DEFAULT_CONTROL_BUTTON_FACTORY = GridDataFactory.swtDefaults()
+            .align(SWT.END, SWT.CENTER)
+            .minSize(200, 35)
+            .hint(200, 35);
 
     @Autowired
     protected Shell shell;
@@ -55,9 +59,9 @@ public abstract class AbstractMainComposite extends Composite {
 
     protected Button createBackButton(Composite parent, ApplicationContext applicationContext, Composite composite) {
         Button button = new Button(parent, SWT.PUSH);
-        button.setLayoutData(GridDataFactory.swtDefaults().align(SWT.END, SWT.CENTER).minSize(200, 35).hint(200, 35).create());
+        button.setLayoutData(DEFAULT_CONTROL_BUTTON_FACTORY.create());
         button.setText("Wstecz");
-        button.setFont(FontDescriptor.createFrom(Fonts.DEFAULT_FONT_DATA).setHeight(16).createFont(button.getDisplay()));
+        button.setFont(FontDescriptor.createFrom(Fonts.DEFAULT_FONT_DATA).createFont(button.getDisplay()));
         button.addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(SelectionEvent e) {
