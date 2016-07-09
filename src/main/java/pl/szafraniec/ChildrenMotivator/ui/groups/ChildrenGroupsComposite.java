@@ -12,6 +12,8 @@ import org.eclipse.swt.events.ControlAdapter;
 import org.eclipse.swt.events.ControlEvent;
 import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
@@ -26,6 +28,8 @@ import pl.szafraniec.ChildrenMotivator.repository.ChildrenGroupRepository;
 import pl.szafraniec.ChildrenMotivator.ui.AbstractMainComposite;
 import pl.szafraniec.ChildrenMotivator.ui.Fonts;
 import pl.szafraniec.ChildrenMotivator.ui.groups.dialog.EditChildrenGroupDialog;
+import pl.szafraniec.ChildrenMotivator.ui.groups.group.GroupDetailComposite;
+import pl.szafraniec.ChildrenMotivator.ui.start.StartComposite;
 
 import java.util.stream.Collectors;
 
@@ -59,14 +63,14 @@ public class ChildrenGroupsComposite extends AbstractMainComposite {
         controlsButtonsComposite.setLayoutData(GridDataFactory.swtDefaults().align(SWT.CENTER, SWT.TOP).create());
         controlsButtonsComposite.setLayout(GridLayoutFactory.swtDefaults().numColumns(1).create());
 
-        createBackButton(controlsButtonsComposite, applicationContext, shell);
+        createBackButton(controlsButtonsComposite, applicationContext, shell, StartComposite.class);
         createAddGroupButton(controlsButtonsComposite);
         return controlsButtonsComposite;
     }
 
     private void createAddGroupButton(Composite parent) {
         Button addGroupButton = new Button(parent, SWT.PUSH);
-        addGroupButton.setLayoutData(DEFAULT_CONTROL_BUTTON_FACTORY.create());
+        addGroupButton.setLayoutData(DEFAULT_CONTROL_BUTTON_FACTORY);
         addGroupButton.setText("Dodaj grupę");
         addGroupButton.setFont(FontDescriptor.createFrom(Fonts.DEFAULT_FONT_DATA).createFont(addGroupButton.getDisplay()));
         addGroupButton.addMouseListener(new MouseAdapter() {
@@ -134,6 +138,14 @@ public class ChildrenGroupsComposite extends AbstractMainComposite {
         groupButton.setFont(FontDescriptor.createFrom(Fonts.DEFAULT_FONT_DATA).createFont(groupButton.getDisplay()));
 
         groupButton.setLayoutData(RowDataFactory.swtDefaults().hint(150, 150).create());
+        groupButton.addSelectionListener(new SelectionAdapter() {
+            @Override
+            public void widgetSelected(SelectionEvent e) {
+                applicationContext.getBean(GroupDetailComposite.class, shell, childrenGroup);
+                dispose();
+                shell.layout(true, true);
+            }
+        });
         return groupButton;
     }
 }

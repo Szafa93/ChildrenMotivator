@@ -6,7 +6,6 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.orm.jpa.JpaSystemException;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import pl.szafraniec.ChildrenMotivator.model.annotation.DaoTest;
 import pl.szafraniec.ChildrenMotivator.repository.ChildrenGroupRepository;
@@ -121,10 +120,10 @@ public class ChildrenGroupRepositoryTest {
         Assert.assertEquals(1, childrenGroupRepository.count());
     }
 
-    @Test(expected = JpaSystemException.class)
-    @DatabaseSetup(value = { "classpath:data/ChildrenGroup.xml" })
-    public void impossibleDeleteGroupWithChildrenTest() {
-        childrenGroupRepository.delete(2);
-        childrenGroupRepository.flush();
-    }
+    //    @Test(expected = JpaSystemException.class)
+    //    @DatabaseSetup(value = { "classpath:data/ChildrenGroup.xml" })
+    //    public void impossibleDeleteGroupWithChildrenTest() {
+    //        childrenGroupRepository.delete(2);
+    //        childrenGroupRepository.flush();
+    //    }
 }

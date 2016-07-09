@@ -1,27 +1,28 @@
 package pl.szafraniec.ChildrenMotivator.ui;
 
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.layout.GridLayoutFactory;
 import org.eclipse.jface.resource.FontDescriptor;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.MouseAdapter;
+import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Font;
+import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
-import pl.szafraniec.ChildrenMotivator.ui.start.StartComposite;
 
 import javax.annotation.PostConstruct;
 
 public abstract class AbstractMainComposite extends Composite {
-    protected static final GridDataFactory DEFAULT_CONTROL_BUTTON_FACTORY = GridDataFactory.swtDefaults()
-            .align(SWT.END, SWT.CENTER)
-            .minSize(200, 35)
-            .hint(200, 35);
+    protected static final GridData DEFAULT_CONTROL_BUTTON_FACTORY = GridDataFactory.swtDefaults().align(SWT.FILL, SWT.CENTER).minSize(200,
+            35).hint(200, 35).create();
 
     @Autowired
     protected Shell shell;
@@ -57,19 +58,39 @@ public abstract class AbstractMainComposite extends Composite {
         return label;
     }
 
-    protected Button createBackButton(Composite parent, ApplicationContext applicationContext, Composite composite) {
+    protected Button createBackButton(Composite parent, ApplicationContext applicationContext, Composite composite, Class backClass) {
         Button button = new Button(parent, SWT.PUSH);
-        button.setLayoutData(DEFAULT_CONTROL_BUTTON_FACTORY.create());
+        button.setLayoutData(DEFAULT_CONTROL_BUTTON_FACTORY);
         button.setText("Wstecz");
         button.setFont(FontDescriptor.createFrom(Fonts.DEFAULT_FONT_DATA).createFont(button.getDisplay()));
         button.addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(SelectionEvent e) {
-                applicationContext.getBean(StartComposite.class, composite);
+                applicationContext.getBean(backClass, composite);
                 dispose();
                 composite.layout(true, true);
             }
         });
         return button;
+    }
+
+    protected Button createRemoveButton(Composite parent, Runnable runnable) {
+        Button removeButton = new Button(parent, SWT.PUSH);
+        removeButton.setLayoutData(GridDataFactory.createFrom(DEFAULT_CONTROL_BUTTON_FACTORY)
+                .grab(false, true)
+                .align(SWT.FILL, SWT.END)
+                .create());
+        removeButton.setText("Usuń");
+        removeButton.setFont(FontDescriptor.createFrom(Fonts.DEFAULT_FONT_DATA).createFont(removeButton.getDisplay()));
+        removeButton.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseUp(MouseEvent e) {
+                if (MessageDialog.openConfirm(shell, "Potwierdzenie usunięcia",
+                        "Usunięte zostaną wszystkie dane powiązane. Czy chcesz kontynuować?")) {
+                    runnable.run();
+                }
+            }
+        });
+        return removeButton;
     }
 }

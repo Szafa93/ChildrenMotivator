@@ -98,4 +98,18 @@ public class Child {
     public void setChildrenGroup(ChildrenGroup childrenGroup) {
         this.childrenGroup = childrenGroup;
     }
+
+    public static class ChildFactory {
+
+        public static Child create(String name, String surname, String pesel, String parentMail, ChildrenGroup childrenGroup) {
+            Child child = new Child();
+            child.setName(name);
+            child.setSurname(surname);
+            child.setPesel(pesel);
+            child.setParentEmail(parentMail);
+            child.setChildrenGroup(childrenGroup);
+            childrenGroup.getChildren().add(child);
+            return child;
+        }
+    }
 }

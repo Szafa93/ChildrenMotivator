@@ -8,6 +8,7 @@ import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import pl.szafraniec.ChildrenMotivator.ui.AbstractMainComposite;
+import pl.szafraniec.ChildrenMotivator.ui.start.StartComposite;
 
 @Component
 @Scope(scopeName = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
@@ -23,7 +24,7 @@ public class ActivitiesComposite extends AbstractMainComposite {
         topPart.setLayoutData(GridDataFactory.swtDefaults().grab(true, false).align(SWT.FILL, SWT.CENTER).create());
 
         createLabel(topPart, "Możliwe aktywności");
-        createBackButton(topPart, applicationContext, shell);
+        createBackButton(topPart, applicationContext, shell, StartComposite.class);
     }
 
     protected void createDownPart() {

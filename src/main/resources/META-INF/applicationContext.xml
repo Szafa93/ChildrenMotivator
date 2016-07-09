@@ -59,6 +59,7 @@
                 <prop key="hibernate.connection.CharSet">${hibernate.connection.CharSet}</prop>
                 <prop key="hibernate.connection.characterEncoding">${hibernate.connection.characterEncoding}</prop>
                 <prop key="hibernate.connection.useUnicode">${hibernate.connection.hibernate.connection.useUnicode}</prop>
+                <prop key="hibernate.enable_lazy_load_no_trans">true</prop>
             </props>
         </property>
     </bean>
