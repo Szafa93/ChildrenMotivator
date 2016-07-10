@@ -23,7 +23,7 @@ public class GradeScheme {
     private int id;
 
     @Column(nullable = false)
-    private double weight;
+    private int value;
 
     @Lob
     @Column(nullable = false)
@@ -37,12 +37,12 @@ public class GradeScheme {
         this.id = id;
     }
 
-    public double getWeight() {
-        return weight;
+    public int getValue() {
+        return value;
     }
 
-    public void setWeight(double weight) {
-        this.weight = weight;
+    public void setValue(int value) {
+        this.value = value;
     }
 
     public byte[] getImage() {
@@ -51,5 +51,14 @@ public class GradeScheme {
 
     public void setImage(byte[] image) {
         this.image = image;
+    }
+
+    public static class GradeSchemeFactory {
+        public static GradeScheme create(int value, byte[] image) {
+            GradeScheme gradeScheme = new GradeScheme();
+            gradeScheme.setImage(image);
+            gradeScheme.setValue(value);
+            return gradeScheme;
+        }
     }
 }

@@ -140,7 +140,7 @@ public class ActivitiesComposite extends AbstractMainComposite {
         imageData = Images.resize(getShell().getDisplay(), imageData);
         activityButton.setImage(imageData);
 
-        activityButton.setLayoutData(RowDataFactory.swtDefaults().hint(Images.IMAGE_HEIGHT, Images.IMAGE_HEIGHT).create());
+        activityButton.setLayoutData(RowDataFactory.swtDefaults().hint(Images.IMAGE_WIDTH, Images.IMAGE_HEIGHT).create());
         activityButton.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseUp(MouseEvent e) {
