@@ -5,6 +5,8 @@
  */
 package pl.szafraniec.ChildrenMotivator.model;
 
+import org.hibernate.validator.constraints.NotBlank;
+
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -21,8 +23,42 @@ public class Activity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
+    @NotBlank
     private String name;
 
     @Lob
     private byte[] image;
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public byte[] getImage() {
+        return image;
+    }
+
+    public void setImage(byte[] image) {
+        this.image = image;
+    }
+
+    public static class ActivityFactory {
+        public static Activity create(String name, byte[] image) {
+            Activity activity = new Activity();
+            activity.setName(name);
+            activity.setImage(image);
+            return activity;
+        }
+    }
 }

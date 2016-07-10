@@ -23,7 +23,7 @@ import javax.annotation.PostConstruct;
 public abstract class AbstractMainComposite extends Composite {
     protected static final GridData DEFAULT_CONTROL_BUTTON_FACTORY = GridDataFactory.swtDefaults().align(SWT.FILL, SWT.CENTER).minSize(200,
             35).hint(200, 35).create();
-
+    
     @Autowired
     protected Shell shell;
 

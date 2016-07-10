@@ -26,7 +26,7 @@ import pl.szafraniec.ChildrenMotivator.ui.AbstractMainComposite;
 import pl.szafraniec.ChildrenMotivator.ui.Fonts;
 import pl.szafraniec.ChildrenMotivator.ui.groups.ChildrenGroupsComposite;
 import pl.szafraniec.ChildrenMotivator.ui.groups.dialog.EditChildrenGroupDialog;
-import pl.szafraniec.ChildrenMotivator.ui.groups.group.children.dialog.EditChildDialog;
+import pl.szafraniec.ChildrenMotivator.ui.groups.group.dialog.EditChildDialog;
 
 import java.util.stream.Collectors;
 
