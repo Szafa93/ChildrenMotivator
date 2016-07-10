@@ -28,8 +28,8 @@ import pl.szafraniec.ChildrenMotivator.repository.GradeSchemeRepository;
 import pl.szafraniec.ChildrenMotivator.ui.AbstractMainComposite;
 import pl.szafraniec.ChildrenMotivator.ui.Fonts;
 import pl.szafraniec.ChildrenMotivator.ui.Images;
-import pl.szafraniec.ChildrenMotivator.ui.activities.activity.ActivityComposite;
 import pl.szafraniec.ChildrenMotivator.ui.gradesSchemes.dialog.EditGradeSchemeDialog;
+import pl.szafraniec.ChildrenMotivator.ui.gradesSchemes.gradeScheme.GradeSchemeComposite;
 import pl.szafraniec.ChildrenMotivator.ui.start.StartComposite;
 
 import java.io.ByteArrayInputStream;
@@ -144,7 +144,7 @@ public class GradesSchemesComposite extends AbstractMainComposite {
         activityButton.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseUp(MouseEvent e) {
-                applicationContext.getBean(ActivityComposite.class, shell, gradeScheme);
+                applicationContext.getBean(GradeSchemeComposite.class, shell, gradeScheme);
                 dispose();
                 shell.layout(true, true);
             }
