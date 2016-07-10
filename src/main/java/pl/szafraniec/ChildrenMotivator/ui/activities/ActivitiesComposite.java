@@ -102,10 +102,10 @@ public class ActivitiesComposite extends AbstractMainComposite {
         Composite downPart = new Composite(this, SWT.NONE);
         downPart.setLayout(GridLayoutFactory.swtDefaults().numColumns(1).create());
         downPart.setLayoutData(GridDataFactory.swtDefaults().grab(true, true).align(SWT.FILL, SWT.FILL).create());
-        createChildrenActivitiesComposite(downPart);
+        createActivitiesComposite(downPart);
     }
 
-    private Composite createChildrenActivitiesComposite(Composite parent) {
+    private Composite createActivitiesComposite(Composite parent) {
         scrolledComposite = new ScrolledComposite(parent, SWT.V_SCROLL | SWT.H_SCROLL | SWT.BORDER);
         scrolledComposite.setLayoutData(GridDataFactory.swtDefaults().grab(true, true).align(SWT.FILL, SWT.FILL).create());
         scrolledComposite.setExpandVertical(true);
@@ -140,7 +140,7 @@ public class ActivitiesComposite extends AbstractMainComposite {
         imageData = Images.resize(getShell().getDisplay(), imageData);
         activityButton.setImage(imageData);
 
-        activityButton.setLayoutData(RowDataFactory.swtDefaults().hint(150, 150).create());
+        activityButton.setLayoutData(RowDataFactory.swtDefaults().hint(Images.IMAGE_HEIGHT, Images.IMAGE_HEIGHT).create());
         activityButton.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseUp(MouseEvent e) {

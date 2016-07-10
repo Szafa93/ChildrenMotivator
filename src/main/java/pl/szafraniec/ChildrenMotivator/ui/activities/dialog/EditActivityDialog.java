@@ -101,8 +101,8 @@ public class EditActivityDialog extends Dialog {
         image.setLayoutData(GridDataFactory.swtDefaults()
                 .span(2, 1)
                 .align(SWT.CENTER, SWT.CENTER)
-                .hint(150, 150)
-                .minSize(150, 150)
+                .hint(Images.IMAGE_WIDTH, Images.IMAGE_HEIGHT)
+                .minSize(Images.IMAGE_WIDTH, Images.IMAGE_HEIGHT)
                 .create());
         if (fileData != null) {
             Image imageData = new Image(getShell().getDisplay(), new ByteArrayInputStream(fileData));
