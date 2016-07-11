@@ -27,4 +27,37 @@ public class ActivitiesTableScheme {
 
     @ManyToMany
     private List<Activity> listOfActivities = new ArrayList<>();
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public List<Activity> getListOfActivities() {
+        return listOfActivities;
+    }
+
+    public void setListOfActivities(List<Activity> listOfActivities) {
+        this.listOfActivities = listOfActivities;
+    }
+
+    public static class ActivitiesTableSchemeFactory {
+        public static ActivitiesTableScheme create(String name, List<Activity> activities) {
+            ActivitiesTableScheme scheme = new ActivitiesTableScheme();
+            scheme.setName(name);
+            scheme.setListOfActivities(activities);
+            return scheme;
+        }
+    }
 }

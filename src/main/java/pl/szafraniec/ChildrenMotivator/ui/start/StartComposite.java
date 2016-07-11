@@ -14,7 +14,7 @@ import org.springframework.stereotype.Component;
 import pl.szafraniec.ChildrenMotivator.ui.AbstractMainComposite;
 import pl.szafraniec.ChildrenMotivator.ui.Fonts;
 import pl.szafraniec.ChildrenMotivator.ui.activities.ActivitiesComposite;
-import pl.szafraniec.ChildrenMotivator.ui.activities.tableSchemes.TableSchemesComposite;
+import pl.szafraniec.ChildrenMotivator.ui.activities.tableSchemes.ActivitiesTableSchemesComposite;
 import pl.szafraniec.ChildrenMotivator.ui.gradesSchemes.GradesSchemesComposite;
 import pl.szafraniec.ChildrenMotivator.ui.groups.ChildrenGroupsComposite;
 
@@ -41,7 +41,7 @@ public class StartComposite extends AbstractMainComposite {
         createButton(downPart, "Grupy", ChildrenGroupsComposite.class);
         createButton(downPart, "Możliwe oceny", GradesSchemesComposite.class);
         createButton(downPart, "Możliwe aktywności", ActivitiesComposite.class);
-        createButton(downPart, "Schematy tablic aktywności", TableSchemesComposite.class);
+        createButton(downPart, "Schematy tablic aktywności", ActivitiesTableSchemesComposite.class);
     }
 
     private void createButton(Composite parent, String text, Class compositeClass) {

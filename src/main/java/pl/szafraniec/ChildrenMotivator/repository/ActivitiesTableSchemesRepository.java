@@ -5,5 +5,5 @@ import org.springframework.stereotype.Repository;
 import pl.szafraniec.ChildrenMotivator.model.ActivitiesTableScheme;
 
 @Repository
-public interface ActivitiesTableSchemeRepository extends JpaRepository<ActivitiesTableScheme, Integer> {
+public interface ActivitiesTableSchemesRepository extends JpaRepository<ActivitiesTableScheme, Integer> {
 }
