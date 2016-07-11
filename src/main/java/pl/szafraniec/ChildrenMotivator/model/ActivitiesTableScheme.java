@@ -10,6 +10,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToMany;
+import javax.persistence.OrderBy;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -26,6 +27,7 @@ public class ActivitiesTableScheme {
     private String name;
 
     @ManyToMany
+    @OrderBy("id")
     private List<Activity> listOfActivities = new ArrayList<>();
 
     public int getId() {

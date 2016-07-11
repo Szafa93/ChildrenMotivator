@@ -119,6 +119,7 @@ public class EditActivitiesTableSchemeDialog extends Dialog {
         activityButton.setBackgroundImage(imageData);
         activityButton.setData(activity);
         activityButton.setLayoutData(GridDataFactory.swtDefaults().hint(Images.IMAGE_WIDTH, Images.IMAGE_HEIGHT).create());
+        activityButton.setSelection(activities.contains(activity));
 
         activityButton.addSelectionListener(new SelectionAdapter() {
             @Override
@@ -128,6 +129,7 @@ public class EditActivitiesTableSchemeDialog extends Dialog {
                 } else {
                     activities.remove(activityButton.getData());
                 }
+                getButton(Dialog.OK).setEnabled(checkConstrains());
             }
         });
         return activityButton;

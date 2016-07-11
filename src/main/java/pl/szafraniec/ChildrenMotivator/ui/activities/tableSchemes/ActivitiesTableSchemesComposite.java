@@ -28,8 +28,8 @@ import pl.szafraniec.ChildrenMotivator.repository.ActivitiesTableSchemesReposito
 import pl.szafraniec.ChildrenMotivator.ui.AbstractMainComposite;
 import pl.szafraniec.ChildrenMotivator.ui.Fonts;
 import pl.szafraniec.ChildrenMotivator.ui.Images;
-import pl.szafraniec.ChildrenMotivator.ui.activities.activity.ActivityComposite;
 import pl.szafraniec.ChildrenMotivator.ui.activities.tableSchemes.dialog.EditActivitiesTableSchemeDialog;
+import pl.szafraniec.ChildrenMotivator.ui.activities.tableSchemes.tableScheme.ActivitiesTableSchemeComposite;
 import pl.szafraniec.ChildrenMotivator.ui.start.StartComposite;
 
 import java.util.List;
@@ -149,7 +149,7 @@ public class ActivitiesTableSchemesComposite extends AbstractMainComposite {
         activitiesTableSchemeButton.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseUp(MouseEvent e) {
-                applicationContext.getBean(ActivityComposite.class, shell, activitiesTableScheme);
+                applicationContext.getBean(ActivitiesTableSchemeComposite.class, shell, activitiesTableScheme);
                 dispose();
                 shell.layout(true, true);
             }

@@ -12,6 +12,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Lob;
+import java.util.Arrays;
 
 /**
  * @author Maciek
@@ -60,5 +61,30 @@ public class Activity {
             activity.setImage(image);
             return activity;
         }
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o)
+            return true;
+        if (o == null || getClass() != o.getClass())
+            return false;
+
+        Activity activity = (Activity) o;
+
+        if (id != activity.id)
+            return false;
+        if (!name.equals(activity.name))
+            return false;
+        return Arrays.equals(image, activity.image);
+
+    }
+
+    @Override
+    public int hashCode() {
+        int result = id;
+        result = 31 * result + name.hashCode();
+        result = 31 * result + Arrays.hashCode(image);
+        return result;
     }
 }
