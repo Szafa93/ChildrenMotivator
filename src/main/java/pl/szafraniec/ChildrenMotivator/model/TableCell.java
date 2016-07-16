@@ -21,11 +21,8 @@ public class TableCell {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
-    @ManyToOne(optional = false)
+    @ManyToOne
     private GradeScheme gradeScheme;
-
-    @ManyToOne(optional = false)
-    private Worker worker;
 
     private String gradeComment;
 
@@ -45,19 +42,18 @@ public class TableCell {
         this.gradeScheme = gradeScheme;
     }
 
-    public Worker getWorker() {
-        return worker;
-    }
-
-    public void setWorker(Worker worker) {
-        this.worker = worker;
-    }
-
     public String getGradeComment() {
         return gradeComment;
     }
 
     public void setGradeComment(String gradeComment) {
         this.gradeComment = gradeComment;
+    }
+
+    public static class TableCellBuilder {
+        public static TableCell create() {
+            TableCell tableCell = new TableCell();
+            return tableCell;
+        }
     }
 }

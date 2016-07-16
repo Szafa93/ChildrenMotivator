@@ -24,15 +24,16 @@ import pl.szafraniec.ChildrenMotivator.model.ChildrenGroup;
 import pl.szafraniec.ChildrenMotivator.repository.ChildrenGroupRepository;
 import pl.szafraniec.ChildrenMotivator.ui.AbstractMainComposite;
 import pl.szafraniec.ChildrenMotivator.ui.Fonts;
+import pl.szafraniec.ChildrenMotivator.ui.behaviorTable.BehaviorTableComposite;
+import pl.szafraniec.ChildrenMotivator.ui.child.dialog.EditChildDialog;
 import pl.szafraniec.ChildrenMotivator.ui.groups.ChildrenGroupsComposite;
 import pl.szafraniec.ChildrenMotivator.ui.groups.dialog.EditChildrenGroupDialog;
-import pl.szafraniec.ChildrenMotivator.ui.groups.group.dialog.EditChildDialog;
 
 import java.util.stream.Collectors;
 
 @Component
 @Scope(scopeName = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
-public class GroupDetailComposite extends AbstractMainComposite {
+public class ChildrenGroupComposite extends AbstractMainComposite {
 
     @Autowired
     private ChildrenGroupRepository childrenGroupRepository;
@@ -45,7 +46,7 @@ public class GroupDetailComposite extends AbstractMainComposite {
 
     private Label label;
 
-    public GroupDetailComposite(Composite parent, ChildrenGroup childrenGroup) {
+    public ChildrenGroupComposite(Composite parent, ChildrenGroup childrenGroup) {
         super(parent, SWT.NONE);
         this.childrenGroup = childrenGroup;
     }
@@ -99,7 +100,7 @@ public class GroupDetailComposite extends AbstractMainComposite {
             }
         });
         scrolledComposite.layout(true, true);
-        return childrenGroupComposite;
+        return scrolledComposite;
     }
 
     private Control createChildButton(Child child, Composite parent) {
@@ -129,12 +130,14 @@ public class GroupDetailComposite extends AbstractMainComposite {
     private void createBehaviorTableButton(Composite parent) {
         Button addGroupButton = new Button(parent, SWT.PUSH);
         addGroupButton.setLayoutData(DEFAULT_CONTROL_BUTTON_FACTORY);
-        addGroupButton.setText("Tablica zachowań");
+        addGroupButton.setText("Tablica zachowania");
         addGroupButton.setFont(FontDescriptor.createFrom(Fonts.DEFAULT_FONT_DATA).createFont(addGroupButton.getDisplay()));
         addGroupButton.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseUp(MouseEvent e) {
-                showBehaviorTable();
+                applicationContext.getBean(BehaviorTableComposite.class, shell, childrenGroup);
+                dispose();
+                shell.layout(true, true);
             }
         });
     }
@@ -172,10 +175,6 @@ public class GroupDetailComposite extends AbstractMainComposite {
         applicationContext.getBean(ChildrenGroupsComposite.class, shell);
         dispose();
         shell.layout(true, true);
-    }
-
-    private void showBehaviorTable() {
-        // TODO
     }
 
     private void addChild() {

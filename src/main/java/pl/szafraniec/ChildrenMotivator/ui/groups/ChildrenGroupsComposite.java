@@ -28,7 +28,7 @@ import pl.szafraniec.ChildrenMotivator.repository.ChildrenGroupRepository;
 import pl.szafraniec.ChildrenMotivator.ui.AbstractMainComposite;
 import pl.szafraniec.ChildrenMotivator.ui.Fonts;
 import pl.szafraniec.ChildrenMotivator.ui.groups.dialog.EditChildrenGroupDialog;
-import pl.szafraniec.ChildrenMotivator.ui.groups.group.GroupDetailComposite;
+import pl.szafraniec.ChildrenMotivator.ui.groups.group.ChildrenGroupComposite;
 import pl.szafraniec.ChildrenMotivator.ui.start.StartComposite;
 
 import java.util.stream.Collectors;
@@ -141,7 +141,7 @@ public class ChildrenGroupsComposite extends AbstractMainComposite {
         groupButton.addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(SelectionEvent e) {
-                applicationContext.getBean(GroupDetailComposite.class, shell, childrenGroup);
+                applicationContext.getBean(ChildrenGroupComposite.class, shell, childrenGroup);
                 dispose();
                 shell.layout(true, true);
             }

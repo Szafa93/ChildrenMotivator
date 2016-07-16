@@ -99,6 +99,24 @@ public class Child {
         this.childrenGroup = childrenGroup;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o)
+            return true;
+        if (o == null || getClass() != o.getClass())
+            return false;
+
+        Child child = (Child) o;
+
+        return id == child.id;
+
+    }
+
+    @Override
+    public int hashCode() {
+        return id;
+    }
+
     public static class ChildFactory {
 
         public static Child create(String name, String surname, String pesel, String parentMail, ChildrenGroup childrenGroup) {
@@ -109,6 +127,10 @@ public class Child {
             child.setParentEmail(parentMail);
             child.setChildrenGroup(childrenGroup);
             childrenGroup.getChildren().add(child);
+            childrenGroup.getBehaviorTable().getDays().forEach(day -> {
+                day.getGrades().put(child, TableCell.TableCellBuilder.create());
+            });
+
             return child;
         }
     }

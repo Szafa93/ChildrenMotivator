@@ -16,6 +16,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.PrimaryKeyJoinColumn;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -55,6 +56,12 @@ public class ChildrenGroup {
     }
 
     public List<Child> getChildren() {
+        Collections.sort(children, (o1, o2) -> {
+            if (o1.getSurname().compareTo(o2.getSurname()) == 0) {
+                return o1.getName().compareTo(o2.getName());
+            }
+            return o1.getSurname().compareTo(o2.getSurname());
+        });
         return children;
     }
 
@@ -74,7 +81,7 @@ public class ChildrenGroup {
         public static ChildrenGroup create(String name) {
             ChildrenGroup childrenGroup = new ChildrenGroup();
             childrenGroup.name = name;
-            childrenGroup.behaviorTable = new BehaviorTable();
+            childrenGroup.behaviorTable = BehaviorTable.BehaviorTableFactory.create(childrenGroup);
             childrenGroup.children = new ArrayList<>();
             return childrenGroup;
         }

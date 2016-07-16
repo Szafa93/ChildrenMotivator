@@ -1,5 +1,6 @@
 package pl.szafraniec.ChildrenMotivator.model;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -9,8 +10,12 @@ import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.MapKeyJoinColumn;
 import javax.persistence.OneToMany;
+import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.Date;
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @Entity
 public class BehaviorTableDay {
@@ -22,7 +27,8 @@ public class BehaviorTableDay {
     @Column(nullable = false)
     private Date date;
 
-    @OneToMany   // unidirectional
+    // unidirectional
+    @OneToMany(cascade = CascadeType.ALL)
     @JoinTable(name = "BehaviorTableDay_Grades",
             joinColumns = @JoinColumn(name = "BehaviorTableDay"),
             inverseJoinColumns = @JoinColumn(name = "TableCell"))
@@ -51,5 +57,18 @@ public class BehaviorTableDay {
 
     public void setGrades(Map<Child, TableCell> grades) {
         this.grades = grades;
+    }
+
+    public LocalDate getLocalDate() {
+        return date.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+    }
+
+    public static class BehaviorTableDayBuilder {
+        public static BehaviorTableDay create(LocalDate localDate, List<Child> children) {
+            BehaviorTableDay day = new BehaviorTableDay();
+            day.setDate(Date.from(localDate.atStartOfDay(ZoneId.systemDefault()).toInstant()));
+            day.setGrades(children.stream().collect(Collectors.toMap(child -> child, child -> TableCell.TableCellBuilder.create())));
+            return day;
+        }
     }
 }

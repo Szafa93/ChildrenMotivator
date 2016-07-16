@@ -58,15 +58,19 @@ public abstract class AbstractMainComposite extends Composite {
         return label;
     }
 
-    protected Button createBackButton(Composite parent, ApplicationContext applicationContext, Composite composite, Class backClass) {
+    protected Button createBackButton(Composite parent, ApplicationContext applicationContext, Composite composite, Class backClass,
+            Object... args) {
         Button button = new Button(parent, SWT.PUSH);
+        Object[] constructorArgs = new Object[args.length + 1];
+        constructorArgs[0] = composite;
+        System.arraycopy(args, 0, constructorArgs, 1, args.length);
         button.setLayoutData(DEFAULT_CONTROL_BUTTON_FACTORY);
         button.setText("Wstecz");
         button.setFont(FontDescriptor.createFrom(Fonts.DEFAULT_FONT_DATA).createFont(button.getDisplay()));
         button.addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(SelectionEvent e) {
-                applicationContext.getBean(backClass, composite);
+                applicationContext.getBean(backClass, constructorArgs);
                 dispose();
                 composite.layout(true, true);
             }

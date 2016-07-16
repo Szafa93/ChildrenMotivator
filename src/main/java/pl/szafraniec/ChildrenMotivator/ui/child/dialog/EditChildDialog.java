@@ -1,4 +1,4 @@
-package pl.szafraniec.ChildrenMotivator.ui.groups.group.dialog;
+package pl.szafraniec.ChildrenMotivator.ui.child.dialog;
 
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.layout.GridDataFactory;
