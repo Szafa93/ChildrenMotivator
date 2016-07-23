@@ -19,6 +19,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 
 import javax.annotation.PostConstruct;
+import java.util.function.Supplier;
 
 public abstract class AbstractMainComposite extends Composite {
     protected static final GridData DEFAULT_CONTROL_BUTTON_FACTORY = GridDataFactory.swtDefaults().align(SWT.FILL, SWT.CENTER).minSize(200,
@@ -58,18 +59,23 @@ public abstract class AbstractMainComposite extends Composite {
         return label;
     }
 
+    protected Button createBackButton(Composite parent, ApplicationContext applicationContext, Composite composite, Class backClass) {
+        return createBackButton(parent, applicationContext, composite, backClass, () -> new Object[0]);
+    }
+
     protected Button createBackButton(Composite parent, ApplicationContext applicationContext, Composite composite, Class backClass,
-            Object... args) {
+            Supplier<Object[]> argsSupplier) {
         Button button = new Button(parent, SWT.PUSH);
-        Object[] constructorArgs = new Object[args.length + 1];
-        constructorArgs[0] = composite;
-        System.arraycopy(args, 0, constructorArgs, 1, args.length);
         button.setLayoutData(DEFAULT_CONTROL_BUTTON_FACTORY);
         button.setText("Wstecz");
         button.setFont(FontDescriptor.createFrom(Fonts.DEFAULT_FONT_DATA).createFont(button.getDisplay()));
         button.addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(SelectionEvent e) {
+                Object[] args = argsSupplier.get();
+                Object[] constructorArgs = new Object[args.length + 1];
+                constructorArgs[0] = composite;
+                System.arraycopy(args, 0, constructorArgs, 1, args.length);
                 applicationContext.getBean(backClass, constructorArgs);
                 dispose();
                 composite.layout(true, true);

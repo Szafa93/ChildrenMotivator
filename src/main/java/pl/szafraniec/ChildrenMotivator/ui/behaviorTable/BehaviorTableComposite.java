@@ -39,13 +39,14 @@ import java.util.List;
 import java.util.StringJoiner;
 import java.util.stream.Stream;
 
-@Component
+@Component("BehaviorTableComposite")
 @Scope(scopeName = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 public class BehaviorTableComposite extends AbstractMainComposite {
-    private static final GridData TABLE_CELL_LAYOUT_DATA = GridDataFactory.fillDefaults().align(SWT.FILL, SWT.FILL).hint(Images.IMAGE_WIDTH,
+    protected static final GridData TABLE_CELL_LAYOUT_DATA = GridDataFactory.fillDefaults().align(SWT.FILL, SWT.FILL).hint(
+            Images.IMAGE_WIDTH,
             Images.IMAGE_HEIGHT).create();
 
-    private static final GridData INSIDE_TABLE_CELL_LAYOUT_DATA = GridDataFactory.fillDefaults().align(SWT.CENTER, SWT.CENTER).grab(true,
+    protected static final GridData INSIDE_TABLE_CELL_LAYOUT_DATA = GridDataFactory.fillDefaults().align(SWT.CENTER, SWT.CENTER).grab(true,
             true).create();
 
     @Autowired
@@ -84,12 +85,13 @@ public class BehaviorTableComposite extends AbstractMainComposite {
         createTopControlsButtonsComposite(topPart);
     }
 
-    private Composite createTopControlsButtonsComposite(Composite parent) {
+    protected Composite createTopControlsButtonsComposite(Composite parent) {
         Composite controlsButtonsComposite = new Composite(parent, SWT.NONE);
         controlsButtonsComposite.setLayoutData(GridDataFactory.swtDefaults().align(SWT.CENTER, SWT.TOP).create());
         controlsButtonsComposite.setLayout(GridLayoutFactory.swtDefaults().numColumns(1).create());
 
-        createBackButton(controlsButtonsComposite, applicationContext, shell, ChildrenGroupComposite.class, childrenGroup);
+        createBackButton(controlsButtonsComposite, applicationContext, shell, ChildrenGroupComposite.class,
+                () -> new Object[] { childrenGroup });
         createEditButton(controlsButtonsComposite);
         return controlsButtonsComposite;
     }
@@ -102,10 +104,9 @@ public class BehaviorTableComposite extends AbstractMainComposite {
         editButton.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseUp(MouseEvent e) {
-                //                TODO
-                //                applicationContext.getBean(EditBehaviorTableComposite.class, shell, childrenGroup);
-                //                dispose();
-                //                shell.layout(true, true);
+                applicationContext.getBean("EditBehaviorTableComposite", shell, childrenGroup);
+                dispose();
+                shell.layout(true, true);
             }
         });
     }
@@ -184,7 +185,7 @@ public class BehaviorTableComposite extends AbstractMainComposite {
     private void fillTableBehaviorComposite(Composite parent) {
         List<BehaviorTableDay> days = childrenGroup.getBehaviorTable().getDays(startDate, endDate).orElseGet(() -> {
             childrenGroup.getBehaviorTable().generateDay(startDate, endDate);
-            childrenGroupRepository.saveAndFlush(childrenGroup);
+            childrenGroup = childrenGroupRepository.saveAndFlush(childrenGroup);
             return childrenGroup.getBehaviorTable().getDays(startDate, endDate).get();
         });
         generateHeader(days, parent);
@@ -217,21 +218,23 @@ public class BehaviorTableComposite extends AbstractMainComposite {
         childRowHeader.setLayoutData(INSIDE_TABLE_CELL_LAYOUT_DATA);
         childRowHeader.setText(String.format("%s\n%s", child.getName(), child.getSurname()));
         childRowHeader.setFont(FontDescriptor.createFrom(Fonts.DEFAULT_FONT_DATA).createFont(childRowHeader.getDisplay()));
-        days.stream().forEachOrdered(day -> {
-            TableCell grade = day.getGrades().get(child);
-            Composite dayGradeComposite = new Composite(parent, SWT.BORDER);
-            dayGradeComposite.setLayoutData(TABLE_CELL_LAYOUT_DATA);
-            dayGradeComposite.setLayout(GridLayoutFactory.fillDefaults().create());
-            Label dayGrade = new Label(dayGradeComposite, SWT.NONE);
-            dayGrade.setLayoutData(INSIDE_TABLE_CELL_LAYOUT_DATA);
-            if (grade.getGradeScheme() == null) {
-                dayGrade.setToolTipText("Brak oceny");
-            } else {
-                dayGrade.setToolTipText(grade.getGradeComment());
-                Image imageData = new Image(getShell().getDisplay(), new ByteArrayInputStream(grade.getGradeScheme().getImage()));
-                imageData = Images.resize(getShell().getDisplay(), imageData);
-                dayGrade.setImage(imageData);
-            }
-        });
+        days.stream().forEachOrdered(day -> createTableCell(child, day, parent));
+    }
+
+    protected void createTableCell(Child child, BehaviorTableDay day, Composite parent) {
+        TableCell grade = day.getGrades().get(child);
+        Composite dayGradeComposite = new Composite(parent, SWT.BORDER);
+        dayGradeComposite.setLayoutData(TABLE_CELL_LAYOUT_DATA);
+        dayGradeComposite.setLayout(GridLayoutFactory.fillDefaults().create());
+        Label dayGrade = new Label(dayGradeComposite, SWT.NONE);
+        dayGrade.setLayoutData(INSIDE_TABLE_CELL_LAYOUT_DATA);
+        if (grade.getGradeScheme() == null) {
+            dayGrade.setToolTipText("Brak oceny");
+        } else {
+            dayGrade.setToolTipText(grade.getGradeComment());
+            Image imageData = new Image(getShell().getDisplay(), new ByteArrayInputStream(grade.getGradeScheme().getImage()));
+            imageData = Images.resize(getShell().getDisplay(), imageData);
+            dayGrade.setImage(imageData);
+        }
     }
 }

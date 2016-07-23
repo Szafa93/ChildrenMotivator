@@ -53,6 +53,24 @@ public class GradeScheme {
         this.image = image;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o)
+            return true;
+        if (o == null || getClass() != o.getClass())
+            return false;
+
+        GradeScheme that = (GradeScheme) o;
+
+        return id == that.id;
+
+    }
+
+    @Override
+    public int hashCode() {
+        return id;
+    }
+
     public static class GradeSchemeFactory {
         public static GradeScheme create(int value, byte[] image) {
             GradeScheme gradeScheme = new GradeScheme();

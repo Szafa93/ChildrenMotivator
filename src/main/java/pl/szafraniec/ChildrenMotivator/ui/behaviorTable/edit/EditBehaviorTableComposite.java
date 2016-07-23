@@ -1,0 +1,112 @@
+package pl.szafraniec.ChildrenMotivator.ui.behaviorTable.edit;
+
+import org.eclipse.jface.layout.GridDataFactory;
+import org.eclipse.jface.layout.GridLayoutFactory;
+import org.eclipse.jface.resource.FontDescriptor;
+import org.eclipse.jface.window.Window;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.MouseAdapter;
+import org.eclipse.swt.events.MouseEvent;
+import org.eclipse.swt.events.MouseListener;
+import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Label;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.config.ConfigurableBeanFactory;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
+import pl.szafraniec.ChildrenMotivator.model.BehaviorTableDay;
+import pl.szafraniec.ChildrenMotivator.model.Child;
+import pl.szafraniec.ChildrenMotivator.model.ChildrenGroup;
+import pl.szafraniec.ChildrenMotivator.model.TableCell;
+import pl.szafraniec.ChildrenMotivator.repository.ChildrenGroupRepository;
+import pl.szafraniec.ChildrenMotivator.ui.Fonts;
+import pl.szafraniec.ChildrenMotivator.ui.Images;
+import pl.szafraniec.ChildrenMotivator.ui.behaviorTable.BehaviorTableComposite;
+import pl.szafraniec.ChildrenMotivator.ui.behaviorTable.dialog.GradeSelectorDialog;
+
+import java.io.ByteArrayInputStream;
+
+@Component("EditBehaviorTableComposite")
+@Scope(scopeName = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
+public class EditBehaviorTableComposite extends BehaviorTableComposite {
+
+    @Autowired
+    private ChildrenGroupRepository childrenGroupRepository;
+
+    private ChildrenGroup childrenGroup;
+
+    public EditBehaviorTableComposite(Composite parent, ChildrenGroup childrenGroup) {
+        super(parent, childrenGroup);
+        this.childrenGroup = childrenGroup;
+    }
+
+    @Override
+    protected Composite createTopControlsButtonsComposite(Composite parent) {
+        Composite controlsButtonsComposite = new Composite(parent, SWT.NONE);
+        controlsButtonsComposite.setLayoutData(GridDataFactory.swtDefaults().align(SWT.CENTER, SWT.TOP).create());
+        controlsButtonsComposite.setLayout(GridLayoutFactory.swtDefaults().numColumns(1).create());
+
+        createSaveButton(controlsButtonsComposite);
+
+        return controlsButtonsComposite;
+    }
+
+    private void createSaveButton(Composite parent) {
+        Button saveButton = new Button(parent, SWT.PUSH);
+        saveButton.setLayoutData(DEFAULT_CONTROL_BUTTON_FACTORY);
+        saveButton.setText("Save");
+        saveButton.setFont(FontDescriptor.createFrom(Fonts.DEFAULT_FONT_DATA).createFont(saveButton.getDisplay()));
+        saveButton.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseUp(MouseEvent e) {
+                childrenGroup = childrenGroupRepository.saveAndFlush(childrenGroup);
+                applicationContext.getBean("BehaviorTableComposite", shell, childrenGroup);
+                dispose();
+                shell.layout(true, true);
+            }
+        });
+    }
+
+    @Override
+    protected void createTableCell(Child child, BehaviorTableDay day, Composite parent) {
+        TableCell grade = day.getGrades().get(child);
+        Composite tableCellComposite = new Composite(parent, SWT.BORDER);
+        tableCellComposite.setLayoutData(TABLE_CELL_LAYOUT_DATA);
+        tableCellComposite.setLayout(GridLayoutFactory.fillDefaults().create());
+        Label tableCell = new Label(tableCellComposite, SWT.NONE);
+        fillTableCellLabel(tableCell, grade);
+        MouseListener mouseListener = new MouseAdapter() {
+
+            @Override
+            public void mouseUp(MouseEvent e) {
+                GradeSelectorDialog dialog = new GradeSelectorDialog(Display.getCurrent().getActiveShell(), grade.getGradeScheme(),
+                        grade.getGradeComment());
+                applicationContext.getAutowireCapableBeanFactory().autowireBean(dialog);
+                if (Window.OK == dialog.open()) {
+                    grade.setGradeScheme(dialog.getGradeScheme());
+                    grade.setGradeComment(dialog.getGradeComment());
+                    fillTableCellLabel(tableCell, grade);
+                    tableCellComposite.layout(true, true);
+                }
+            }
+        };
+        tableCell.addMouseListener(mouseListener);
+        tableCellComposite.addMouseListener(mouseListener);
+    }
+
+    private void fillTableCellLabel(Label tableCell, TableCell grade) {
+        tableCell.setLayoutData(INSIDE_TABLE_CELL_LAYOUT_DATA);
+        if (grade.getGradeScheme() == null) {
+            tableCell.setToolTipText("Brak oceny");
+            tableCell.setText("Brak oceny");
+        } else {
+            tableCell.setToolTipText(grade.getGradeComment());
+            Image imageData = new Image(getShell().getDisplay(), new ByteArrayInputStream(grade.getGradeScheme().getImage()));
+            imageData = Images.resize(getShell().getDisplay(), imageData);
+            tableCell.setImage(imageData);
+        }
+    }
+}

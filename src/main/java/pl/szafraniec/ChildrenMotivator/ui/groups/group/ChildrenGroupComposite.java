@@ -24,7 +24,6 @@ import pl.szafraniec.ChildrenMotivator.model.ChildrenGroup;
 import pl.szafraniec.ChildrenMotivator.repository.ChildrenGroupRepository;
 import pl.szafraniec.ChildrenMotivator.ui.AbstractMainComposite;
 import pl.szafraniec.ChildrenMotivator.ui.Fonts;
-import pl.szafraniec.ChildrenMotivator.ui.behaviorTable.BehaviorTableComposite;
 import pl.szafraniec.ChildrenMotivator.ui.child.dialog.EditChildDialog;
 import pl.szafraniec.ChildrenMotivator.ui.groups.ChildrenGroupsComposite;
 import pl.szafraniec.ChildrenMotivator.ui.groups.dialog.EditChildrenGroupDialog;
@@ -135,7 +134,7 @@ public class ChildrenGroupComposite extends AbstractMainComposite {
         addGroupButton.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseUp(MouseEvent e) {
-                applicationContext.getBean(BehaviorTableComposite.class, shell, childrenGroup);
+                applicationContext.getBean("BehaviorTableComposite", shell, childrenGroup);
                 dispose();
                 shell.layout(true, true);
             }
