@@ -119,11 +119,4 @@ public class ChildrenGroupRepositoryTest {
         childrenGroupRepository.flush();
         Assert.assertEquals(1, childrenGroupRepository.count());
     }
-
-    //    @Test(expected = JpaSystemException.class)
-    //    @DatabaseSetup(value = { "classpath:data/ChildrenGroup.xml" })
-    //    public void impossibleDeleteGroupWithChildrenTest() {
-    //        childrenGroupRepository.delete(2);
-    //        childrenGroupRepository.flush();
-    //    }
 }

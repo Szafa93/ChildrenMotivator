@@ -14,6 +14,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -126,6 +127,7 @@ public class Child {
             child.setPesel(pesel);
             child.setParentEmail(parentMail);
             child.setChildrenGroup(childrenGroup);
+            child.setActivitiesTableList(new ArrayList<>());
             childrenGroup.getChildren().add(child);
             childrenGroup.getBehaviorTable().getDays().forEach(day -> {
                 day.getGrades().put(child, TableCell.TableCellBuilder.create());

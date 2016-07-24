@@ -24,6 +24,7 @@ import pl.szafraniec.ChildrenMotivator.model.ChildrenGroup;
 import pl.szafraniec.ChildrenMotivator.repository.ChildrenGroupRepository;
 import pl.szafraniec.ChildrenMotivator.ui.AbstractMainComposite;
 import pl.szafraniec.ChildrenMotivator.ui.Fonts;
+import pl.szafraniec.ChildrenMotivator.ui.child.ChildComposite;
 import pl.szafraniec.ChildrenMotivator.ui.child.dialog.EditChildDialog;
 import pl.szafraniec.ChildrenMotivator.ui.groups.ChildrenGroupsComposite;
 import pl.szafraniec.ChildrenMotivator.ui.groups.dialog.EditChildrenGroupDialog;
@@ -88,7 +89,7 @@ public class ChildrenGroupComposite extends AbstractMainComposite {
         childrenGroupComposite.setLayoutData(GridDataFactory.swtDefaults().grab(true, true).align(SWT.FILL, SWT.FILL).create());
         childrenGroupComposite.setLayout(GridLayoutFactory.swtDefaults().numColumns(1).create());
 
-        childrenGroup.getChildren().stream().map(child -> createChildButton(child, childrenGroupComposite)).collect(Collectors.toList());
+        fillChildrenGroupComposite();
 
         childrenGroupComposite.pack(true);
         scrolledComposite.setContent(childrenGroupComposite);
@@ -102,6 +103,10 @@ public class ChildrenGroupComposite extends AbstractMainComposite {
         return scrolledComposite;
     }
 
+    private void fillChildrenGroupComposite() {
+        childrenGroup.getChildren().stream().map(child -> createChildButton(child, childrenGroupComposite)).collect(Collectors.toList());
+    }
+
     private Control createChildButton(Child child, Composite parent) {
         Button groupButton = new Button(parent, SWT.WRAP);
         groupButton.setText(String.format("%s %s", child.getName(), child.getSurname()));
@@ -111,6 +116,15 @@ public class ChildrenGroupComposite extends AbstractMainComposite {
                 .grab(true, false)
                 .align(SWT.FILL, SWT.CENTER)
                 .create());
+
+        groupButton.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseUp(MouseEvent e) {
+                applicationContext.getBean(ChildComposite.class, shell, child);
+                dispose();
+                shell.layout(true, true);
+            }
+        });
         return groupButton;
     }
 
@@ -179,8 +193,11 @@ public class ChildrenGroupComposite extends AbstractMainComposite {
     private void addChild() {
         EditChildDialog dialog = new EditChildDialog(shell);
         if (Window.OK == dialog.open()) {
-            Child child = addChild(dialog.getName(), dialog.getSurname(), dialog.getPesel(), dialog.getParentEmail(), childrenGroup);
-            createChildButton(child, childrenGroupComposite);
+            addChild(dialog.getName(), dialog.getSurname(), dialog.getPesel(), dialog.getParentEmail(), childrenGroup);
+            for (Control control : childrenGroupComposite.getChildren()) {
+                control.dispose();
+            }
+            fillChildrenGroupComposite();
             scrolledComposite.layout(true, true);
         }
     }
@@ -189,7 +206,6 @@ public class ChildrenGroupComposite extends AbstractMainComposite {
         EditChildrenGroupDialog dialog = new EditChildrenGroupDialog(shell, childrenGroup.getName(), "Edytuj grupę");
         if (Window.OK == dialog.open()) {
             editChildrenGroup(dialog.getGroupName());
-
             scrolledComposite.layout(true, true);
         }
     }
@@ -200,10 +216,9 @@ public class ChildrenGroupComposite extends AbstractMainComposite {
         label.setText(childrenGroup.getName());
     }
 
-    private Child addChild(String name, String surname, String pesel, String parentMail, ChildrenGroup childrenGroup) {
-        Child child = Child.ChildFactory.create(name, surname, pesel, parentMail, childrenGroup);
+    private void addChild(String name, String surname, String pesel, String parentMail, ChildrenGroup childrenGroup) {
+        Child.ChildFactory.create(name, surname, pesel, parentMail, childrenGroup);
         this.childrenGroup = childrenGroupRepository.saveAndFlush(childrenGroup);
-        return child;
     }
 
 }

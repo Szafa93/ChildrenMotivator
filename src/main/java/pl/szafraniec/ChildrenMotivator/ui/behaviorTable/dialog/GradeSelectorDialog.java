@@ -47,7 +47,6 @@ public class GradeSelectorDialog extends Dialog {
         } else {
             this.gradeComment = gradeComment;
         }
-
     }
 
     @Override
@@ -72,7 +71,7 @@ public class GradeSelectorDialog extends Dialog {
         labelComment.setText("Komentarz: ");
         Text textComment = new Text(groupPropertiesComposite, SWT.BORDER);
         textComment.setText(gradeComment);
-        textComment.setLayoutData(GridDataFactory.swtDefaults().grab(true, false).create());
+        textComment.setLayoutData(GridDataFactory.swtDefaults().grab(true, false).align(SWT.FILL, SWT.FILL).create());
         textComment.addModifyListener(event -> {
             gradeComment = textComment.getText();
             getButton(Dialog.OK).setEnabled(checkConstrains());

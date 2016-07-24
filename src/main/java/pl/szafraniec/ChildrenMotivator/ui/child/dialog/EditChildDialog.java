@@ -10,6 +10,8 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 
+import java.util.function.Consumer;
+
 public class EditChildDialog extends Dialog {
     private String shellName;
 
@@ -49,44 +51,23 @@ public class EditChildDialog extends Dialog {
 
     private void createChildProperties(Composite parent) {
         Composite groupPropertiesComposite = new Composite(parent, SWT.NONE);
+        groupPropertiesComposite.setLayoutData(GridDataFactory.fillDefaults().grab(true, true).align(SWT.FILL, SWT.FILL).create());
         groupPropertiesComposite.setLayout(GridLayoutFactory.fillDefaults().numColumns(2).create());
-        Label labelName = new Label(groupPropertiesComposite, SWT.NONE);
-        labelName.setText("Imię: ");
-        Text textName = new Text(groupPropertiesComposite, SWT.BORDER);
-        textName.setText(name);
-        textName.setLayoutData(GridDataFactory.swtDefaults().grab(true, false).create());
-        textName.addModifyListener(event -> {
-            name = textName.getText();
-            getButton(Dialog.OK).setEnabled(checkConstrains());
-        });
+        createChildProperty(groupPropertiesComposite, "Imię: ", name, newValue -> name = newValue);
+        createChildProperty(groupPropertiesComposite, "Nazwisko: ", surname, newValue -> surname = newValue);
+        createChildProperty(groupPropertiesComposite, "PESEL: ", pesel, newValue -> pesel = newValue);
+        createChildProperty(groupPropertiesComposite, "Email rodzica: ", parentEmail, newValue -> parentEmail = newValue);
+    }
 
-        Label labelSurname = new Label(groupPropertiesComposite, SWT.NONE);
-        labelSurname.setText("Nazwisko: ");
-        Text textSurname = new Text(groupPropertiesComposite, SWT.BORDER);
-        textSurname.setText(surname);
-        textSurname.setLayoutData(GridDataFactory.swtDefaults().grab(true, false).create());
-        textSurname.addModifyListener(event -> {
-            surname = textSurname.getText();
-            getButton(Dialog.OK).setEnabled(checkConstrains());
-        });
-
-        Label labelPesel = new Label(groupPropertiesComposite, SWT.NONE);
-        labelPesel.setText("PESEL: ");
-        Text textPesel = new Text(groupPropertiesComposite, SWT.BORDER);
-        textPesel.setText(pesel);
-        textPesel.setLayoutData(GridDataFactory.swtDefaults().grab(true, false).create());
-        textPesel.addModifyListener(event -> {
-            pesel = textPesel.getText();
-            getButton(Dialog.OK).setEnabled(checkConstrains());
-        });
-
-        Label labelEmail = new Label(groupPropertiesComposite, SWT.NONE);
-        labelEmail.setText("Email rodzica: ");
-        Text textEmail = new Text(groupPropertiesComposite, SWT.BORDER);
-        textEmail.setText(parentEmail);
-        textEmail.setLayoutData(GridDataFactory.swtDefaults().grab(true, false).create());
-        textEmail.addModifyListener(event -> {
-            parentEmail = textEmail.getText();
+    private void createChildProperty(Composite parent, String propertyName, String initialValue, Consumer<String> modifyValueConsumer) {
+        Label propertyNameLabel = new Label(parent, SWT.NONE);
+        propertyNameLabel.setLayoutData(GridDataFactory.fillDefaults().align(SWT.FILL, SWT.FILL).grab(false, false).create());
+        propertyNameLabel.setText(propertyName);
+        Text propertyValueLabel = new Text(parent, SWT.BORDER | SWT.RIGHT);
+        propertyValueLabel.setText(initialValue);
+        propertyValueLabel.setLayoutData(GridDataFactory.fillDefaults().align(SWT.FILL, SWT.FILL).grab(true, false).create());
+        propertyValueLabel.addModifyListener(event -> {
+            modifyValueConsumer.accept(propertyValueLabel.getText());
             getButton(Dialog.OK).setEnabled(checkConstrains());
         });
     }

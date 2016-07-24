@@ -32,7 +32,7 @@ public class ChildrenGroup {
     @NotBlank
     private String name;
 
-    @OneToMany(mappedBy = "childrenGroup", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "childrenGroup", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Child> children;
 
     @OneToOne(optional = false, cascade = CascadeType.ALL)
