@@ -24,7 +24,9 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import pl.szafraniec.ChildrenMotivator.model.ActivitiesTableScheme;
 import pl.szafraniec.ChildrenMotivator.model.Activity;
+import pl.szafraniec.ChildrenMotivator.model.TableCell;
 import pl.szafraniec.ChildrenMotivator.repository.ActivitiesTableSchemesRepository;
+import pl.szafraniec.ChildrenMotivator.repository.ChildActivitiesTableRepository;
 import pl.szafraniec.ChildrenMotivator.ui.AbstractMainComposite;
 import pl.szafraniec.ChildrenMotivator.ui.Fonts;
 import pl.szafraniec.ChildrenMotivator.ui.Images;
@@ -41,6 +43,9 @@ public class ActivitiesTableSchemeComposite extends AbstractMainComposite {
 
     @Autowired
     private ActivitiesTableSchemesRepository activitiesTableSchemesRepository;
+
+    @Autowired
+    private ChildActivitiesTableRepository childActivitiesTableRepository;
 
     private ActivitiesTableScheme activitiesTableScheme;
 
@@ -173,6 +178,19 @@ public class ActivitiesTableSchemeComposite extends AbstractMainComposite {
     private void editActivitiesTableScheme(String name, List<Activity> activities) {
         activitiesTableScheme.setName(name);
         activitiesTableScheme.setListOfActivities(activities);
+
+        activitiesTableScheme.getChildActivitiesTables().stream().flatMap(table -> table.getDays().stream()).forEach(day -> {
+            // remove all removed activities
+            day.getGrades().keySet().stream().filter(activity -> !activities.contains(activity)).collect(Collectors.toList()).forEach(
+                    activity -> day.getGrades().remove(activity));
+            // add all new activities
+            activities.stream().filter(activity -> !day.getGrades().keySet().contains(activity)).collect(Collectors.toList()).forEach(
+                    activity -> day.getGrades().put(activity, TableCell.TableCellBuilder.create()));
+        });
+
+        activitiesTableScheme.setChildActivitiesTables(
+                activitiesTableScheme.getChildActivitiesTables().stream().map(childActivitiesTableRepository::save).collect(
+                        Collectors.toList()));
         activitiesTableSchemesRepository.saveAndFlush(activitiesTableScheme);
         activitiesTableScheme = activitiesTableSchemesRepository.getOne(activitiesTableScheme.getId());
     }

@@ -5,11 +5,15 @@
  */
 package pl.szafraniec.ChildrenMotivator.model;
 
+import org.hibernate.annotations.Cascade;
+import org.hibernate.annotations.CascadeType;
+
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToMany;
+import javax.persistence.OneToMany;
 import javax.persistence.OrderBy;
 import java.util.ArrayList;
 import java.util.List;
@@ -28,7 +32,12 @@ public class ActivitiesTableScheme {
 
     @ManyToMany
     @OrderBy("id")
-    private List<Activity> listOfActivities = new ArrayList<>();
+    private List<Activity> listOfActivities;
+
+    @OneToMany(mappedBy = "activitiesTableScheme")
+    @OrderBy("id")
+    @Cascade(CascadeType.SAVE_UPDATE)
+    private List<ChildActivitiesTable> childActivitiesTables;
 
     public int getId() {
         return id;
@@ -54,11 +63,21 @@ public class ActivitiesTableScheme {
         this.listOfActivities = listOfActivities;
     }
 
+    public List<ChildActivitiesTable> getChildActivitiesTables() {
+        return childActivitiesTables;
+    }
+
+    public void setChildActivitiesTables(List<ChildActivitiesTable> childActivitiesTables) {
+        this.childActivitiesTables = childActivitiesTables;
+    }
+
     public static class ActivitiesTableSchemeFactory {
         public static ActivitiesTableScheme create(String name, List<Activity> activities) {
             ActivitiesTableScheme scheme = new ActivitiesTableScheme();
             scheme.setName(name);
             scheme.setListOfActivities(activities);
+            scheme.listOfActivities = new ArrayList<>();
+            scheme.childActivitiesTables = new ArrayList<>();
             return scheme;
         }
     }
