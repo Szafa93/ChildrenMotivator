@@ -28,6 +28,7 @@ import pl.szafraniec.ChildrenMotivator.repository.ChildRepository;
 import pl.szafraniec.ChildrenMotivator.repository.ChildrenGroupRepository;
 import pl.szafraniec.ChildrenMotivator.ui.AbstractMainComposite;
 import pl.szafraniec.ChildrenMotivator.ui.Fonts;
+import pl.szafraniec.ChildrenMotivator.ui.activities.dialog.ActivityTableSelectorDialog;
 import pl.szafraniec.ChildrenMotivator.ui.child.dialog.EditChildDialog;
 import pl.szafraniec.ChildrenMotivator.ui.groups.dialog.GroupSelectorDialog;
 import pl.szafraniec.ChildrenMotivator.ui.groups.group.ChildrenGroupComposite;
@@ -94,7 +95,10 @@ public class ChildComposite extends AbstractMainComposite {
         composite.setLayout(GridLayoutFactory.fillDefaults().numColumns(1).create());
         childPropertiesComposite = new Composite(composite, SWT.NONE);
         fillChildProperties(childPropertiesComposite);
-        scrolledComposite = new ScrolledComposite(composite, SWT.V_SCROLL | SWT.H_SCROLL | SWT.BORDER);
+        Label label = new Label(composite, SWT.NONE);
+        label.setLayoutData(GridDataFactory.fillDefaults().grab(true, false).align(SWT.CENTER, SWT.FILL).create());
+        label.setText("Tablice aktywności");
+        scrolledComposite = new ScrolledComposite(composite, SWT.V_SCROLL | SWT.BORDER);
         scrolledComposite.setLayoutData(GridDataFactory.fillDefaults().grab(true, true).align(SWT.FILL, SWT.FILL).create());
         scrolledComposite.setExpandVertical(true);
         scrolledComposite.setExpandHorizontal(true);
@@ -152,6 +156,7 @@ public class ChildComposite extends AbstractMainComposite {
         controlsButtonsComposite.setLayout(GridLayoutFactory.swtDefaults().numColumns(1).create());
         createEditButton(controlsButtonsComposite);
         createChangeGroupButton(controlsButtonsComposite);
+        createAddActivityTableButton(controlsButtonsComposite);
         createRemoveButton(controlsButtonsComposite, this::removeChild);
         return controlsButtonsComposite;
     }
@@ -165,6 +170,19 @@ public class ChildComposite extends AbstractMainComposite {
             @Override
             public void mouseUp(MouseEvent e) {
                 changeGroup();
+            }
+        });
+    }
+
+    private void createAddActivityTableButton(Composite parent) {
+        Button addActibityTableButton = new Button(parent, SWT.PUSH | SWT.WRAP);
+        addActibityTableButton.setLayoutData(DEFAULT_CONTROL_BUTTON_FACTORY);
+        addActibityTableButton.setText("Dodaj tablicę aktywności");
+        addActibityTableButton.setFont(FontDescriptor.createFrom(Fonts.DEFAULT_FONT_DATA).createFont(addActibityTableButton.getDisplay()));
+        addActibityTableButton.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseUp(MouseEvent e) {
+                addActivityTable();
             }
         });
     }
@@ -233,5 +251,24 @@ public class ChildComposite extends AbstractMainComposite {
             childPropertiesComposite.layout(true, true);
         }
     }
+
+    private void addActivityTable() {
+        ActivityTableSelectorDialog dialog = new ActivityTableSelectorDialog(shell);
+        applicationContext.getAutowireCapableBeanFactory().autowireBean(dialog);
+        if (Window.OK == dialog.open()) {
+            ChildActivitiesTable childActivitiesTable = ChildActivitiesTable.ChildActivitiesTableFactory.create(child,
+                    dialog.getActivitiesTableScheme());
+            child = childRepository.saveAndFlush(child);
+            for (Control widget : childComposite.getChildren()) {
+                widget.dispose();
+            }
+            child.getActivitiesTableList().stream().map(table -> createTableButton(table, childComposite)).collect(Collectors.toList());
+            this.layout(true, true);
+
+            Rectangle r = scrolledComposite.getClientArea();
+            scrolledComposite.setMinSize(childComposite.computeSize(r.width, SWT.DEFAULT));
+        }
+    }
+
 
 }

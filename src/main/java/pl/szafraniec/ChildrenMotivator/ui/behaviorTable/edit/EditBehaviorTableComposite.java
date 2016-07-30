@@ -25,7 +25,7 @@ import pl.szafraniec.ChildrenMotivator.repository.ChildrenGroupRepository;
 import pl.szafraniec.ChildrenMotivator.ui.Fonts;
 import pl.szafraniec.ChildrenMotivator.ui.Images;
 import pl.szafraniec.ChildrenMotivator.ui.behaviorTable.BehaviorTableComposite;
-import pl.szafraniec.ChildrenMotivator.ui.behaviorTable.dialog.GradeSelectorDialog;
+import pl.szafraniec.ChildrenMotivator.ui.gradesSchemes.dialog.GradeSelectorDialog;
 
 import java.io.ByteArrayInputStream;
 

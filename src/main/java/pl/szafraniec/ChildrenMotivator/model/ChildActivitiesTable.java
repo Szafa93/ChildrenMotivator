@@ -13,6 +13,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -65,5 +66,16 @@ public class ChildActivitiesTable {
 
     public void setDays(List<ChildActivitiesTableDay> days) {
         this.days = days;
+    }
+
+    public static class ChildActivitiesTableFactory {
+        public static ChildActivitiesTable create(Child child, ActivitiesTableScheme activitiesTableScheme) {
+            ChildActivitiesTable table = new ChildActivitiesTable();
+            table.child = child;
+            table.activitiesTableScheme = activitiesTableScheme;
+            table.days = new ArrayList<>();
+            child.getActivitiesTableList().add(table);
+            return table;
+        }
     }
 }
