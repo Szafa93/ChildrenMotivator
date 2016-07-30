@@ -75,8 +75,7 @@ public class ActivitiesTableScheme {
         public static ActivitiesTableScheme create(String name, List<Activity> activities) {
             ActivitiesTableScheme scheme = new ActivitiesTableScheme();
             scheme.setName(name);
-            scheme.setListOfActivities(activities);
-            scheme.listOfActivities = new ArrayList<>();
+            scheme.listOfActivities = activities;
             scheme.childActivitiesTables = new ArrayList<>();
             return scheme;
         }

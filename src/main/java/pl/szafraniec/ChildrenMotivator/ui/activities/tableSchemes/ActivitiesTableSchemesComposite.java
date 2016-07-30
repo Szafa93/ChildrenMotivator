@@ -93,6 +93,8 @@ public class ActivitiesTableSchemesComposite extends AbstractMainComposite {
             ActivitiesTableScheme scheme = addActivitiesTableSchema(dialog.getActivitiesTableSchemeName(), dialog.getActivities());
             createActivitiesTableSchemeButton(scheme, activitiesTableSchemeComposite);
             scrolledComposite.layout(true, true);
+            Rectangle r = scrolledComposite.getClientArea();
+            scrolledComposite.setMinSize(activitiesTableSchemeComposite.computeSize(r.width, SWT.DEFAULT));
         }
     }
 
