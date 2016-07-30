@@ -147,6 +147,15 @@ public class ChildComposite extends AbstractMainComposite {
 
         groupButton.setLayoutData(GridDataFactory.createFrom(DEFAULT_CONTROL_BUTTON_FACTORY).grab(true, false).align(SWT.FILL,
                 SWT.CENTER).create());
+
+        groupButton.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseUp(MouseEvent e) {
+                applicationContext.getBean("ActivityTableComposite", shell, table);
+                dispose();
+                shell.layout(true, true);
+            }
+        });
         return groupButton;
     }
 
