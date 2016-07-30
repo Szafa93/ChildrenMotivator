@@ -19,7 +19,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
+import pl.szafraniec.ChildrenMotivator.model.ActivitiesTableScheme;
 import pl.szafraniec.ChildrenMotivator.model.Activity;
+import pl.szafraniec.ChildrenMotivator.repository.ActivitiesTableSchemesRepository;
 import pl.szafraniec.ChildrenMotivator.repository.ActivityRepository;
 import pl.szafraniec.ChildrenMotivator.ui.AbstractMainComposite;
 import pl.szafraniec.ChildrenMotivator.ui.Fonts;
@@ -28,6 +30,7 @@ import pl.szafraniec.ChildrenMotivator.ui.activities.ActivitiesComposite;
 import pl.szafraniec.ChildrenMotivator.ui.activities.dialog.EditActivityDialog;
 
 import java.io.ByteArrayInputStream;
+import java.util.List;
 
 @Component
 @Scope(scopeName = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
@@ -35,6 +38,9 @@ public class ActivityComposite extends AbstractMainComposite {
 
     @Autowired
     private ActivityRepository activityRepository;
+
+    @Autowired
+    private ActivitiesTableSchemesRepository activitiesTableSchemesRepository;
 
     private Activity activity;
 
@@ -115,8 +121,18 @@ public class ActivityComposite extends AbstractMainComposite {
         controlsButtonsComposite.setLayout(GridLayoutFactory.swtDefaults().numColumns(1).create());
 
         createEditButton(controlsButtonsComposite);
-        createRemoveButton(controlsButtonsComposite, this::removeActivity);
+        Button removeButton = createRemoveButton(controlsButtonsComposite, this::removeActivity);
+        removeButton.setEnabled(canRemove());
         return controlsButtonsComposite;
+    }
+
+    private boolean canRemove() {
+        return !activitiesTableSchemesRepository.findAll()
+                .stream()
+                .map(ActivitiesTableScheme::getListOfActivities)
+                .flatMap(List::stream)
+                .mapToInt(Activity::getId)
+                .anyMatch(id -> id == activity.getId());
     }
 
     private void createEditButton(Composite parent) {

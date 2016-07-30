@@ -20,7 +20,9 @@ import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import pl.szafraniec.ChildrenMotivator.model.GradeScheme;
+import pl.szafraniec.ChildrenMotivator.model.TableCell;
 import pl.szafraniec.ChildrenMotivator.repository.GradeSchemeRepository;
+import pl.szafraniec.ChildrenMotivator.repository.TableCellRepository;
 import pl.szafraniec.ChildrenMotivator.ui.AbstractMainComposite;
 import pl.szafraniec.ChildrenMotivator.ui.Fonts;
 import pl.szafraniec.ChildrenMotivator.ui.Images;
@@ -35,6 +37,9 @@ public class GradeSchemeComposite extends AbstractMainComposite {
 
     @Autowired
     private GradeSchemeRepository gradeSchemeRepository;
+
+    @Autowired
+    private TableCellRepository tableCellRepository;
 
     private GradeScheme gradeScheme;
 
@@ -115,8 +120,18 @@ public class GradeSchemeComposite extends AbstractMainComposite {
         controlsButtonsComposite.setLayout(GridLayoutFactory.swtDefaults().numColumns(1).create());
 
         createEditButton(controlsButtonsComposite);
-        createRemoveButton(controlsButtonsComposite, this::removeActivity);
+        Button removeButton = createRemoveButton(controlsButtonsComposite, this::removeGradeScheme);
+        removeButton.setEnabled(canRemove());
         return controlsButtonsComposite;
+    }
+
+    private boolean canRemove() {
+        return !tableCellRepository.findAll()
+                .stream()
+                .map(TableCell::getGradeScheme)
+                .filter(gradeScheme -> gradeScheme != null)
+                .mapToInt(GradeScheme::getId)
+                .anyMatch(id -> id == gradeScheme.getId());
     }
 
     private void createEditButton(Composite parent) {
@@ -127,12 +142,12 @@ public class GradeSchemeComposite extends AbstractMainComposite {
         addGroupButton.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseUp(MouseEvent e) {
-                editActivity();
+                editGradeScheme();
             }
         });
     }
 
-    private void removeActivity() {
+    private void removeGradeScheme() {
         gradeSchemeRepository.delete(gradeScheme);
         gradeSchemeRepository.flush();
 
@@ -141,17 +156,17 @@ public class GradeSchemeComposite extends AbstractMainComposite {
         shell.layout(true, true);
     }
 
-    private void editActivity() {
+    private void editGradeScheme() {
         EditGradeSchemeDialog dialog = new EditGradeSchemeDialog(shell, gradeScheme.getValue(), gradeScheme.getImage(),
                 "Edytuj schemat oceny");
         if (Window.OK == dialog.open()) {
-            editActivity(dialog.getGradeValue(), dialog.getImageByte());
+            editGradeScheme(dialog.getGradeValue(), dialog.getImageByte());
 
             scrolledComposite.layout(true, true);
         }
     }
 
-    private void editActivity(int gradeValue, byte[] imageByte) {
+    private void editGradeScheme(int gradeValue, byte[] imageByte) {
         gradeScheme.setValue(gradeValue);
         gradeScheme.setImage(imageByte);
         gradeScheme = gradeSchemeRepository.saveAndFlush(gradeScheme);
