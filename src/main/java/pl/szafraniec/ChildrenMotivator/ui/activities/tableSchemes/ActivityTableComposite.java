@@ -65,10 +65,7 @@ public class ActivityTableComposite extends AbstractMainComposite {
         super(parent, SWT.NONE);
         this.table = table;
         DayOfWeek today = LocalDate.now().getDayOfWeek();
-        if (today.equals(DayOfWeek.SUNDAY)) {
-            startDate = LocalDate.now().with(TemporalAdjusters.next(DayOfWeek.MONDAY));
-            endDate = LocalDate.now().with(TemporalAdjusters.next(DayOfWeek.FRIDAY));
-        } else if (today.equals(DayOfWeek.SATURDAY)) {
+        if (today.equals(DayOfWeek.SATURDAY) || today.equals(DayOfWeek.SUNDAY)) {
             startDate = LocalDate.now().with(TemporalAdjusters.previous(DayOfWeek.MONDAY));
             endDate = LocalDate.now().with(TemporalAdjusters.previous(DayOfWeek.FRIDAY));
         } else {
@@ -167,9 +164,7 @@ public class ActivityTableComposite extends AbstractMainComposite {
     private boolean canShowNextWeek() {
         LocalDate today = LocalDate.now();
         LocalDate lastPossibleDate;
-        if (today.getDayOfWeek().equals(DayOfWeek.SUNDAY)) {
-            lastPossibleDate = today.with(TemporalAdjusters.next(DayOfWeek.FRIDAY));
-        } else if (today.getDayOfWeek().equals(DayOfWeek.SATURDAY)) {
+        if (today.getDayOfWeek().equals(DayOfWeek.SATURDAY) || today.getDayOfWeek().equals(DayOfWeek.SUNDAY)) {
             lastPossibleDate = today.with(TemporalAdjusters.previous(DayOfWeek.FRIDAY));
         } else {
             lastPossibleDate = LocalDate.now().with(TemporalAdjusters.nextOrSame(DayOfWeek.FRIDAY));
