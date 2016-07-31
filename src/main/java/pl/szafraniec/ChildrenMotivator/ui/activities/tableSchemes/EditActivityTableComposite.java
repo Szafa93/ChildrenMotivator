@@ -41,11 +41,8 @@ public class EditActivityTableComposite extends ActivityTableComposite {
     @Autowired
     private ChildRepository childRepository;
 
-    private ChildActivitiesTable childActivitiesTable;
-
     public EditActivityTableComposite(Composite parent, ChildActivitiesTable childActivitiesTable) {
         super(parent, childActivitiesTable);
-        this.childActivitiesTable = childActivitiesTable;
     }
 
     @Override
@@ -61,9 +58,9 @@ public class EditActivityTableComposite extends ActivityTableComposite {
     }
 
     private void removeActivityTableScheme() {
-        Child child = childActivitiesTable.getChild();
-        child.getActivitiesTableList().remove(childActivitiesTable);
-        childActivitiesTableRepository.delete(childActivitiesTable);
+        Child child = table.getChild();
+        child.getActivitiesTableList().remove(table);
+        childActivitiesTableRepository.delete(table);
         child = childRepository.saveAndFlush(child);
 
         applicationContext.getBean(ChildComposite.class, shell, child);
@@ -79,8 +76,8 @@ public class EditActivityTableComposite extends ActivityTableComposite {
         saveButton.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseUp(MouseEvent e) {
-                childActivitiesTable = childActivitiesTableRepository.saveAndFlush(childActivitiesTable);
-                applicationContext.getBean("ActivityTableComposite", shell, childActivitiesTable);
+                table = childActivitiesTableRepository.saveAndFlush(table);
+                applicationContext.getBean("ActivityTableComposite", shell, table);
                 dispose();
                 shell.layout(true, true);
             }

@@ -52,7 +52,7 @@ public class ActivityTableComposite extends AbstractMainComposite {
     @Autowired
     private ChildActivitiesTableRepository childActivitiesTableRepository;
 
-    private ChildActivitiesTable table;
+    protected ChildActivitiesTable table;
 
     private ScrolledComposite scrolledComposite;
     private Composite tableBehaviorComposite;
@@ -160,6 +160,7 @@ public class ActivityTableComposite extends AbstractMainComposite {
                 scrolledComposite.layout(true, true);
             }
         });
+        forwardButton.setEnabled(canShowNextWeek());
         return forwardButton;
     }
 

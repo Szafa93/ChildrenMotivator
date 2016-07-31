@@ -38,7 +38,7 @@ public class Child {
 
     private String parentEmail;
 
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "child")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "child", orphanRemoval = true)
     private List<ChildActivitiesTable> activitiesTableList;
 
     @ManyToOne(optional = false)

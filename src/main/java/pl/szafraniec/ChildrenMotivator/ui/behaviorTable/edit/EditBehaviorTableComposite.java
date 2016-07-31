@@ -36,11 +36,8 @@ public class EditBehaviorTableComposite extends BehaviorTableComposite {
     @Autowired
     private ChildrenGroupRepository childrenGroupRepository;
 
-    private ChildrenGroup childrenGroup;
-
     public EditBehaviorTableComposite(Composite parent, ChildrenGroup childrenGroup) {
         super(parent, childrenGroup);
-        this.childrenGroup = childrenGroup;
     }
 
     @Override

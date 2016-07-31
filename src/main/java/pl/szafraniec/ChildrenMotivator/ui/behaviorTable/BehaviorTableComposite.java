@@ -53,7 +53,7 @@ public class BehaviorTableComposite extends AbstractMainComposite {
     @Autowired
     private ChildrenGroupRepository childrenGroupRepository;
 
-    private ChildrenGroup childrenGroup;
+    protected ChildrenGroup childrenGroup;
     private ScrolledComposite scrolledComposite;
     private Composite tableBehaviorComposite;
 
