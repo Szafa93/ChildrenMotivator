@@ -112,7 +112,7 @@ public class ChildrenGroupComposite extends AbstractMainComposite {
         groupButton.setText(String.format("%s %s", child.getName(), child.getSurname()));
         groupButton.setFont(FontDescriptor.createFrom(Fonts.DEFAULT_FONT_DATA).createFont(groupButton.getDisplay()));
 
-        groupButton.setLayoutData(GridDataFactory.createFrom(DEFAULT_CONTROL_BUTTON_FACTORY)
+        groupButton.setLayoutData(DEFAULT_CONTROL_BUTTON_FACTORY.copy()
                 .grab(true, false)
                 .align(SWT.FILL, SWT.CENTER)
                 .create());
@@ -142,7 +142,7 @@ public class ChildrenGroupComposite extends AbstractMainComposite {
 
     private void createBehaviorTableButton(Composite parent) {
         Button addGroupButton = new Button(parent, SWT.PUSH);
-        addGroupButton.setLayoutData(DEFAULT_CONTROL_BUTTON_FACTORY);
+        addGroupButton.setLayoutData(DEFAULT_CONTROL_BUTTON_FACTORY.create());
         addGroupButton.setText("Tablica zachowania");
         addGroupButton.setFont(FontDescriptor.createFrom(Fonts.DEFAULT_FONT_DATA).createFont(addGroupButton.getDisplay()));
         addGroupButton.addMouseListener(new MouseAdapter() {
@@ -157,7 +157,7 @@ public class ChildrenGroupComposite extends AbstractMainComposite {
 
     private void createAddChildButton(Composite parent) {
         Button addGroupButton = new Button(parent, SWT.PUSH);
-        addGroupButton.setLayoutData(DEFAULT_CONTROL_BUTTON_FACTORY);
+        addGroupButton.setLayoutData(DEFAULT_CONTROL_BUTTON_FACTORY.create());
         addGroupButton.setText("Dodaj dziecko");
         addGroupButton.setFont(FontDescriptor.createFrom(Fonts.DEFAULT_FONT_DATA).createFont(addGroupButton.getDisplay()));
         addGroupButton.addMouseListener(new MouseAdapter() {
@@ -170,7 +170,7 @@ public class ChildrenGroupComposite extends AbstractMainComposite {
 
     private void createEditButton(Composite parent) {
         Button addGroupButton = new Button(parent, SWT.PUSH);
-        addGroupButton.setLayoutData(DEFAULT_CONTROL_BUTTON_FACTORY);
+        addGroupButton.setLayoutData(DEFAULT_CONTROL_BUTTON_FACTORY.create());
         addGroupButton.setText("Edytuj");
         addGroupButton.setFont(FontDescriptor.createFrom(Fonts.DEFAULT_FONT_DATA).createFont(addGroupButton.getDisplay()));
         addGroupButton.addMouseListener(new MouseAdapter() {

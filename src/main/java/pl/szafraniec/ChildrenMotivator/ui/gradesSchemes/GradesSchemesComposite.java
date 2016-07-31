@@ -72,7 +72,7 @@ public class GradesSchemesComposite extends AbstractMainComposite {
 
     private void createAddGradeShemeButton(Composite parent) {
         Button addGradeSchemeButton = new Button(parent, SWT.PUSH);
-        addGradeSchemeButton.setLayoutData(DEFAULT_CONTROL_BUTTON_FACTORY);
+        addGradeSchemeButton.setLayoutData(DEFAULT_CONTROL_BUTTON_FACTORY.create());
         addGradeSchemeButton.setText("Dodaj ocenę");
         addGradeSchemeButton.setFont(FontDescriptor.createFrom(Fonts.DEFAULT_FONT_DATA).createFont(addGradeSchemeButton.getDisplay()));
         addGradeSchemeButton.addMouseListener(new MouseAdapter() {

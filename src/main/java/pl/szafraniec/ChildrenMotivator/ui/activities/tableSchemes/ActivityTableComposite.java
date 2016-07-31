@@ -59,6 +59,7 @@ public class ActivityTableComposite extends AbstractMainComposite {
 
     private LocalDate startDate;
     private LocalDate endDate;
+    private Button forwardButton;
 
     public ActivityTableComposite(Composite parent, ChildActivitiesTable table) {
         super(parent, SWT.NONE);
@@ -99,7 +100,7 @@ public class ActivityTableComposite extends AbstractMainComposite {
 
     private void createEditButton(Composite parent) {
         Button editButton = new Button(parent, SWT.PUSH);
-        editButton.setLayoutData(DEFAULT_CONTROL_BUTTON_FACTORY);
+        editButton.setLayoutData(DEFAULT_CONTROL_BUTTON_FACTORY.create());
         editButton.setText("Edytuj");
         editButton.setFont(FontDescriptor.createFrom(Fonts.DEFAULT_FONT_DATA).createFont(editButton.getDisplay()));
         editButton.addMouseListener(new MouseAdapter() {
@@ -119,7 +120,7 @@ public class ActivityTableComposite extends AbstractMainComposite {
         downPart.setLayoutData(GridDataFactory.swtDefaults().grab(true, true).align(SWT.FILL, SWT.FILL).create());
         createBackButton(downPart);
         createTableBehaviorComposite(downPart);
-        createForwardButton(downPart);
+        forwardButton = createForwardButton(downPart);
     }
 
     private Button createBackButton(Composite parent) {
@@ -133,6 +134,7 @@ public class ActivityTableComposite extends AbstractMainComposite {
             public void widgetSelected(SelectionEvent e) {
                 startDate = startDate.with(TemporalAdjusters.previous(DayOfWeek.MONDAY));
                 endDate = endDate.with(TemporalAdjusters.previous(DayOfWeek.FRIDAY));
+                forwardButton.setEnabled(canShowNextWeek());
                 Stream.of(tableBehaviorComposite.getChildren()).forEach(Widget::dispose);
                 fillTableBehaviorComposite(tableBehaviorComposite);
                 scrolledComposite.layout(true, true);
@@ -152,12 +154,26 @@ public class ActivityTableComposite extends AbstractMainComposite {
             public void widgetSelected(SelectionEvent e) {
                 startDate = startDate.with(TemporalAdjusters.next(DayOfWeek.MONDAY));
                 endDate = endDate.with(TemporalAdjusters.next(DayOfWeek.FRIDAY));
+                forwardButton.setEnabled(canShowNextWeek());
                 Stream.of(tableBehaviorComposite.getChildren()).forEach(Widget::dispose);
                 fillTableBehaviorComposite(tableBehaviorComposite);
                 scrolledComposite.layout(true, true);
             }
         });
         return forwardButton;
+    }
+
+    private boolean canShowNextWeek() {
+        LocalDate today = LocalDate.now();
+        LocalDate lastPossibleDate;
+        if (today.getDayOfWeek().equals(DayOfWeek.SUNDAY)) {
+            lastPossibleDate = today.with(TemporalAdjusters.next(DayOfWeek.FRIDAY));
+        } else if (today.getDayOfWeek().equals(DayOfWeek.SATURDAY)) {
+            lastPossibleDate = today.with(TemporalAdjusters.previous(DayOfWeek.FRIDAY));
+        } else {
+            lastPossibleDate = LocalDate.now().with(TemporalAdjusters.nextOrSame(DayOfWeek.FRIDAY));
+        }
+        return endDate.isBefore(lastPossibleDate);
     }
 
     private Composite createTableBehaviorComposite(Composite parent) {

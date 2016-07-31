@@ -75,7 +75,7 @@ public class ActivitiesTableSchemesComposite extends AbstractMainComposite {
 
     private void createAddActivitiesTableSchemaButton(Composite parent) {
         Button addActivityButton = new Button(parent, SWT.PUSH);
-        addActivityButton.setLayoutData(DEFAULT_CONTROL_BUTTON_FACTORY);
+        addActivityButton.setLayoutData(DEFAULT_CONTROL_BUTTON_FACTORY.create());
         addActivityButton.setText("Dodaj schemat");
         addActivityButton.setFont(FontDescriptor.createFrom(Fonts.DEFAULT_FONT_DATA).createFont(addActivityButton.getDisplay()));
         addActivityButton.addMouseListener(new MouseAdapter() {

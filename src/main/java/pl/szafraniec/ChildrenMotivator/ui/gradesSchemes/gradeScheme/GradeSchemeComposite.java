@@ -136,7 +136,7 @@ public class GradeSchemeComposite extends AbstractMainComposite {
 
     private void createEditButton(Composite parent) {
         Button addGroupButton = new Button(parent, SWT.PUSH);
-        addGroupButton.setLayoutData(DEFAULT_CONTROL_BUTTON_FACTORY);
+        addGroupButton.setLayoutData(DEFAULT_CONTROL_BUTTON_FACTORY.create());
         addGroupButton.setText("Edytuj");
         addGroupButton.setFont(FontDescriptor.createFrom(Fonts.DEFAULT_FONT_DATA).createFont(addGroupButton.getDisplay()));
         addGroupButton.addMouseListener(new MouseAdapter() {

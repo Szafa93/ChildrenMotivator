@@ -70,7 +70,7 @@ public class ChildrenGroupsComposite extends AbstractMainComposite {
 
     private void createAddGroupButton(Composite parent) {
         Button addGroupButton = new Button(parent, SWT.PUSH);
-        addGroupButton.setLayoutData(DEFAULT_CONTROL_BUTTON_FACTORY);
+        addGroupButton.setLayoutData(DEFAULT_CONTROL_BUTTON_FACTORY.create());
         addGroupButton.setText("Dodaj grupę");
         addGroupButton.setFont(FontDescriptor.createFrom(Fonts.DEFAULT_FONT_DATA).createFont(addGroupButton.getDisplay()));
         addGroupButton.addMouseListener(new MouseAdapter() {

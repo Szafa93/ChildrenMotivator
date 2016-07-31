@@ -72,7 +72,7 @@ public class ActivitiesComposite extends AbstractMainComposite {
 
     private void createAddActivityButton(Composite parent) {
         Button addActivityButton = new Button(parent, SWT.PUSH);
-        addActivityButton.setLayoutData(DEFAULT_CONTROL_BUTTON_FACTORY);
+        addActivityButton.setLayoutData(DEFAULT_CONTROL_BUTTON_FACTORY.create());
         addActivityButton.setText("Dodaj aktywność");
         addActivityButton.setFont(FontDescriptor.createFrom(Fonts.DEFAULT_FONT_DATA).createFont(addActivityButton.getDisplay()));
         addActivityButton.addMouseListener(new MouseAdapter() {

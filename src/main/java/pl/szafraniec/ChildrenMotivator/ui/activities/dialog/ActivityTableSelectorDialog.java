@@ -96,7 +96,7 @@ public class ActivityTableSelectorDialog extends Dialog {
     }
 
     private Button createTableSchemeButton(ActivitiesTableScheme activitiesTableScheme, Composite parent, Consumer<Button> uncheckAll) {
-        Button gradeSchemeButton = new Button(parent, SWT.CHECK | SWT.BORDER);
+        Button gradeSchemeButton = new Button(parent, SWT.CHECK | SWT.BORDER | SWT.WRAP);
         gradeSchemeButton.setToolTipText(activitiesTableScheme.getName());
         gradeSchemeButton.setText(activitiesTableScheme.getName());
         gradeSchemeButton.setFont(FontDescriptor.createFrom(Fonts.DEFAULT_FONT_DATA).createFont(gradeSchemeButton.getDisplay()));

@@ -10,7 +10,6 @@ import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Font;
-import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
@@ -22,8 +21,10 @@ import javax.annotation.PostConstruct;
 import java.util.function.Supplier;
 
 public abstract class AbstractMainComposite extends Composite {
-    protected static final GridData DEFAULT_CONTROL_BUTTON_FACTORY = GridDataFactory.swtDefaults().align(SWT.FILL, SWT.CENTER).minSize(200,
-            35).hint(200, 35).create();
+    protected static final GridDataFactory DEFAULT_CONTROL_BUTTON_FACTORY = GridDataFactory.swtDefaults()
+            .align(SWT.FILL, SWT.CENTER)
+            .minSize(200, 35)
+            .hint(200, SWT.DEFAULT);
     
     @Autowired
     protected Shell shell;
@@ -66,7 +67,7 @@ public abstract class AbstractMainComposite extends Composite {
     protected Button createBackButton(Composite parent, ApplicationContext applicationContext, Composite composite, Class backClass,
             Supplier<Object[]> argsSupplier) {
         Button button = new Button(parent, SWT.PUSH);
-        button.setLayoutData(DEFAULT_CONTROL_BUTTON_FACTORY);
+        button.setLayoutData(DEFAULT_CONTROL_BUTTON_FACTORY.create());
         button.setText("Wstecz");
         button.setFont(FontDescriptor.createFrom(Fonts.DEFAULT_FONT_DATA).createFont(button.getDisplay()));
         button.addSelectionListener(new SelectionAdapter() {
@@ -86,7 +87,7 @@ public abstract class AbstractMainComposite extends Composite {
 
     protected Button createRemoveButton(Composite parent, Runnable runnable) {
         Button removeButton = new Button(parent, SWT.PUSH);
-        removeButton.setLayoutData(GridDataFactory.createFrom(DEFAULT_CONTROL_BUTTON_FACTORY)
+        removeButton.setLayoutData(DEFAULT_CONTROL_BUTTON_FACTORY.copy()
                 .grab(false, true)
                 .align(SWT.FILL, SWT.END)
                 .create());
