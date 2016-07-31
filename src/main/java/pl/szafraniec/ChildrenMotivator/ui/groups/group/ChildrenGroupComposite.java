@@ -136,7 +136,8 @@ public class ChildrenGroupComposite extends AbstractMainComposite {
         createBehaviorTableButton(controlsButtonsComposite);
         createAddChildButton(controlsButtonsComposite);
         createEditButton(controlsButtonsComposite);
-        createRemoveButton(controlsButtonsComposite, this::removeGroup);
+        createRemoveButton(controlsButtonsComposite, this::removeGroup,
+                "Usunięte zostaną wszystkie dzieci z tej grupy wraz z ich ocenami i tablicami aktywności");
         return controlsButtonsComposite;
     }
 

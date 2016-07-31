@@ -86,6 +86,10 @@ public abstract class AbstractMainComposite extends Composite {
     }
 
     protected Button createRemoveButton(Composite parent, Runnable runnable) {
+        return createRemoveButton(parent, runnable, "Usunięte zostaną wszystkie dane powiązane.");
+    }
+
+    protected Button createRemoveButton(Composite parent, Runnable runnable, String removeMessage) {
         Button removeButton = new Button(parent, SWT.PUSH);
         removeButton.setLayoutData(DEFAULT_CONTROL_BUTTON_FACTORY.copy()
                 .grab(false, true)
@@ -97,7 +101,7 @@ public abstract class AbstractMainComposite extends Composite {
             @Override
             public void mouseUp(MouseEvent e) {
                 if (MessageDialog.openConfirm(shell, "Potwierdzenie usunięcia",
-                        "Usunięte zostaną wszystkie dane powiązane. Czy chcesz kontynuować?")) {
+                        removeMessage + System.lineSeparator() + "Czy chcesz kontynuować?")) {
                     runnable.run();
                 }
             }

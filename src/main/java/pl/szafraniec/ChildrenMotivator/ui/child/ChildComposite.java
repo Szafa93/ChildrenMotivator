@@ -166,7 +166,8 @@ public class ChildComposite extends AbstractMainComposite {
         createEditButton(controlsButtonsComposite);
         createChangeGroupButton(controlsButtonsComposite);
         createAddActivityTableButton(controlsButtonsComposite);
-        createRemoveButton(controlsButtonsComposite, this::removeChild);
+        createRemoveButton(controlsButtonsComposite, this::removeChild,
+                "Usunięte zostaną wszystkie dane tego dziecka, oceny tego dziecka i oraz tablice aktywności przypisane do tego dziecka");
         return controlsButtonsComposite;
     }
 

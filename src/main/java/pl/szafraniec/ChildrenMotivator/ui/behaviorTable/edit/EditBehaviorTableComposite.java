@@ -54,7 +54,7 @@ public class EditBehaviorTableComposite extends BehaviorTableComposite {
     private void createSaveButton(Composite parent) {
         Button saveButton = new Button(parent, SWT.PUSH);
         saveButton.setLayoutData(DEFAULT_CONTROL_BUTTON_FACTORY.create());
-        saveButton.setText("Save");
+        saveButton.setText("Zapisz");
         saveButton.setFont(FontDescriptor.createFrom(Fonts.DEFAULT_FONT_DATA).createFont(saveButton.getDisplay()));
         saveButton.addMouseListener(new MouseAdapter() {
             @Override

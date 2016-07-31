@@ -135,7 +135,8 @@ public class ActivitiesTableSchemeComposite extends AbstractMainComposite {
         controlsButtonsComposite.setLayout(GridLayoutFactory.swtDefaults().numColumns(1).create());
 
         createEditButton(controlsButtonsComposite);
-        createRemoveButton(controlsButtonsComposite, this::removeActivitiesTableScheme);
+        createRemoveButton(controlsButtonsComposite, this::removeActivitiesTableScheme,
+                "Usunięte zostaną wszystkie tablice aktywności wraz z ocenami ze wszystkich dzieci.");
         return controlsButtonsComposite;
     }
 

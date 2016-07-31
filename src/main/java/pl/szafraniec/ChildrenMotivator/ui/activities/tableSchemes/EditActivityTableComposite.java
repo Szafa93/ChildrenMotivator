@@ -52,7 +52,8 @@ public class EditActivityTableComposite extends ActivityTableComposite {
         controlsButtonsComposite.setLayout(GridLayoutFactory.swtDefaults().numColumns(1).create());
 
         createSaveButton(controlsButtonsComposite);
-        createRemoveButton(controlsButtonsComposite, this::removeActivityTableScheme);
+        createRemoveButton(controlsButtonsComposite, this::removeActivityTableScheme,
+                "Usunięta zostanie ta tablica wraz ze wszystkimi ocenami");
 
         return controlsButtonsComposite;
     }
@@ -71,7 +72,7 @@ public class EditActivityTableComposite extends ActivityTableComposite {
     private void createSaveButton(Composite parent) {
         Button saveButton = new Button(parent, SWT.PUSH);
         saveButton.setLayoutData(DEFAULT_CONTROL_BUTTON_FACTORY.create());
-        saveButton.setText("Save");
+        saveButton.setText("Zapisz");
         saveButton.setFont(FontDescriptor.createFrom(Fonts.DEFAULT_FONT_DATA).createFont(saveButton.getDisplay()));
         saveButton.addMouseListener(new MouseAdapter() {
             @Override
