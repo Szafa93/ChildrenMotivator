@@ -78,8 +78,7 @@ public class EditActivityDialog extends Dialog {
             public void widgetSelected(SelectionEvent e) {
                 FileDialog fileDialog = new FileDialog(getShell(), SWT.OPEN);
                 fileDialog.setText("Open");
-                fileDialog.setFilterPath("C:/");
-                String[] filterExt = { "*.png", "*.*" };
+                String[] filterExt = Images.FILE_EXTENSIONS;
                 fileDialog.setFilterExtensions(filterExt);
                 String selected = fileDialog.open();
                 if (selected != null) {

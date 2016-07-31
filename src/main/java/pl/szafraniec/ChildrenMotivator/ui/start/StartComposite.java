@@ -29,15 +29,21 @@ public class StartComposite extends AbstractMainComposite {
     protected void createTopPart() {
         Composite topPart = new Composite(this, SWT.NONE);
         topPart.setLayout(GridLayoutFactory.swtDefaults().numColumns(2).equalWidth(false).create());
-        topPart.setLayoutData(GridDataFactory.swtDefaults().grab(true, false).align(SWT.FILL, SWT.CENTER).create());
+        topPart.setLayoutData(GridDataFactory.swtDefaults().grab(true, false).align(SWT.CENTER, SWT.CENTER).create());
 
         createLabel(topPart, "Children Motivator");
     }
 
     protected void createDownPart() {
         Composite downPart = new Composite(this, SWT.NONE);
-        downPart.setLayout(GridLayoutFactory.swtDefaults().numColumns(1).create());
-        downPart.setLayoutData(GridDataFactory.swtDefaults().grab(true, true).align(SWT.LEFT, SWT.TOP).create());
+        downPart.setLayout(GridLayoutFactory.swtDefaults()
+                .numColumns(1)
+                .spacing(20, 20)
+                .create());
+        downPart.setLayoutData(GridDataFactory.swtDefaults()
+                .grab(true, true)
+                .align(SWT.CENTER, SWT.CENTER)
+                .create());
         createButton(downPart, "Grupy", ChildrenGroupsComposite.class);
         createButton(downPart, "Możliwe oceny", GradesSchemesComposite.class);
         createButton(downPart, "Możliwe aktywności", ActivitiesComposite.class);
@@ -47,10 +53,10 @@ public class StartComposite extends AbstractMainComposite {
     private void createButton(Composite parent, String text, Class compositeClass) {
         Button button = new Button(parent, SWT.PUSH);
         button.setLayoutData(GridDataFactory.swtDefaults()
-                .align(SWT.LEFT, SWT.CENTER)
+                .grab(true, false)
+                .align(SWT.CENTER, SWT.CENTER)
                 .minSize(500, 35)
                 .hint(500, 35)
-                .span(SWT.DEFAULT, 10)
                 .create());
         button.setText(text);
         button.setFont(FontDescriptor.createFrom(Fonts.DEFAULT_FONT_DATA).createFont(button.getDisplay()));

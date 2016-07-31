@@ -6,4 +6,5 @@ import pl.szafraniec.ChildrenMotivator.model.Child;
 
 @Repository
 public interface ChildRepository extends JpaRepository<Child, Integer> {
+    Child findByPesel(String pesel);
 }

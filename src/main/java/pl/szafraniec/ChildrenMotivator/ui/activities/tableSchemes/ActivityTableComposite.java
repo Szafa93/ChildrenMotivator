@@ -27,6 +27,7 @@ import pl.szafraniec.ChildrenMotivator.model.ChildActivitiesTableDay;
 import pl.szafraniec.ChildrenMotivator.model.TableCell;
 import pl.szafraniec.ChildrenMotivator.repository.ChildActivitiesTableRepository;
 import pl.szafraniec.ChildrenMotivator.ui.AbstractMainComposite;
+import pl.szafraniec.ChildrenMotivator.ui.DayOfWeekLocalization;
 import pl.szafraniec.ChildrenMotivator.ui.Fonts;
 import pl.szafraniec.ChildrenMotivator.ui.Images;
 import pl.szafraniec.ChildrenMotivator.ui.child.ChildComposite;
@@ -203,7 +204,9 @@ public class ActivityTableComposite extends AbstractMainComposite {
             dayHeaderComposite.setLayoutData(TABLE_CELL_LAYOUT_DATA);
             dayHeaderComposite.setLayout(GridLayoutFactory.fillDefaults().create());
             Label dayHeader = new Label(dayHeaderComposite, SWT.NONE);
-            dayHeader.setText(day.getLocalDate().toString());
+            dayHeader.setText(DayOfWeekLocalization.getDayOfWeekName(day.getLocalDate().getDayOfWeek())
+                    + System.lineSeparator()
+                    + day.getLocalDate().toString());
             dayHeader.setFont(FontDescriptor.createFrom(Fonts.DEFAULT_FONT_DATA).createFont(dayHeader.getDisplay()));
             dayHeader.setAlignment(SWT.CENTER);
             dayHeader.setLayoutData(INSIDE_TABLE_CELL_LAYOUT_DATA);

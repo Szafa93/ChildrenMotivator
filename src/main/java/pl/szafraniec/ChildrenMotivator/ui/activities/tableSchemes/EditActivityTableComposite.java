@@ -18,12 +18,15 @@ import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import pl.szafraniec.ChildrenMotivator.model.Activity;
+import pl.szafraniec.ChildrenMotivator.model.Child;
 import pl.szafraniec.ChildrenMotivator.model.ChildActivitiesTable;
 import pl.szafraniec.ChildrenMotivator.model.ChildActivitiesTableDay;
 import pl.szafraniec.ChildrenMotivator.model.TableCell;
 import pl.szafraniec.ChildrenMotivator.repository.ChildActivitiesTableRepository;
+import pl.szafraniec.ChildrenMotivator.repository.ChildRepository;
 import pl.szafraniec.ChildrenMotivator.ui.Fonts;
 import pl.szafraniec.ChildrenMotivator.ui.Images;
+import pl.szafraniec.ChildrenMotivator.ui.child.ChildComposite;
 import pl.szafraniec.ChildrenMotivator.ui.gradesSchemes.dialog.GradeSelectorDialog;
 
 import java.io.ByteArrayInputStream;
@@ -34,6 +37,9 @@ public class EditActivityTableComposite extends ActivityTableComposite {
 
     @Autowired
     private ChildActivitiesTableRepository childActivitiesTableRepository;
+
+    @Autowired
+    private ChildRepository childRepository;
 
     private ChildActivitiesTable childActivitiesTable;
 
@@ -49,8 +55,20 @@ public class EditActivityTableComposite extends ActivityTableComposite {
         controlsButtonsComposite.setLayout(GridLayoutFactory.swtDefaults().numColumns(1).create());
 
         createSaveButton(controlsButtonsComposite);
+        createRemoveButton(controlsButtonsComposite, this::removeActivityTableScheme);
 
         return controlsButtonsComposite;
+    }
+
+    private void removeActivityTableScheme() {
+        Child child = childActivitiesTable.getChild();
+        child.getActivitiesTableList().remove(childActivitiesTable);
+        childActivitiesTableRepository.delete(childActivitiesTable);
+        child = childRepository.saveAndFlush(child);
+
+        applicationContext.getBean(ChildComposite.class, shell, child);
+        dispose();
+        shell.layout(true, true);
     }
 
     private void createSaveButton(Composite parent) {

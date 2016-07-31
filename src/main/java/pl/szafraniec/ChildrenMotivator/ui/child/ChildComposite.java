@@ -223,6 +223,7 @@ public class ChildComposite extends AbstractMainComposite {
     private void editChild() {
         EditChildDialog dialog = new EditChildDialog(shell, child.getName(), child.getSurname(), child.getPesel(), child.getParentEmail(),
                 "Edytuj");
+        applicationContext.getAutowireCapableBeanFactory().autowireBean(dialog);
         if (Window.OK == dialog.open()) {
             child.setName(dialog.getName());
             child.setSurname(dialog.getSurname());

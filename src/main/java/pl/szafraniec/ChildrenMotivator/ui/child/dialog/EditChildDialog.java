@@ -9,10 +9,16 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
+import org.springframework.beans.factory.annotation.Autowired;
+import pl.szafraniec.ChildrenMotivator.repository.ChildRepository;
 
 import java.util.function.Consumer;
 
 public class EditChildDialog extends Dialog {
+
+    @Autowired
+    private ChildRepository childRepository;
+
     private String shellName;
 
     private String name;
@@ -73,7 +79,11 @@ public class EditChildDialog extends Dialog {
     }
 
     private boolean checkConstrains() {
-        return name.trim().length() != 0 && surname.trim().length() != 0 && pesel.trim().length() != 0 && parentEmail.trim().length() != 0;
+        return name.trim().length() != 0
+                && surname.trim().length() != 0
+                && pesel.trim().length() != 0
+                && childRepository.findByPesel(pesel) == null
+                && (parentEmail.trim().length() == 0 || parentEmail.contains("@"));
     }
 
     @Override

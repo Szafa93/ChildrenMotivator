@@ -9,6 +9,8 @@ public interface Images {
     int IMAGE_WIDTH = 150;
     int IMAGE_HEIGHT = 150;
 
+    String[] FILE_EXTENSIONS = { "*.png", "*.bmp", "*.jpeg", "*.jpg", "*.gif", "*.tiff" };
+
     static Image resize(Device device, Image image) {
         return resize(device, image, IMAGE_WIDTH, IMAGE_HEIGHT);
     }
