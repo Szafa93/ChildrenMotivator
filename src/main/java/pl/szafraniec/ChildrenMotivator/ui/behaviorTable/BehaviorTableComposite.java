@@ -7,8 +7,6 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.ScrolledComposite;
 import org.eclipse.swt.events.ControlAdapter;
 import org.eclipse.swt.events.ControlEvent;
-import org.eclipse.swt.events.MouseAdapter;
-import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Image;
@@ -91,23 +89,7 @@ public class BehaviorTableComposite extends AbstractMainComposite {
 
         createBackButton(controlsButtonsComposite, applicationContext, shell, ChildrenGroupComposite.class,
                 () -> new Object[] { childrenGroup });
-        createEditButton(controlsButtonsComposite);
         return controlsButtonsComposite;
-    }
-
-    private void createEditButton(Composite parent) {
-        Button editButton = new Button(parent, SWT.PUSH);
-        editButton.setLayoutData(DEFAULT_CONTROL_BUTTON_FACTORY.create());
-        editButton.setText("Edytuj");
-        editButton.setFont(FontDescriptor.createFrom(Fonts.DEFAULT_FONT_DATA).createFont(editButton.getDisplay()));
-        editButton.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseUp(MouseEvent e) {
-                applicationContext.getBean("EditBehaviorTableComposite", shell, childrenGroup);
-                dispose();
-                shell.layout(true, true);
-            }
-        });
     }
 
     @Override

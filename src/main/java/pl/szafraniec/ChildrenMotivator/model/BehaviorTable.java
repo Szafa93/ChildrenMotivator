@@ -60,28 +60,21 @@ public class BehaviorTable {
     }
 
     public Optional<List<BehaviorTableDay>> getDays(LocalDate startDate, LocalDate endDate) {
+        long daysAmount = Stream.iterate(startDate, date -> date.plusDays(1))
+                .limit(ChronoUnit.DAYS.between(startDate, endDate) + 1)
+                .filter(date -> !date.getDayOfWeek().equals(DayOfWeek.SUNDAY) && !date.getDayOfWeek().equals(DayOfWeek.SATURDAY))
+                .count();
         return Optional.of(getDays().stream().filter(day -> (day.getLocalDate().isAfter(startDate) && day.getLocalDate().isBefore(endDate))
                 || day.getLocalDate().isEqual(startDate) || day.getLocalDate().isEqual(endDate)).collect(Collectors.toList())).filter(
-                list -> !list.isEmpty());
+                list -> list.size() == daysAmount);
     }
 
     public BehaviorTable generateDay(LocalDate startDate, LocalDate endDate) {
-        Optional<LocalDate> last = days.stream().map(BehaviorTableDay::getLocalDate).max(LocalDate::compareTo);
-        Optional<LocalDate> first = days.stream().map(BehaviorTableDay::getLocalDate).min(LocalDate::compareTo);
-        LocalDate lastDate;
-        LocalDate firstDate;
-        if (endDate.isBefore(first.orElse(endDate))) {
-            firstDate = startDate;
-            lastDate = first.map(date -> date.minusDays(1)).orElse(endDate);
-        } else {
-            firstDate = last.map(date -> date.plusDays(1)).orElse(startDate);
-            lastDate = endDate;
-        }
-
-        long daysAmount = ChronoUnit.DAYS.between(firstDate, lastDate) + 1;
-        days.addAll(Stream.iterate(firstDate, date -> date.plusDays(1))
+        long daysAmount = ChronoUnit.DAYS.between(startDate, endDate) + 1;
+        days.addAll(Stream.iterate(startDate, date -> date.plusDays(1))
                 .limit(daysAmount)
                 .filter(date -> !date.getDayOfWeek().equals(DayOfWeek.SUNDAY) && !date.getDayOfWeek().equals(DayOfWeek.SATURDAY))
+                .filter(date -> !days.stream().map(BehaviorTableDay::getLocalDate).anyMatch(localDate -> localDate.isEqual(date)))
                 .map(date -> BehaviorTableDay.BehaviorTableDayBuilder.create(date, childrenGroup.getChildren()))
                 .collect(Collectors.toList()));
         return this;

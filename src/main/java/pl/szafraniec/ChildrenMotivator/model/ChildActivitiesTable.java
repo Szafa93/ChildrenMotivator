@@ -15,6 +15,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.PrimaryKeyJoinColumn;
+import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
@@ -77,29 +78,23 @@ public class ChildActivitiesTable {
     }
 
     public Optional<List<ChildActivitiesTableDay>> getDays(LocalDate startDate, LocalDate endDate) {
+        long daysAmount = Stream.iterate(startDate, date -> date.plusDays(1))
+                .limit(ChronoUnit.DAYS.between(startDate, endDate) + 1)
+                .filter(date -> !date.getDayOfWeek().equals(DayOfWeek.SUNDAY) && !date.getDayOfWeek().equals(DayOfWeek.SATURDAY))
+                .count();
         return Optional.of(getDays().stream().filter(day -> (day.getLocalDate().isAfter(startDate) && day.getLocalDate().isBefore(endDate))
                 || day.getLocalDate().isEqual(startDate) || day.getLocalDate().isEqual(endDate)).collect(Collectors.toList())).filter(
-                list -> !list.isEmpty());
+                list -> list.size() == daysAmount);
     }
 
     public ChildActivitiesTable generateDay(LocalDate startDate, LocalDate endDate) {
-        Optional<LocalDate> last = days.stream().map(ChildActivitiesTableDay::getLocalDate).max(LocalDate::compareTo);
-        Optional<LocalDate> first = days.stream().map(ChildActivitiesTableDay::getLocalDate).min(LocalDate::compareTo);
-        LocalDate lastDate;
-        LocalDate firstDate;
-        if (endDate.isBefore(first.orElse(endDate))) {
-            firstDate = startDate;
-            lastDate = first.map(date -> date.minusDays(1)).orElse(endDate);
-        } else {
-            firstDate = last.map(date -> date.plusDays(1)).orElse(startDate);
-            lastDate = endDate;
-        }
-
-        long daysAmount = ChronoUnit.DAYS.between(firstDate, lastDate) + 1;
-        days.addAll(Stream.iterate(firstDate, date -> date.plusDays(1)).limit(daysAmount).filter(
-                date -> !date.getDayOfWeek().equals(java.time.DayOfWeek.SUNDAY) && !date.getDayOfWeek().equals(
-                        java.time.DayOfWeek.SATURDAY)).map(date -> ChildActivitiesTableDay.ChildActivitiesTableDayBuilder.create(date,
-                activitiesTableScheme.getListOfActivities())).collect(Collectors.toList()));
+        long daysAmount = ChronoUnit.DAYS.between(startDate, endDate) + 1;
+        days.addAll(Stream.iterate(startDate, date -> date.plusDays(1))
+                .limit(daysAmount)
+                .filter(date -> !date.getDayOfWeek().equals(DayOfWeek.SUNDAY) && !date.getDayOfWeek().equals(DayOfWeek.SATURDAY))
+                .filter(date -> !days.stream().map(ChildActivitiesTableDay::getLocalDate).anyMatch(localDate -> localDate.isEqual(date)))
+                .map(date -> ChildActivitiesTableDay.ChildActivitiesTableDayBuilder.create(date, activitiesTableScheme.getListOfActivities()))
+                .collect(Collectors.toList()));
         return this;
     }
 
