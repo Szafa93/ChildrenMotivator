@@ -63,6 +63,13 @@
             <version>${hsqldb-version}</version>
         </dependency>
 
+        <!-- Charts -->
+        <dependency>
+            <groupId>org.jfree</groupId>
+            <artifactId>jfreechart</artifactId>
+            <version>1.0.19</version>
+        </dependency>
+
         <!-- Apache's Database Connection Pooling -->
         <dependency>
             <groupId>org.apache.commons</groupId>

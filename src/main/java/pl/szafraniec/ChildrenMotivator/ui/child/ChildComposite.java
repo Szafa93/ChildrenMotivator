@@ -1,5 +1,6 @@
 package pl.szafraniec.ChildrenMotivator.ui.child;
 
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.layout.GridLayoutFactory;
 import org.eclipse.jface.resource.FontDescriptor;
@@ -10,10 +11,12 @@ import org.eclipse.swt.events.ControlAdapter;
 import org.eclipse.swt.events.ControlEvent;
 import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
@@ -29,6 +32,7 @@ import pl.szafraniec.ChildrenMotivator.repository.ChildrenGroupRepository;
 import pl.szafraniec.ChildrenMotivator.ui.AbstractMainComposite;
 import pl.szafraniec.ChildrenMotivator.ui.Fonts;
 import pl.szafraniec.ChildrenMotivator.ui.activities.dialog.ActivityTableSelectorDialog;
+import pl.szafraniec.ChildrenMotivator.ui.activities.tableSchemes.ChartComposite;
 import pl.szafraniec.ChildrenMotivator.ui.child.dialog.EditChildDialog;
 import pl.szafraniec.ChildrenMotivator.ui.groups.dialog.GroupSelectorDialog;
 import pl.szafraniec.ChildrenMotivator.ui.groups.group.ChildrenGroupComposite;
@@ -141,14 +145,18 @@ public class ChildComposite extends AbstractMainComposite {
     }
 
     private Control createTableButton(ChildActivitiesTable table, Composite parent) {
-        Button groupButton = new Button(parent, SWT.WRAP);
-        groupButton.setText(table.getActivitiesTableScheme().getName());
-        groupButton.setFont(FontDescriptor.createFrom(Fonts.DEFAULT_FONT_DATA).createFont(groupButton.getDisplay()));
+        Composite composite = new Composite(parent, SWT.NONE);
+        composite.setLayoutData(DEFAULT_CONTROL_BUTTON_FACTORY.copy().grab(true, false).align(SWT.FILL,
+                SWT.CENTER).create());
+        composite.setLayout(GridLayoutFactory.fillDefaults().numColumns(3).create());
+        Button tableButton = new Button(composite, SWT.WRAP);
+        tableButton.setText(table.getActivitiesTableScheme().getName());
+        tableButton.setFont(FontDescriptor.createFrom(Fonts.DEFAULT_FONT_DATA).createFont(tableButton.getDisplay()));
 
-        groupButton.setLayoutData(DEFAULT_CONTROL_BUTTON_FACTORY.copy().grab(true, false).align(SWT.FILL,
+        tableButton.setLayoutData(DEFAULT_CONTROL_BUTTON_FACTORY.copy().grab(true, true).align(SWT.FILL,
                 SWT.CENTER).create());
 
-        groupButton.addMouseListener(new MouseAdapter() {
+        tableButton.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseUp(MouseEvent e) {
                 applicationContext.getBean("ActivityTableComposite", shell, table);
@@ -156,7 +164,45 @@ public class ChildComposite extends AbstractMainComposite {
                 shell.layout(true, true);
             }
         });
-        return groupButton;
+
+        Button chartButton = new Button(composite, SWT.NONE);
+        chartButton.setImage(new Image(Display.getCurrent(), getClass().getClassLoader().getResource("icons/chart.png").getFile()));
+        chartButton.setLayoutData(GridDataFactory.fillDefaults()
+                .grab(false, true)
+                .align(SWT.FILL, SWT.FILL)
+                .create());
+        chartButton.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseUp(MouseEvent e) {
+                applicationContext.getBean(ChartComposite.class, shell, table);
+                dispose();
+                shell.layout(true, true);
+            }
+        });
+
+        Button removeButton = new Button(composite, SWT.NONE);
+        removeButton.setImage(new Image(Display.getCurrent(), getClass().getClassLoader().getResource("icons/remove.png").getFile()));
+        removeButton.setLayoutData(GridDataFactory.fillDefaults()
+                .grab(false, true)
+                .align(SWT.FILL, SWT.FILL)
+                .create());
+        removeButton.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseUp(MouseEvent e) {
+                if (MessageDialog.openConfirm(shell, "Potwierdzenie usunięcia",
+                        "Usunięta zostanie ta tablica wraz ze wszystkimi ocenami" + System.lineSeparator() + "Czy chcesz kontynuować?")) {
+                    Child child = table.getChild();
+                    child.getActivitiesTableList().remove(table);
+                    child = childRepository.saveAndFlush(child);
+
+                    applicationContext.getBean(ChildComposite.class, shell, child);
+                    dispose();
+                    shell.layout(true, true);
+                }
+            }
+        });
+
+        return composite;
     }
 
     private Composite createDownControlsButtonsComposite(Composite parent) {
@@ -280,6 +326,5 @@ public class ChildComposite extends AbstractMainComposite {
             scrolledComposite.setMinSize(childComposite.computeSize(r.width, SWT.DEFAULT));
         }
     }
-
 
 }
