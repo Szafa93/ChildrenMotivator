@@ -34,10 +34,6 @@ public class ActivityTableSelectorDialog extends Dialog {
 
     private List<Button> activitiesTableSchemesButtons;
 
-    public ActivityTableSelectorDialog(Shell parentShell) {
-        this(parentShell, null);
-    }
-
     public ActivityTableSelectorDialog(Shell shell, ActivitiesTableScheme activitiesTableScheme) {
         super(shell);
         this.activitiesTableScheme = activitiesTableScheme;
@@ -120,7 +116,7 @@ public class ActivityTableSelectorDialog extends Dialog {
     }
 
     private boolean checkConstrains() {
-        return true;
+        return activitiesTableScheme != null;
     }
 
     @Override

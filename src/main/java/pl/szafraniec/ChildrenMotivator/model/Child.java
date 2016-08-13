@@ -13,9 +13,8 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
-import java.util.ArrayList;
-import java.util.List;
+import javax.persistence.OneToOne;
+import javax.persistence.PrimaryKeyJoinColumn;
 
 /**
  * @author Maciek
@@ -38,8 +37,9 @@ public class Child {
 
     private String parentEmail;
 
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "child", orphanRemoval = true)
-    private List<ChildActivitiesTable> activitiesTableList;
+    @OneToOne(optional = false, cascade = CascadeType.ALL)
+    @PrimaryKeyJoinColumn
+    private ChildActivitiesTable childActivitiesTable;
 
     @ManyToOne(optional = false)
     private ChildrenGroup childrenGroup;
@@ -84,12 +84,12 @@ public class Child {
         this.parentEmail = parentEmail;
     }
 
-    public List<ChildActivitiesTable> getActivitiesTableList() {
-        return activitiesTableList;
+    public ChildActivitiesTable getChildActivitiesTable() {
+        return childActivitiesTable;
     }
 
-    public void setActivitiesTableList(List<ChildActivitiesTable> activitiesTableList) {
-        this.activitiesTableList = activitiesTableList;
+    public void setChildActivitiesTable(ChildActivitiesTable childActivitiesTable) {
+        this.childActivitiesTable = childActivitiesTable;
     }
 
     public ChildrenGroup getChildrenGroup() {
@@ -127,7 +127,7 @@ public class Child {
             child.setPesel(pesel);
             child.setParentEmail(parentMail);
             child.setChildrenGroup(childrenGroup);
-            child.setActivitiesTableList(new ArrayList<>());
+            child.setChildActivitiesTable(ChildActivitiesTable.ChildActivitiesTableFactory.create(child));
             childrenGroup.getChildren().add(child);
             childrenGroup.getBehaviorTable().getDays().forEach(day -> {
                 day.getGrades().put(child, TableCell.TableCellBuilder.create());

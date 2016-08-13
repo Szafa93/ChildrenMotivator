@@ -13,6 +13,8 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
+import javax.persistence.PrimaryKeyJoinColumn;
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
@@ -31,10 +33,11 @@ public class ChildActivitiesTable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
-    @ManyToOne(optional = false)
+    @ManyToOne(optional = true)
     private ActivitiesTableScheme activitiesTableScheme;
 
-    @ManyToOne(optional = false)
+    @OneToOne(mappedBy = "childActivitiesTable")
+    @PrimaryKeyJoinColumn
     private Child child;
 
     @OneToMany(orphanRemoval = true, cascade = CascadeType.ALL)
@@ -101,12 +104,10 @@ public class ChildActivitiesTable {
     }
 
     public static class ChildActivitiesTableFactory {
-        public static ChildActivitiesTable create(Child child, ActivitiesTableScheme activitiesTableScheme) {
+        public static ChildActivitiesTable create(Child child) {
             ChildActivitiesTable table = new ChildActivitiesTable();
             table.child = child;
-            table.activitiesTableScheme = activitiesTableScheme;
             table.days = new ArrayList<>();
-            child.getActivitiesTableList().add(table);
             return table;
         }
     }

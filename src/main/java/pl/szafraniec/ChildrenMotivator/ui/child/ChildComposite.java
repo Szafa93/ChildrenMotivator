@@ -6,25 +6,19 @@ import org.eclipse.jface.layout.GridLayoutFactory;
 import org.eclipse.jface.resource.FontDescriptor;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.custom.ScrolledComposite;
-import org.eclipse.swt.events.ControlAdapter;
-import org.eclipse.swt.events.ControlEvent;
 import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
-import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
+import pl.szafraniec.ChildrenMotivator.model.ActivitiesTableScheme;
 import pl.szafraniec.ChildrenMotivator.model.BehaviorTableDay;
 import pl.szafraniec.ChildrenMotivator.model.Child;
-import pl.szafraniec.ChildrenMotivator.model.ChildActivitiesTable;
 import pl.szafraniec.ChildrenMotivator.model.ChildrenGroup;
 import pl.szafraniec.ChildrenMotivator.model.TableCell;
 import pl.szafraniec.ChildrenMotivator.repository.ChildRepository;
@@ -37,11 +31,12 @@ import pl.szafraniec.ChildrenMotivator.ui.child.dialog.EditChildDialog;
 import pl.szafraniec.ChildrenMotivator.ui.groups.dialog.GroupSelectorDialog;
 import pl.szafraniec.ChildrenMotivator.ui.groups.group.ChildrenGroupComposite;
 
-import java.util.stream.Collectors;
+import java.util.ArrayList;
 
 @Component
 @Scope(scopeName = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 public class ChildComposite extends AbstractMainComposite {
+    // TODO add button for activity table
 
     @Autowired
     private ChildRepository childRepository;
@@ -50,10 +45,6 @@ public class ChildComposite extends AbstractMainComposite {
     private ChildrenGroupRepository childrenGroupRepository;
 
     private Child child;
-
-    private Composite childComposite;
-
-    private ScrolledComposite scrolledComposite;
 
     private Composite childPropertiesComposite;
 
@@ -99,30 +90,7 @@ public class ChildComposite extends AbstractMainComposite {
         composite.setLayout(GridLayoutFactory.fillDefaults().numColumns(1).create());
         childPropertiesComposite = new Composite(composite, SWT.NONE);
         fillChildProperties(childPropertiesComposite);
-        Label label = new Label(composite, SWT.NONE);
-        label.setLayoutData(GridDataFactory.fillDefaults().grab(true, false).align(SWT.CENTER, SWT.FILL).create());
-        label.setText("Tablice aktywności");
-        scrolledComposite = new ScrolledComposite(composite, SWT.V_SCROLL | SWT.BORDER);
-        scrolledComposite.setLayoutData(GridDataFactory.fillDefaults().grab(true, true).align(SWT.FILL, SWT.FILL).create());
-        scrolledComposite.setExpandVertical(true);
-        scrolledComposite.setExpandHorizontal(true);
-
-        childComposite = new Composite(scrolledComposite, SWT.NONE);
-        childComposite.setLayoutData(GridDataFactory.swtDefaults().grab(true, true).align(SWT.FILL, SWT.FILL).create());
-        childComposite.setLayout(GridLayoutFactory.swtDefaults().numColumns(1).create());
-
-        child.getActivitiesTableList().stream().map(table -> createTableButton(table, childComposite)).collect(Collectors.toList());
-
-        childComposite.pack(true);
-        scrolledComposite.setContent(childComposite);
-        scrolledComposite.addControlListener(new ControlAdapter() {
-            public void controlResized(ControlEvent e) {
-                Rectangle r = scrolledComposite.getClientArea();
-                scrolledComposite.setMinSize(childComposite.computeSize(r.width, SWT.DEFAULT));
-            }
-        });
-        scrolledComposite.layout(true, true);
-        return scrolledComposite;
+        return composite;
     }
 
     private void fillChildProperties(Composite childPropertiesComposite) {
@@ -133,74 +101,49 @@ public class ChildComposite extends AbstractMainComposite {
         createChildProperty(childPropertiesComposite, "PESEL:", child.getPesel());
         createChildProperty(childPropertiesComposite, "Email rodzica:", child.getParentEmail());
         createChildProperty(childPropertiesComposite, "Grupa:", child.getChildrenGroup().getName());
+        createActivityTableProperties(childPropertiesComposite, "Tablica aktywności:");
     }
 
     private void createChildProperty(Composite parent, String propertyName, String propertyValue) {
         Label propertyNameLabel = new Label(parent, SWT.NONE);
-        propertyNameLabel.setLayoutData(GridDataFactory.fillDefaults().align(SWT.FILL, SWT.FILL).grab(true, false).create());
+        propertyNameLabel.setLayoutData(GridDataFactory.fillDefaults().align(SWT.BEGINNING, SWT.CENTER).grab(false, false).create());
         propertyNameLabel.setText(propertyName);
         Label propertyValueLabel = new Label(parent, SWT.RIGHT);
-        propertyValueLabel.setLayoutData(GridDataFactory.fillDefaults().align(SWT.FILL, SWT.END).grab(false, false).create());
+        propertyValueLabel.setLayoutData(GridDataFactory.fillDefaults().align(SWT.END, SWT.CENTER).grab(true, false).create());
         propertyValueLabel.setText(propertyValue);
     }
 
-    private Control createTableButton(ChildActivitiesTable table, Composite parent) {
+    private void createActivityTableProperties(Composite parent, String propertyName) {
+        Label activityTableLabel = new Label(parent, SWT.NONE);
+        activityTableLabel.setLayoutData(GridDataFactory.fillDefaults().align(SWT.BEGINNING, SWT.CENTER).grab(false, false).create());
+        activityTableLabel.setText(propertyName);
+        if (child.getChildActivitiesTable().getActivitiesTableScheme() != null) {
+            //            Label propertyValueLabel = new Label(parent, SWT.RIGHT | SWT.BORDER);
+            Button propertyValueLabel = new Button(parent, SWT.RIGHT);
+            propertyValueLabel.setLayoutData(GridDataFactory.fillDefaults().align(SWT.FILL, SWT.CENTER).grab(true, false).create());
+            propertyValueLabel.setText(child.getChildActivitiesTable().getActivitiesTableScheme().getName());
+            propertyValueLabel.addMouseListener(new MouseAdapter() {
+                @Override
+                public void mouseUp(MouseEvent e) {
+                    applicationContext.getBean("ActivityTableComposite", shell, child.getChildActivitiesTable());
+                    dispose();
+                    shell.layout(true, true);
+                }
+            });
+        }
+    }
+
+    private Control createTableButton(Composite parent) {
         Composite composite = new Composite(parent, SWT.NONE);
         composite.setLayoutData(DEFAULT_CONTROL_BUTTON_FACTORY.copy().grab(true, false).align(SWT.FILL,
                 SWT.CENTER).create());
         composite.setLayout(GridLayoutFactory.fillDefaults().numColumns(3).create());
         Button tableButton = new Button(composite, SWT.WRAP);
-        tableButton.setText(table.getActivitiesTableScheme().getName());
-        tableButton.setFont(FontDescriptor.createFrom(Fonts.DEFAULT_FONT_DATA).createFont(tableButton.getDisplay()));
+        tableButton.setText(child.getChildActivitiesTable().getActivitiesTableScheme().getName());
+        //tableButton.setFont(FontDescriptor.createFrom(Fonts.DEFAULT_FONT_DATA).createFont(tableButton.getDisplay()));
 
-        tableButton.setLayoutData(DEFAULT_CONTROL_BUTTON_FACTORY.copy().grab(true, true).align(SWT.FILL,
+        tableButton.setLayoutData(DEFAULT_CONTROL_BUTTON_FACTORY.copy().grab(true, true).align(SWT.END,
                 SWT.CENTER).create());
-
-        tableButton.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseUp(MouseEvent e) {
-                applicationContext.getBean("ActivityTableComposite", shell, table);
-                dispose();
-                shell.layout(true, true);
-            }
-        });
-
-        Button chartButton = new Button(composite, SWT.NONE);
-        chartButton.setImage(new Image(Display.getCurrent(), getClass().getClassLoader().getResource("icons/chart.png").getFile()));
-        chartButton.setLayoutData(GridDataFactory.fillDefaults()
-                .grab(false, true)
-                .align(SWT.FILL, SWT.FILL)
-                .create());
-        chartButton.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseUp(MouseEvent e) {
-                applicationContext.getBean(ChartComposite.class, shell, table);
-                dispose();
-                shell.layout(true, true);
-            }
-        });
-
-        Button removeButton = new Button(composite, SWT.NONE);
-        removeButton.setImage(new Image(Display.getCurrent(), getClass().getClassLoader().getResource("icons/remove.png").getFile()));
-        removeButton.setLayoutData(GridDataFactory.fillDefaults()
-                .grab(false, true)
-                .align(SWT.FILL, SWT.FILL)
-                .create());
-        removeButton.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseUp(MouseEvent e) {
-                if (MessageDialog.openConfirm(shell, "Potwierdzenie usunięcia",
-                        "Usunięta zostanie ta tablica wraz ze wszystkimi ocenami" + System.lineSeparator() + "Czy chcesz kontynuować?")) {
-                    Child child = table.getChild();
-                    child.getActivitiesTableList().remove(table);
-                    child = childRepository.saveAndFlush(child);
-
-                    applicationContext.getBean(ChildComposite.class, shell, child);
-                    dispose();
-                    shell.layout(true, true);
-                }
-            }
-        });
 
         return composite;
     }
@@ -211,10 +154,50 @@ public class ChildComposite extends AbstractMainComposite {
         controlsButtonsComposite.setLayout(GridLayoutFactory.swtDefaults().numColumns(1).create());
         createEditButton(controlsButtonsComposite);
         createChangeGroupButton(controlsButtonsComposite);
-        createAddActivityTableButton(controlsButtonsComposite);
+        createSelectActivityTableButton(controlsButtonsComposite);
+        createRemoveActivityTableButton(controlsButtonsComposite);
+        createShowChartButton(controlsButtonsComposite);
         createRemoveButton(controlsButtonsComposite, this::removeChild,
-                "Usunięte zostaną wszystkie dane tego dziecka, oceny tego dziecka i oraz tablice aktywności przypisane do tego dziecka");
+                "Usunięte zostaną wszystkie dane tego dziecka, oceny tego dziecka oraz tablica aktywności przypisana do tego dziecka");
         return controlsButtonsComposite;
+    }
+
+    private void createRemoveActivityTableButton(Composite parent) {
+        Button addGroupButton = new Button(parent, SWT.PUSH | SWT.WRAP);
+        addGroupButton.setLayoutData(DEFAULT_CONTROL_BUTTON_FACTORY.create());
+        addGroupButton.setText("Usuń tablicę aktywności");
+        addGroupButton.setFont(FontDescriptor.createFrom(Fonts.DEFAULT_FONT_DATA).createFont(addGroupButton.getDisplay()));
+        addGroupButton.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseUp(MouseEvent e) {
+                if (MessageDialog.openConfirm(shell, "Potwierdzenie usunięcia",
+                        "Usunięta zostanie ta tablica wraz ze wszystkimi ocenami" + System.lineSeparator() + "Czy chcesz kontynuować?")) {
+                    child.getChildActivitiesTable().setActivitiesTableScheme(null);
+                    child.getChildActivitiesTable().setDays(new ArrayList<>());
+                    child = childRepository.saveAndFlush(child);
+
+                    applicationContext.getBean(ChildComposite.class, shell, child);
+                    dispose();
+                    shell.layout(true, true);
+                }
+            }
+        });
+    }
+
+    private void createShowChartButton(Composite parent) {
+        Button addGroupButton = new Button(parent, SWT.PUSH);
+        addGroupButton.setLayoutData(DEFAULT_CONTROL_BUTTON_FACTORY.create());
+        addGroupButton.setText("Wykres ocen");
+        addGroupButton.setFont(FontDescriptor.createFrom(Fonts.DEFAULT_FONT_DATA).createFont(addGroupButton.getDisplay()));
+        addGroupButton.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseUp(MouseEvent e) {
+                applicationContext.getBean(ChartComposite.class, shell, child.getChildActivitiesTable());
+                dispose();
+                shell.layout(true, true);
+            }
+        });
+        addGroupButton.setEnabled(child.getChildActivitiesTable().getActivitiesTableScheme() != null);
     }
 
     private void createChangeGroupButton(Composite parent) {
@@ -230,15 +213,15 @@ public class ChildComposite extends AbstractMainComposite {
         });
     }
 
-    private void createAddActivityTableButton(Composite parent) {
-        Button addActibityTableButton = new Button(parent, SWT.PUSH | SWT.WRAP);
-        addActibityTableButton.setLayoutData(DEFAULT_CONTROL_BUTTON_FACTORY.create());
-        addActibityTableButton.setText("Dodaj tablicę aktywności");
-        addActibityTableButton.setFont(FontDescriptor.createFrom(Fonts.DEFAULT_FONT_DATA).createFont(addActibityTableButton.getDisplay()));
-        addActibityTableButton.addMouseListener(new MouseAdapter() {
+    private void createSelectActivityTableButton(Composite parent) {
+        Button selectActivityTableButton = new Button(parent, SWT.PUSH | SWT.WRAP);
+        selectActivityTableButton.setLayoutData(DEFAULT_CONTROL_BUTTON_FACTORY.create());
+        selectActivityTableButton.setText("Wybierz tablicę aktywności");
+        selectActivityTableButton.setFont(FontDescriptor.createFrom(Fonts.DEFAULT_FONT_DATA).createFont(selectActivityTableButton.getDisplay()));
+        selectActivityTableButton.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseUp(MouseEvent e) {
-                addActivityTable();
+                selectActivityTable();
             }
         });
     }
@@ -309,21 +292,34 @@ public class ChildComposite extends AbstractMainComposite {
         }
     }
 
-    private void addActivityTable() {
-        ActivityTableSelectorDialog dialog = new ActivityTableSelectorDialog(shell);
+    private void selectActivityTable() {
+        ActivityTableSelectorDialog dialog = new ActivityTableSelectorDialog(shell, child.getChildActivitiesTable().getActivitiesTableScheme());
         applicationContext.getAutowireCapableBeanFactory().autowireBean(dialog);
         if (Window.OK == dialog.open()) {
-            ChildActivitiesTable childActivitiesTable = ChildActivitiesTable.ChildActivitiesTableFactory.create(child,
-                    dialog.getActivitiesTableScheme());
-            child = childRepository.saveAndFlush(child);
-            for (Control widget : childComposite.getChildren()) {
-                widget.dispose();
+            ActivitiesTableScheme scheme = dialog.getActivitiesTableScheme();
+            // TODO migrate grades
+            ActivitiesTableScheme oldScheme = child.getChildActivitiesTable().getActivitiesTableScheme();
+            if (oldScheme != null) {
+                oldScheme.getListOfActivities()
+                        .stream()
+                        .filter(activity -> !scheme.getListOfActivities().contains(activity))
+                        .forEach(activity -> child.getChildActivitiesTable()
+                                .getDays()
+                                .forEach(day -> day.getGrades().remove(activity)));
+                scheme.getListOfActivities()
+                        .stream()
+                        .filter(activity -> !oldScheme.getListOfActivities().contains(activity))
+                        .forEach(activity -> child.getChildActivitiesTable()
+                                .getDays()
+                                .forEach(day -> day.getGrades().put(activity, TableCell.TableCellBuilder.create())));
             }
-            child.getActivitiesTableList().stream().map(table -> createTableButton(table, childComposite)).collect(Collectors.toList());
-            this.layout(true, true);
+            child.getChildActivitiesTable().setActivitiesTableScheme(scheme);
 
-            Rectangle r = scrolledComposite.getClientArea();
-            scrolledComposite.setMinSize(childComposite.computeSize(r.width, SWT.DEFAULT));
+
+            child = childRepository.saveAndFlush(child);
+            applicationContext.getBean(ChildComposite.class, shell, child);
+            dispose();
+            shell.layout(true, true);
         }
     }
 
