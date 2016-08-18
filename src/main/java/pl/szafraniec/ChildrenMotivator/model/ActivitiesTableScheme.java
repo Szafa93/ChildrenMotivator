@@ -67,6 +67,24 @@ public class ActivitiesTableScheme {
         return childActivitiesTables;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o)
+            return true;
+        if (o == null || getClass() != o.getClass())
+            return false;
+
+        ActivitiesTableScheme scheme = (ActivitiesTableScheme) o;
+
+        return id == scheme.id;
+
+    }
+
+    @Override
+    public int hashCode() {
+        return id;
+    }
+
     public void setChildActivitiesTables(List<ChildActivitiesTable> childActivitiesTables) {
         this.childActivitiesTables = childActivitiesTables;
     }

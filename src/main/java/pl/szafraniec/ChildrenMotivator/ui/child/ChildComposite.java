@@ -297,7 +297,6 @@ public class ChildComposite extends AbstractMainComposite {
         applicationContext.getAutowireCapableBeanFactory().autowireBean(dialog);
         if (Window.OK == dialog.open()) {
             ActivitiesTableScheme scheme = dialog.getActivitiesTableScheme();
-            // TODO migrate grades
             ActivitiesTableScheme oldScheme = child.getChildActivitiesTable().getActivitiesTableScheme();
             if (oldScheme != null) {
                 oldScheme.getListOfActivities()
