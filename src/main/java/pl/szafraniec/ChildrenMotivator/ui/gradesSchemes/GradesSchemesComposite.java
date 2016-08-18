@@ -85,6 +85,7 @@ public class GradesSchemesComposite extends AbstractMainComposite {
 
     private void addGradeScheme() {
         EditGradeSchemeDialog dialog = new EditGradeSchemeDialog(Display.getCurrent().getActiveShell());
+        applicationContext.getAutowireCapableBeanFactory().autowireBean(dialog);
         if (Window.OK == dialog.open()) {
             GradeScheme gradeScheme = addGradeScheme(dialog.getGradeValue(), dialog.getImageByte());
             createGradeSchemeButton(gradeScheme, gradeSchemesComposite);

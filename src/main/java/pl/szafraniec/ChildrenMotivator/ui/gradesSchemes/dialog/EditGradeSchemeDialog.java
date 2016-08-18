@@ -4,9 +4,13 @@ import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.layout.GridLayoutFactory;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.MouseEvent;
+import org.eclipse.swt.events.MouseMoveListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
@@ -14,25 +18,38 @@ import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
+import org.eclipse.swt.widgets.ToolTip;
+import org.springframework.beans.factory.annotation.Autowired;
+import pl.szafraniec.ChildrenMotivator.model.GradeScheme;
+import pl.szafraniec.ChildrenMotivator.repository.GradeSchemeRepository;
 import pl.szafraniec.ChildrenMotivator.ui.Images;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.StringJoiner;
 
 public class EditGradeSchemeDialog extends Dialog {
+
+    private final int id;
+    @Autowired
+    private GradeSchemeRepository gradeSchemeRepository;
+
     private String gradeValue;
     private String shellName;
     private byte[] fileData;
     private Label image;
 
     public EditGradeSchemeDialog(Shell shell) {
-        this(shell, null, null, "Dodaj ocenę");
+        this(shell, null, null, "Dodaj ocenę", -1);
     }
 
-    public EditGradeSchemeDialog(Shell shell, Integer gradeValue, byte[] fileData, String shellName) {
+    public EditGradeSchemeDialog(Shell shell, Integer gradeValue, byte[] fileData, String shellName, int id) {
         super(shell);
+        this.id = id;
         if (gradeValue != null) {
             this.gradeValue = gradeValue.toString();
         } else {
@@ -68,7 +85,11 @@ public class EditGradeSchemeDialog extends Dialog {
         textName.setText(gradeValue);
         textName.addModifyListener(event -> {
             gradeValue = textName.getText();
-            getButton(Dialog.OK).setEnabled(checkConstrains());
+            List<String> errors = checkConstrains();
+            StringJoiner stringJoiner = new StringJoiner(System.lineSeparator());
+            errors.forEach(stringJoiner::add);
+            getButton(Dialog.OK).setEnabled(errors.isEmpty());
+            getButton(Dialog.OK).setToolTipText(stringJoiner.toString());
         });
 
         Label labelImage = new Label(gradeSchemePropertiesComposite, SWT.NONE);
@@ -95,7 +116,11 @@ public class EditGradeSchemeDialog extends Dialog {
 
                     }
                 }
-                getButton(Dialog.OK).setEnabled(checkConstrains());
+                List<String> errors = checkConstrains();
+                StringJoiner stringJoiner = new StringJoiner(System.lineSeparator());
+                errors.forEach(stringJoiner::add);
+                getButton(Dialog.OK).setEnabled(errors.isEmpty());
+                getButton(Dialog.OK).setToolTipText(stringJoiner.toString());
                 gradeSchemePropertiesComposite.layout(true, true);
             }
         });
@@ -111,8 +136,22 @@ public class EditGradeSchemeDialog extends Dialog {
         gradeSchemePropertiesComposite.layout(true, true);
     }
 
-    private boolean checkConstrains() {
-        return gradeValue.trim().length() != 0 && fileData != null && tryParse(gradeValue) != null;
+    private List<String> checkConstrains() {
+        List<String> errors = new ArrayList<>();
+        if (gradeValue.trim().length() == 0)
+            errors.add("Brak podanej oceny");
+        if (fileData == null)
+            errors.add("Brak obrazka");
+        Integer value = tryParse(gradeValue);
+        if (value == null) {
+            errors.add("Ocena nie jest liczbą całkowitą");
+        } else {
+            GradeScheme gradeScheme = gradeSchemeRepository.findByValue(value);
+            if (gradeScheme != null && gradeScheme.getId() != id) {
+                errors.add("Ocena z ta wartością już istnieje");
+            }
+        }
+        return errors;
     }
 
     public Integer tryParse(String text) {
@@ -126,7 +165,32 @@ public class EditGradeSchemeDialog extends Dialog {
     @Override
     protected Control createButtonBar(Composite parent) {
         Control buttonBar = super.createButtonBar(parent);
-        getButton(Dialog.OK).setEnabled(checkConstrains());
+        List<String> errors = checkConstrains();
+        StringJoiner stringJoiner = new StringJoiner(System.lineSeparator());
+        errors.forEach(stringJoiner::add);
+        getButton(Dialog.OK).setEnabled(errors.isEmpty());
+        getButton(Dialog.OK).setToolTipText(stringJoiner.toString());
+        buttonBar.addMouseMoveListener(new MouseMoveListener() {
+            private ToolTip toolTip = null;
+
+            @Override
+            public void mouseMove(MouseEvent e) {
+                Button okButton = getButton(Dialog.OK);
+                Point location = okButton.getLocation();
+                Rectangle size = okButton.getBounds();
+                if (e.x >= location.x && e.x <= location.x + size.width && e.y >= location.y && e.y <= location.y + size.height) {
+                    if (toolTip == null) {
+                        toolTip = new ToolTip(EditGradeSchemeDialog.this.getShell(), SWT.NONE);
+                        toolTip.setText(getButton(Dialog.OK).getToolTipText());
+                        toolTip.setAutoHide(false);
+                        toolTip.setLocation(e.x, e.y);
+                        toolTip.setVisible(true);
+                    }
+                } else {
+                    toolTip = null;
+                }
+            }
+        });
         return buttonBar;
     }
 

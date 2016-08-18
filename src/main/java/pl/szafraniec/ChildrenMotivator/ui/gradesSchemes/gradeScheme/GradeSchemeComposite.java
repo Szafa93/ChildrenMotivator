@@ -158,7 +158,8 @@ public class GradeSchemeComposite extends AbstractMainComposite {
 
     private void editGradeScheme() {
         EditGradeSchemeDialog dialog = new EditGradeSchemeDialog(shell, gradeScheme.getValue(), gradeScheme.getImage(),
-                "Edytuj schemat oceny");
+                "Edytuj schemat oceny", gradeScheme.getId());
+        applicationContext.getAutowireCapableBeanFactory().autowireBean(dialog);
         if (Window.OK == dialog.open()) {
             editGradeScheme(dialog.getGradeValue(), dialog.getImageByte());
 

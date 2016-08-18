@@ -6,4 +6,5 @@ import pl.szafraniec.ChildrenMotivator.model.GradeScheme;
 
 @Repository
 public interface GradeSchemeRepository extends JpaRepository<GradeScheme, Integer> {
+    GradeScheme findByValue(int value);
 }
