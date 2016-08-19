@@ -136,6 +136,7 @@ public class ChildrenGroupComposite extends AbstractMainComposite {
 
         createBehaviorTableButton(controlsButtonsComposite);
         createAddChildButton(controlsButtonsComposite);
+        createSendStatisticButton(controlsButtonsComposite);
         createEditButton(controlsButtonsComposite);
         createRemoveButton(controlsButtonsComposite, this::removeGroup,
                 "Usunięte zostaną wszystkie dzieci z tej grupy wraz z ich ocenami i tablicami aktywności");
@@ -166,6 +167,23 @@ public class ChildrenGroupComposite extends AbstractMainComposite {
             @Override
             public void mouseUp(MouseEvent e) {
                 addChild();
+            }
+        });
+    }
+
+    private void createSendStatisticButton(Composite parent) {
+        Button sendStatistic = new Button(parent, SWT.PUSH | SWT.WRAP);
+        sendStatistic.setLayoutData(DEFAULT_CONTROL_BUTTON_FACTORY.create());
+        sendStatistic.setText("Wślij statystyki do rodziców");
+        sendStatistic.setFont(FontDescriptor.createFrom(Fonts.DEFAULT_FONT_DATA).createFont(sendStatistic.getDisplay()));
+        sendStatistic.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseUp(MouseEvent e) {
+                SendStatisticDialog dialog = new SendStatisticDialog(shell);
+                applicationContext.getAutowireCapableBeanFactory().autowireBean(dialog);
+                if (Window.OK == dialog.open()) {
+                    // send that bullshit
+                }
             }
         });
     }

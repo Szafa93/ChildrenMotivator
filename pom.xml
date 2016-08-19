@@ -70,6 +70,18 @@
             <version>1.0.19</version>
         </dependency>
 
+        <!-- Apache commons -->
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-email</artifactId>
+            <version>1.4</version>
+        </dependency>
+        <dependency>
+            <groupId>commons-validator</groupId>
+            <artifactId>commons-validator</artifactId>
+            <version>1.5.1</version>
+        </dependency>
+
         <!-- JavaMail API-->
         <dependency>
             <groupId>javax.mail</groupId>
@@ -97,6 +109,7 @@
             <artifactId>org.eclipse.jface</artifactId>
             <version>3.11.0</version>
         </dependency>
+
         <!--
         <dependency>
             <groupId>org.eclipse.swt</groupId>
