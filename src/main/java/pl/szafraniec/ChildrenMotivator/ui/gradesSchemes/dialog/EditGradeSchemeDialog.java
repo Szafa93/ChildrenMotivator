@@ -3,6 +3,7 @@ package pl.szafraniec.ChildrenMotivator.ui.gradesSchemes.dialog;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.layout.GridLayoutFactory;
+import org.eclipse.jface.window.DefaultToolTip;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.MouseMoveListener;
@@ -18,7 +19,6 @@ import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
-import org.eclipse.swt.widgets.ToolTip;
 import org.springframework.beans.factory.annotation.Autowired;
 import pl.szafraniec.ChildrenMotivator.model.GradeScheme;
 import pl.szafraniec.ChildrenMotivator.repository.GradeSchemeRepository;
@@ -171,7 +171,7 @@ public class EditGradeSchemeDialog extends Dialog {
         getButton(Dialog.OK).setEnabled(errors.isEmpty());
         getButton(Dialog.OK).setToolTipText(stringJoiner.toString());
         buttonBar.addMouseMoveListener(new MouseMoveListener() {
-            private ToolTip toolTip = null;
+            private DefaultToolTip toolTip = null;
 
             @Override
             public void mouseMove(MouseEvent e) {
@@ -180,13 +180,17 @@ public class EditGradeSchemeDialog extends Dialog {
                 Rectangle size = okButton.getBounds();
                 if (e.x >= location.x && e.x <= location.x + size.width && e.y >= location.y && e.y <= location.y + size.height) {
                     if (toolTip == null) {
-                        toolTip = new ToolTip(EditGradeSchemeDialog.this.getShell(), SWT.NONE);
-                        toolTip.setText(getButton(Dialog.OK).getToolTipText());
-                        toolTip.setAutoHide(false);
-                        toolTip.setLocation(e.x, e.y);
-                        toolTip.setVisible(true);
+                        toolTip = new DefaultToolTip(buttonBar, SWT.NONE, true);
+                        toolTip.setPopupDelay(0);
+                        toolTip.setHideDelay(Integer.MAX_VALUE);
+                        toolTip.show(new Point(e.x, e.y));
+                        toolTip.setHideOnMouseDown(false);
+                        toolTip.setText(okButton.getToolTipText());
+                        toolTip.activate();
                     }
-                } else {
+                } else if (toolTip != null) {
+                    toolTip.hide();
+                    toolTip.deactivate();
                     toolTip = null;
                 }
             }
