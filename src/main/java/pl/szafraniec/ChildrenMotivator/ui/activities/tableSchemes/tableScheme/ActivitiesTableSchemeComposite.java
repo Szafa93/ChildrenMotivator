@@ -24,9 +24,11 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import pl.szafraniec.ChildrenMotivator.model.ActivitiesTableScheme;
 import pl.szafraniec.ChildrenMotivator.model.Activity;
+import pl.szafraniec.ChildrenMotivator.model.Child;
+import pl.szafraniec.ChildrenMotivator.model.ChildActivitiesTable;
 import pl.szafraniec.ChildrenMotivator.model.TableCell;
 import pl.szafraniec.ChildrenMotivator.repository.ActivitiesTableSchemesRepository;
-import pl.szafraniec.ChildrenMotivator.repository.ChildActivitiesTableRepository;
+import pl.szafraniec.ChildrenMotivator.repository.ChildRepository;
 import pl.szafraniec.ChildrenMotivator.ui.AbstractMainComposite;
 import pl.szafraniec.ChildrenMotivator.ui.Fonts;
 import pl.szafraniec.ChildrenMotivator.ui.Images;
@@ -42,10 +44,10 @@ import java.util.stream.Collectors;
 public class ActivitiesTableSchemeComposite extends AbstractMainComposite {
 
     @Autowired
-    private ActivitiesTableSchemesRepository activitiesTableSchemesRepository;
+    private ChildRepository childRepository;
 
     @Autowired
-    private ChildActivitiesTableRepository childActivitiesTableRepository;
+    private ActivitiesTableSchemesRepository activitiesTableSchemesRepository;
 
     private ActivitiesTableScheme activitiesTableScheme;
 
@@ -191,8 +193,12 @@ public class ActivitiesTableSchemeComposite extends AbstractMainComposite {
         });
 
         activitiesTableScheme.setChildActivitiesTables(
-                activitiesTableScheme.getChildActivitiesTables().stream().map(childActivitiesTableRepository::save).collect(
-                        Collectors.toList()));
+                activitiesTableScheme.getChildActivitiesTables()
+                        .stream()
+                        .map(ChildActivitiesTable::getChild)
+                        .map(childRepository::save)
+                        .map(Child::getChildActivitiesTable)
+                        .collect(Collectors.toList()));
         activitiesTableSchemesRepository.saveAndFlush(activitiesTableScheme);
         activitiesTableScheme = activitiesTableSchemesRepository.getOne(activitiesTableScheme.getId());
     }

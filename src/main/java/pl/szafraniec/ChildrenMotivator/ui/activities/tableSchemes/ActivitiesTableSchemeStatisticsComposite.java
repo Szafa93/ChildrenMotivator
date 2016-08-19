@@ -14,7 +14,7 @@ import pl.szafraniec.ChildrenMotivator.model.ChildActivitiesTable;
 import pl.szafraniec.ChildrenMotivator.model.ChildActivitiesTableDay;
 import pl.szafraniec.ChildrenMotivator.model.GradeScheme;
 import pl.szafraniec.ChildrenMotivator.model.TableCell;
-import pl.szafraniec.ChildrenMotivator.repository.ChildActivitiesTableRepository;
+import pl.szafraniec.ChildrenMotivator.repository.ChildRepository;
 
 import java.util.List;
 import java.util.OptionalDouble;
@@ -24,10 +24,10 @@ import java.util.OptionalDouble;
 public class ActivitiesTableSchemeStatisticsComposite extends ActivityTableComposite {
 
     @Autowired
-    private ChildActivitiesTableRepository childActivitiesTableRepository;
+    private ChildRepository childRepository;
 
-    public ActivitiesTableSchemeStatisticsComposite(Composite parent, ChildActivitiesTable table) {
-        super(parent, table);
+    public ActivitiesTableSchemeStatisticsComposite(Composite parent, ChildActivitiesTable table, Runnable onDayAdded) {
+        super(parent, table, onDayAdded);
     }
 
     @Override
@@ -62,7 +62,7 @@ public class ActivitiesTableSchemeStatisticsComposite extends ActivityTableCompo
         label.setLayoutData(GridDataFactory.fillDefaults().grab(true, false).align(SWT.CENTER, SWT.CENTER).span(2, 1).create());
         List<ChildActivitiesTableDay> days = table.getDays(startDate, endDate).orElseGet(() -> {
             table.generateDay(startDate, endDate);
-            table = childActivitiesTableRepository.saveAndFlush(table);
+            table = childRepository.saveAndFlush(table.getChild()).getChildActivitiesTable();
             return table.getDays(startDate, endDate).get();
         });
         table.getActivitiesTableScheme().getListOfActivities().stream().forEach(activity -> {

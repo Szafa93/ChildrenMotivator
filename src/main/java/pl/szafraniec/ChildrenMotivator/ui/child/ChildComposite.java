@@ -128,7 +128,8 @@ public class ChildComposite extends AbstractMainComposite {
             propertyValueLabel.addMouseListener(new MouseAdapter() {
                 @Override
                 public void mouseUp(MouseEvent e) {
-                    applicationContext.getBean("ActivityTableComposite", shell, child.getChildActivitiesTable());
+                    applicationContext.getBean("ActivityTableComposite", shell, child.getChildActivitiesTable(), (Runnable) () -> {
+                    });
                     dispose();
                     shell.layout(true, true);
                 }
@@ -142,9 +143,12 @@ public class ChildComposite extends AbstractMainComposite {
         Label label = new Label(parent, SWT.NONE);
         label.setText(compositeName);
         label.setLayoutData(GridDataFactory.fillDefaults().grab(true, false).align(SWT.CENTER, SWT.CENTER).span(2, 1).create());
-        ActivitiesTableSchemeStatisticsComposite composite = (ActivitiesTableSchemeStatisticsComposite)
-                applicationContext.getBean("ActivitiesTableSchemeStatisticsComposite", parent, child.getChildActivitiesTable());
-        composite.setLayoutData(GridDataFactory.fillDefaults().align(SWT.FILL, SWT.FILL).grab(true, true).span(2, 1).create());
+        if (child.getChildActivitiesTable().getActivitiesTableScheme() != null) {
+            ActivitiesTableSchemeStatisticsComposite composite = (ActivitiesTableSchemeStatisticsComposite)
+                    applicationContext.getBean("ActivitiesTableSchemeStatisticsComposite", parent, child.getChildActivitiesTable(),
+                            (Runnable) () -> child = childRepository.findOne(child.getId()));
+            composite.setLayoutData(GridDataFactory.fillDefaults().align(SWT.FILL, SWT.FILL).grab(true, true).span(2, 1).create());
+        }
     }
 
     private Control createTableButton(Composite parent) {
@@ -266,7 +270,7 @@ public class ChildComposite extends AbstractMainComposite {
 
     private void editChild() {
         EditChildDialog dialog = new EditChildDialog(shell, child.getName(), child.getSurname(), child.getPesel(), child.getParentEmail(),
-                "Edytuj");
+                "Edytuj", child.getId());
         applicationContext.getAutowireCapableBeanFactory().autowireBean(dialog);
         if (Window.OK == dialog.open()) {
             child.setName(dialog.getName());

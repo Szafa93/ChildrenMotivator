@@ -24,7 +24,6 @@ import pl.szafraniec.ChildrenMotivator.model.ChildActivitiesTable;
 import pl.szafraniec.ChildrenMotivator.model.ChildActivitiesTableDay;
 import pl.szafraniec.ChildrenMotivator.model.GradeScheme;
 import pl.szafraniec.ChildrenMotivator.model.TableCell;
-import pl.szafraniec.ChildrenMotivator.repository.ChildActivitiesTableRepository;
 import pl.szafraniec.ChildrenMotivator.repository.ChildRepository;
 import pl.szafraniec.ChildrenMotivator.repository.GradeSchemeRepository;
 import pl.szafraniec.ChildrenMotivator.ui.Fonts;
@@ -43,16 +42,14 @@ import java.util.stream.Collectors;
 public class EditActivityTableComposite extends ActivityTableComposite {
 
     @Autowired
-    private ChildActivitiesTableRepository childActivitiesTableRepository;
-
-    @Autowired
     private ChildRepository childRepository;
 
     @Autowired
     private GradeSchemeRepository gradeSchemeRepository;
 
     public EditActivityTableComposite(Composite parent, ChildActivitiesTable childActivitiesTable) {
-        super(parent, childActivitiesTable);
+        super(parent, childActivitiesTable, () -> {
+        });
     }
 
     @Override
@@ -138,7 +135,8 @@ public class EditActivityTableComposite extends ActivityTableComposite {
                 });
 
                 table = childRepository.saveAndFlush(child).getChildActivitiesTable();
-                applicationContext.getBean("ActivityTableComposite", shell, table);
+                applicationContext.getBean("ActivityTableComposite", shell, table, (Runnable) () -> {
+                });
                 dispose();
                 shell.layout(true, true);
             }

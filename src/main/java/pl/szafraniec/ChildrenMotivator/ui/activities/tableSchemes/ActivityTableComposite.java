@@ -25,7 +25,7 @@ import pl.szafraniec.ChildrenMotivator.model.Activity;
 import pl.szafraniec.ChildrenMotivator.model.ChildActivitiesTable;
 import pl.szafraniec.ChildrenMotivator.model.ChildActivitiesTableDay;
 import pl.szafraniec.ChildrenMotivator.model.TableCell;
-import pl.szafraniec.ChildrenMotivator.repository.ChildActivitiesTableRepository;
+import pl.szafraniec.ChildrenMotivator.repository.ChildRepository;
 import pl.szafraniec.ChildrenMotivator.ui.AbstractMainComposite;
 import pl.szafraniec.ChildrenMotivator.ui.DayOfWeekLocalization;
 import pl.szafraniec.ChildrenMotivator.ui.Fonts;
@@ -50,9 +50,10 @@ public class ActivityTableComposite extends AbstractMainComposite {
             true).create();
 
     @Autowired
-    private ChildActivitiesTableRepository childActivitiesTableRepository;
+    private ChildRepository childRepository;
 
     protected ChildActivitiesTable table;
+    private final Runnable onDayAdded;
 
     private ScrolledComposite scrolledComposite;
     private Composite tableBehaviorComposite;
@@ -61,9 +62,10 @@ public class ActivityTableComposite extends AbstractMainComposite {
     protected LocalDate endDate;
     protected Button forwardButton;
 
-    public ActivityTableComposite(Composite parent, ChildActivitiesTable table) {
+    public ActivityTableComposite(Composite parent, ChildActivitiesTable table, Runnable onDayAdded) {
         super(parent, SWT.NONE);
         this.table = table;
+        this.onDayAdded = onDayAdded;
         DayOfWeek today = LocalDate.now().getDayOfWeek();
         if (today.equals(DayOfWeek.SATURDAY) || today.equals(DayOfWeek.SUNDAY)) {
             startDate = LocalDate.now().with(TemporalAdjusters.previous(DayOfWeek.MONDAY));
@@ -80,7 +82,7 @@ public class ActivityTableComposite extends AbstractMainComposite {
         topPart.setLayout(GridLayoutFactory.swtDefaults().numColumns(2).equalWidth(false).create());
         topPart.setLayoutData(GridDataFactory.swtDefaults().grab(true, false).align(SWT.FILL, SWT.CENTER).create());
 
-        createLabel(topPart, table.getActivitiesTableScheme().getName());
+        createLabel(topPart, table.getChild().getName() + " " + table.getChild().getSurname());
         createTopControlsButtonsComposite(topPart);
     }
 
@@ -140,6 +142,7 @@ public class ActivityTableComposite extends AbstractMainComposite {
                 Stream.of(tableBehaviorComposite.getChildren()).forEach(Widget::dispose);
                 fillTableBehaviorComposite(tableBehaviorComposite);
                 scrolledComposite.layout(true, true);
+                onDayAdded.run();
             }
         });
         return backButton;
@@ -164,6 +167,7 @@ public class ActivityTableComposite extends AbstractMainComposite {
                 Stream.of(tableBehaviorComposite.getChildren()).forEach(Widget::dispose);
                 fillTableBehaviorComposite(tableBehaviorComposite);
                 scrolledComposite.layout(true, true);
+                onDayAdded.run();
             }
         });
         forwardButton.setEnabled(canShowNextWeek());
@@ -211,7 +215,7 @@ public class ActivityTableComposite extends AbstractMainComposite {
     protected void fillTableBehaviorComposite(Composite parent) {
         List<ChildActivitiesTableDay> days = table.getDays(startDate, endDate).orElseGet(() -> {
             table.generateDay(startDate, endDate);
-            table = childActivitiesTableRepository.saveAndFlush(table);
+            table = childRepository.saveAndFlush(table.getChild()).getChildActivitiesTable();
             return table.getDays(startDate, endDate).get();
         });
         generateHeader(days, parent);

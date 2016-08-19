@@ -81,6 +81,12 @@
             <artifactId>commons-validator</artifactId>
             <version>1.5.1</version>
         </dependency>
+        <dependency>
+            <groupId>org.apache.poi</groupId>
+            <artifactId>poi</artifactId>
+            <version>3.15-beta2</version>
+        </dependency>
+
 
         <!-- JavaMail API-->
         <dependency>

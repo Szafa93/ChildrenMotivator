@@ -72,7 +72,6 @@ public class ConfigurationDialog extends Dialog {
         createBooleanProperty(groupPropertiesComposite, "Połączenie SSL: ", sslConnection, newValue -> sslConnection = newValue);
         createProperty(groupPropertiesComposite, "Nazwa użytkownika: ", mailUser, newValue -> mailUser = newValue);
         createProperty(groupPropertiesComposite, "Hasło użytkownika: ", mailPassword, newValue -> mailPassword = newValue, true);
-
     }
 
     private void createProperty(Composite parent, String propertyName, String initialValue, Consumer<String> modifyValueConsumer) {

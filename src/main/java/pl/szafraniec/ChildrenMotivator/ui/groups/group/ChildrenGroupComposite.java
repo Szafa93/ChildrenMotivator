@@ -22,6 +22,7 @@ import org.springframework.stereotype.Component;
 import pl.szafraniec.ChildrenMotivator.model.Child;
 import pl.szafraniec.ChildrenMotivator.model.ChildrenGroup;
 import pl.szafraniec.ChildrenMotivator.repository.ChildrenGroupRepository;
+import pl.szafraniec.ChildrenMotivator.services.StatisticsService;
 import pl.szafraniec.ChildrenMotivator.ui.AbstractMainComposite;
 import pl.szafraniec.ChildrenMotivator.ui.Fonts;
 import pl.szafraniec.ChildrenMotivator.ui.child.ChildComposite;
@@ -37,6 +38,9 @@ public class ChildrenGroupComposite extends AbstractMainComposite {
 
     @Autowired
     private ChildrenGroupRepository childrenGroupRepository;
+
+    @Autowired
+    private StatisticsService statisticsService;
 
     private ChildrenGroup childrenGroup;
 
@@ -174,7 +178,7 @@ public class ChildrenGroupComposite extends AbstractMainComposite {
     private void createSendStatisticButton(Composite parent) {
         Button sendStatistic = new Button(parent, SWT.PUSH | SWT.WRAP);
         sendStatistic.setLayoutData(DEFAULT_CONTROL_BUTTON_FACTORY.create());
-        sendStatistic.setText("Wślij statystyki do rodziców");
+        sendStatistic.setText("Wyślij statystyki do rodziców");
         sendStatistic.setFont(FontDescriptor.createFrom(Fonts.DEFAULT_FONT_DATA).createFont(sendStatistic.getDisplay()));
         sendStatistic.addMouseListener(new MouseAdapter() {
             @Override
@@ -182,7 +186,7 @@ public class ChildrenGroupComposite extends AbstractMainComposite {
                 SendStatisticDialog dialog = new SendStatisticDialog(shell);
                 applicationContext.getAutowireCapableBeanFactory().autowireBean(dialog);
                 if (Window.OK == dialog.open()) {
-                    // send that bullshit
+                    statisticsService.sendStatistics(childrenGroup, dialog.getStart(), dialog.getEnd());
                 }
             }
         });

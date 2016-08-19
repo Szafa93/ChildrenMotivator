@@ -25,7 +25,7 @@ import pl.szafraniec.ChildrenMotivator.model.ChildActivitiesTable;
 import pl.szafraniec.ChildrenMotivator.model.ChildActivitiesTableDay;
 import pl.szafraniec.ChildrenMotivator.model.GradeScheme;
 import pl.szafraniec.ChildrenMotivator.model.TableCell;
-import pl.szafraniec.ChildrenMotivator.repository.ChildActivitiesTableRepository;
+import pl.szafraniec.ChildrenMotivator.repository.ChildRepository;
 import pl.szafraniec.ChildrenMotivator.ui.AbstractMainComposite;
 import pl.szafraniec.ChildrenMotivator.ui.DoubleBufferedChartPanel;
 import pl.szafraniec.ChildrenMotivator.ui.child.ChildComposite;
@@ -49,7 +49,7 @@ import java.util.stream.Stream;
 public class ChartComposite extends AbstractMainComposite {
 
     @Autowired
-    private ChildActivitiesTableRepository childActivitiesTableRepository;
+    private ChildRepository childRepository;
 
     private ChildActivitiesTable table;
 
@@ -185,7 +185,7 @@ public class ChartComposite extends AbstractMainComposite {
     private void fillChart(Composite chartComposite) {
         List<ChildActivitiesTableDay> days = table.getDays(startDate, endDate).orElseGet(() -> {
             table.generateDay(startDate, endDate);
-            table = childActivitiesTableRepository.saveAndFlush(table);
+            table = childRepository.saveAndFlush(table.getChild()).getChildActivitiesTable();
             return table.getDays(startDate, endDate).get();
         });
 

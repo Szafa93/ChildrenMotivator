@@ -1,5 +1,6 @@
 package pl.szafraniec.ChildrenMotivator.ui.child.dialog;
 
+import org.apache.commons.validator.routines.EmailValidator;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.layout.GridLayoutFactory;
@@ -20,6 +21,7 @@ public class EditChildDialog extends Dialog {
     private ChildRepository childRepository;
 
     private String shellName;
+    private final int id;
 
     private String name;
 
@@ -30,16 +32,17 @@ public class EditChildDialog extends Dialog {
     private String parentEmail;
 
     public EditChildDialog(Shell shell) {
-        this(shell, "", "", "", "", "Dodaj dziecko");
+        this(shell, "", "", "", "", "Dodaj dziecko", -1);
     }
 
-    public EditChildDialog(Shell parentShell, String name, String surname, String pesel, String parentEmail, String shellName) {
+    public EditChildDialog(Shell parentShell, String name, String surname, String pesel, String parentEmail, String shellName, int id) {
         super(parentShell);
         this.name = name;
         this.surname = surname;
         this.pesel = pesel;
         this.parentEmail = parentEmail;
         this.shellName = shellName;
+        this.id = id;
     }
 
     @Override
@@ -82,8 +85,8 @@ public class EditChildDialog extends Dialog {
         return name.trim().length() != 0
                 && surname.trim().length() != 0
                 && pesel.trim().length() != 0
-                && childRepository.findByPesel(pesel) == null
-                && (parentEmail.trim().length() == 0 || parentEmail.contains("@"));
+                && (childRepository.findByPesel(pesel) == null || childRepository.findByPesel(pesel).getId() == id)
+                && (parentEmail.trim().length() == 0 || EmailValidator.getInstance().isValid(parentEmail));
     }
 
     @Override
