@@ -57,9 +57,9 @@ public class ActivityTableComposite extends AbstractMainComposite {
     private ScrolledComposite scrolledComposite;
     private Composite tableBehaviorComposite;
 
-    private LocalDate startDate;
-    private LocalDate endDate;
-    private Button forwardButton;
+    protected LocalDate startDate;
+    protected LocalDate endDate;
+    protected Button forwardButton;
 
     public ActivityTableComposite(Composite parent, ChildActivitiesTable table) {
         super(parent, SWT.NONE);
@@ -111,17 +111,22 @@ public class ActivityTableComposite extends AbstractMainComposite {
     }
 
     @Override
-    protected void createDownPart() {
+    protected Composite createDownPart() {
         Composite downPart = new Composite(this, SWT.NONE);
         downPart.setLayout(GridLayoutFactory.swtDefaults().numColumns(3).create());
         downPart.setLayoutData(GridDataFactory.swtDefaults().grab(true, true).align(SWT.FILL, SWT.FILL).create());
         createBackButton(downPart);
         createTableBehaviorComposite(downPart);
-        forwardButton = createForwardButton(downPart);
+        createForwardButton(downPart);
+        return downPart;
     }
 
-    private Button createBackButton(Composite parent) {
-        Button backButton = new Button(parent, SWT.PUSH | SWT.WRAP);
+    protected Button createBackButton(Composite parent) {
+        return createBackButton(parent, SWT.PUSH | SWT.WRAP);
+    }
+
+    protected Button createBackButton(Composite parent, int style) {
+        Button backButton = new Button(parent, style);
         StringJoiner joiner = new StringJoiner(System.lineSeparator());
         "Poprzedni tydzień".chars().mapToObj(i -> (char) i).map(String::valueOf).forEachOrdered(joiner::add);
         backButton.setText(joiner.toString());
@@ -140,8 +145,12 @@ public class ActivityTableComposite extends AbstractMainComposite {
         return backButton;
     }
 
-    private Button createForwardButton(Composite parent) {
-        Button forwardButton = new Button(parent, SWT.PUSH | SWT.WRAP);
+    protected Button createForwardButton(Composite parent) {
+        return createForwardButton(parent, SWT.PUSH | SWT.WRAP);
+    }
+
+    protected Button createForwardButton(Composite parent, int style) {
+        forwardButton = new Button(parent, style);
         StringJoiner joiner = new StringJoiner(System.lineSeparator());
         "Następny tydzień".chars().mapToObj(i -> (char) i).map(String::valueOf).forEachOrdered(joiner::add);
         forwardButton.setText(joiner.toString());
@@ -172,8 +181,12 @@ public class ActivityTableComposite extends AbstractMainComposite {
         return endDate.isBefore(lastPossibleDate);
     }
 
-    private Composite createTableBehaviorComposite(Composite parent) {
-        scrolledComposite = new ScrolledComposite(parent, SWT.V_SCROLL | SWT.H_SCROLL | SWT.BORDER);
+    protected Composite createTableBehaviorComposite(Composite parent) {
+        return createTableBehaviorComposite(parent, SWT.V_SCROLL | SWT.H_SCROLL | SWT.BORDER);
+    }
+
+    protected Composite createTableBehaviorComposite(Composite parent, int style) {
+        scrolledComposite = new ScrolledComposite(parent, style);
         scrolledComposite.setLayoutData(GridDataFactory.swtDefaults().grab(true, true).align(SWT.FILL, SWT.FILL).create());
         scrolledComposite.setExpandVertical(true);
         scrolledComposite.setExpandHorizontal(true);
@@ -195,7 +208,7 @@ public class ActivityTableComposite extends AbstractMainComposite {
         return scrolledComposite;
     }
 
-    private void fillTableBehaviorComposite(Composite parent) {
+    protected void fillTableBehaviorComposite(Composite parent) {
         List<ChildActivitiesTableDay> days = table.getDays(startDate, endDate).orElseGet(() -> {
             table.generateDay(startDate, endDate);
             table = childActivitiesTableRepository.saveAndFlush(table);

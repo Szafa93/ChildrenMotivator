@@ -98,11 +98,12 @@ public class ActivitiesComposite extends AbstractMainComposite {
     }
 
     @Override
-    protected void createDownPart() {
+    protected Composite createDownPart() {
         Composite downPart = new Composite(this, SWT.NONE);
         downPart.setLayout(GridLayoutFactory.swtDefaults().numColumns(1).create());
         downPart.setLayoutData(GridDataFactory.swtDefaults().grab(true, true).align(SWT.FILL, SWT.FILL).create());
         createActivitiesComposite(downPart);
+        return downPart;
     }
 
     private Composite createActivitiesComposite(Composite parent) {

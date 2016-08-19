@@ -49,7 +49,7 @@ public abstract class AbstractMainComposite extends Composite {
 
     protected abstract void createTopPart();
 
-    protected abstract void createDownPart();
+    protected abstract Composite createDownPart();
 
     protected Label createLabel(Composite parent, String text) {
         Label label = new Label(parent, SWT.WRAP);

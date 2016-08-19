@@ -34,7 +34,7 @@ public class StartComposite extends AbstractMainComposite {
         createLabel(topPart, "Children Motivator");
     }
 
-    protected void createDownPart() {
+    protected Composite createDownPart() {
         Composite downPart = new Composite(this, SWT.NONE);
         downPart.setLayout(GridLayoutFactory.swtDefaults()
                 .numColumns(1)
@@ -48,6 +48,7 @@ public class StartComposite extends AbstractMainComposite {
         createButton(downPart, "Możliwe oceny", GradesSchemesComposite.class);
         createButton(downPart, "Możliwe aktywności", ActivitiesComposite.class);
         createButton(downPart, "Schematy tablic aktywności", ActivitiesTableSchemesComposite.class);
+        return downPart;
     }
 
     private void createButton(Composite parent, String text, Class compositeClass) {

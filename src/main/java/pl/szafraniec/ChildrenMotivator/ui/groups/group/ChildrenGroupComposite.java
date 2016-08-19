@@ -71,12 +71,13 @@ public class ChildrenGroupComposite extends AbstractMainComposite {
     }
 
     @Override
-    protected void createDownPart() {
+    protected Composite createDownPart() {
         Composite downPart = new Composite(this, SWT.NONE);
         downPart.setLayout(GridLayoutFactory.swtDefaults().numColumns(2).create());
         downPart.setLayoutData(GridDataFactory.swtDefaults().grab(true, true).align(SWT.FILL, SWT.FILL).create());
         createChildrenComposite(downPart);
         createDownControlsButtonsComposite(downPart);
+        return downPart;
     }
 
     private Composite createChildrenComposite(Composite parent) {

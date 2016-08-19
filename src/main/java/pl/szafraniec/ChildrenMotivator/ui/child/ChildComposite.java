@@ -26,6 +26,7 @@ import pl.szafraniec.ChildrenMotivator.repository.ChildrenGroupRepository;
 import pl.szafraniec.ChildrenMotivator.ui.AbstractMainComposite;
 import pl.szafraniec.ChildrenMotivator.ui.Fonts;
 import pl.szafraniec.ChildrenMotivator.ui.activities.dialog.ActivityTableSelectorDialog;
+import pl.szafraniec.ChildrenMotivator.ui.activities.tableSchemes.ActivitiesTableSchemeStatisticsComposite;
 import pl.szafraniec.ChildrenMotivator.ui.activities.tableSchemes.ChartComposite;
 import pl.szafraniec.ChildrenMotivator.ui.child.dialog.EditChildDialog;
 import pl.szafraniec.ChildrenMotivator.ui.groups.dialog.GroupSelectorDialog;
@@ -76,12 +77,13 @@ public class ChildComposite extends AbstractMainComposite {
     }
 
     @Override
-    protected void createDownPart() {
+    protected Composite createDownPart() {
         Composite downPart = new Composite(this, SWT.NONE);
         downPart.setLayout(GridLayoutFactory.swtDefaults().numColumns(2).create());
         downPart.setLayoutData(GridDataFactory.swtDefaults().grab(true, true).align(SWT.FILL, SWT.FILL).create());
         createChildComposite(downPart);
         createDownControlsButtonsComposite(downPart);
+        return downPart;
     }
 
     private Composite createChildComposite(Composite parent) {
@@ -94,7 +96,7 @@ public class ChildComposite extends AbstractMainComposite {
     }
 
     private void fillChildProperties(Composite childPropertiesComposite) {
-        childPropertiesComposite.setLayoutData(GridDataFactory.fillDefaults().grab(true, false).align(SWT.FILL, SWT.FILL).create());
+        childPropertiesComposite.setLayoutData(GridDataFactory.fillDefaults().grab(true, true).align(SWT.FILL, SWT.FILL).create());
         childPropertiesComposite.setLayout(GridLayoutFactory.fillDefaults().numColumns(2).create());
         createChildProperty(childPropertiesComposite, "Imię:", child.getName());
         createChildProperty(childPropertiesComposite, "Nazwisko:", child.getSurname());
@@ -102,6 +104,7 @@ public class ChildComposite extends AbstractMainComposite {
         createChildProperty(childPropertiesComposite, "Email rodzica:", child.getParentEmail());
         createChildProperty(childPropertiesComposite, "Grupa:", child.getChildrenGroup().getName());
         createActivityTableProperties(childPropertiesComposite, "Tablica aktywności:");
+        createActivityTableStatistics(childPropertiesComposite, "Średnia ocen z aktywności");
     }
 
     private void createChildProperty(Composite parent, String propertyName, String propertyValue) {
@@ -131,6 +134,17 @@ public class ChildComposite extends AbstractMainComposite {
                 }
             });
         }
+    }
+
+    private void createActivityTableStatistics(Composite parent, String compositeName) {
+        Label separator = new Label(parent, SWT.HORIZONTAL | SWT.SEPARATOR);
+        separator.setLayoutData(GridDataFactory.fillDefaults().grab(true, false).align(SWT.FILL, SWT.FILL).span(2, 1).create());
+        Label label = new Label(parent, SWT.NONE);
+        label.setText(compositeName);
+        label.setLayoutData(GridDataFactory.fillDefaults().grab(true, false).align(SWT.CENTER, SWT.CENTER).span(2, 1).create());
+        ActivitiesTableSchemeStatisticsComposite composite = (ActivitiesTableSchemeStatisticsComposite)
+                applicationContext.getBean("ActivitiesTableSchemeStatisticsComposite", parent, child.getChildActivitiesTable());
+        composite.setLayoutData(GridDataFactory.fillDefaults().align(SWT.FILL, SWT.FILL).grab(true, true).span(2, 1).create());
     }
 
     private Control createTableButton(Composite parent) {
