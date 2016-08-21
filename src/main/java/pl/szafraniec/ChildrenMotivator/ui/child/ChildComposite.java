@@ -181,7 +181,7 @@ public class ChildComposite extends AbstractMainComposite {
         showChart.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseUp(MouseEvent e) {
-                applicationContext.getBean(ChartComposite.class, shell, child.get().getChildActivitiesTable());
+                applicationContext.getBean(ChartComposite.class, shell, child);
                 dispose();
                 shell.layout(true, true);
             }
