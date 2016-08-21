@@ -15,8 +15,8 @@ public class Program {
         Display display = CTX.getBean(Display.class);
         Shell shell = CTX.getBean(Shell.class);
         shell.setLayout(new FillLayout());
-        shell.setSize(750, 500);
-        shell.setMinimumSize(750, 500);
+        shell.setSize(1115, 500);
+        shell.setMinimumSize(1115, 500);
         CTX.getBean(StartComposite.class, (Composite) shell);
         shell.layout(true, true);
         shell.open();
