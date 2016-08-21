@@ -13,7 +13,7 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.springframework.beans.factory.annotation.Autowired;
 import pl.szafraniec.ChildrenMotivator.model.ChildrenGroup;
-import pl.szafraniec.ChildrenMotivator.repository.ChildrenGroupRepository;
+import pl.szafraniec.ChildrenMotivator.services.ChildrenGroupService;
 
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -21,7 +21,7 @@ import java.util.stream.Collectors;
 public class GroupSelectorDialog extends Dialog {
 
     @Autowired
-    private ChildrenGroupRepository childrenGroupRepository;
+    private ChildrenGroupService childrenGroupService;
 
     private ChildrenGroup childrenGroup;
 
@@ -52,7 +52,7 @@ public class GroupSelectorDialog extends Dialog {
         propertyNameLabel.setLayoutData(GridDataFactory.fillDefaults().align(SWT.FILL, SWT.FILL).grab(false, false).create());
         propertyNameLabel.setText("Grupa:");
         Combo combo = new Combo(parent, SWT.DROP_DOWN | SWT.READ_ONLY);
-        Map<String, ChildrenGroup> comboMap = childrenGroupRepository.findAll().stream().collect(
+        Map<String, ChildrenGroup> comboMap = childrenGroupService.findAll().stream().collect(
                 Collectors.toMap(ChildrenGroup::getName, g -> g));
         combo.setLayoutData(GridDataFactory.fillDefaults().align(SWT.FILL, SWT.FILL).grab(true, false).create());
         comboMap.keySet().forEach(combo::add);

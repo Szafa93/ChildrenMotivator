@@ -20,9 +20,7 @@ import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import pl.szafraniec.ChildrenMotivator.model.GradeScheme;
-import pl.szafraniec.ChildrenMotivator.model.TableCell;
-import pl.szafraniec.ChildrenMotivator.repository.GradeSchemeRepository;
-import pl.szafraniec.ChildrenMotivator.repository.TableCellRepository;
+import pl.szafraniec.ChildrenMotivator.services.GradeSchemeService;
 import pl.szafraniec.ChildrenMotivator.ui.AbstractMainComposite;
 import pl.szafraniec.ChildrenMotivator.ui.Fonts;
 import pl.szafraniec.ChildrenMotivator.ui.Images;
@@ -35,11 +33,14 @@ import java.io.ByteArrayInputStream;
 @Scope(scopeName = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 public class GradeSchemeComposite extends AbstractMainComposite {
 
-    @Autowired
-    private GradeSchemeRepository gradeSchemeRepository;
+    //    @Autowired
+    //    private GradeSchemeRepository gradeSchemeRepository;
+    //
+    //    @Autowired
+    //    private TableCellRepository tableCellRepository;
 
     @Autowired
-    private TableCellRepository tableCellRepository;
+    private GradeSchemeService gradeSchemeService;
 
     private GradeScheme gradeScheme;
 
@@ -122,17 +123,8 @@ public class GradeSchemeComposite extends AbstractMainComposite {
 
         createEditButton(controlsButtonsComposite);
         Button removeButton = createRemoveButton(controlsButtonsComposite, this::removeGradeScheme);
-        removeButton.setEnabled(canRemove());
+        removeButton.setEnabled(gradeSchemeService.canRemove(gradeScheme));
         return controlsButtonsComposite;
-    }
-
-    private boolean canRemove() {
-        return !tableCellRepository.findAll()
-                .stream()
-                .map(TableCell::getGradeScheme)
-                .filter(gradeScheme -> gradeScheme != null)
-                .mapToInt(GradeScheme::getId)
-                .anyMatch(id -> id == gradeScheme.getId());
     }
 
     private void createEditButton(Composite parent) {
@@ -149,8 +141,7 @@ public class GradeSchemeComposite extends AbstractMainComposite {
     }
 
     private void removeGradeScheme() {
-        gradeSchemeRepository.delete(gradeScheme);
-        gradeSchemeRepository.flush();
+        gradeSchemeService.remove(gradeScheme);
 
         applicationContext.getBean(GradesSchemesComposite.class, shell);
         dispose();
@@ -169,9 +160,7 @@ public class GradeSchemeComposite extends AbstractMainComposite {
     }
 
     private void editGradeScheme(int gradeValue, byte[] imageByte) {
-        gradeScheme.setValue(gradeValue);
-        gradeScheme.setImage(imageByte);
-        gradeScheme = gradeSchemeRepository.saveAndFlush(gradeScheme);
+        gradeScheme = gradeSchemeService.edit(gradeScheme, gradeValue, imageByte);
         label.setText(Integer.toString(gradeValue));
         Image imageData = new Image(getShell().getDisplay(), new ByteArrayInputStream(gradeScheme.getImage()));
         imageData = Images.resize(getShell().getDisplay(), imageData);

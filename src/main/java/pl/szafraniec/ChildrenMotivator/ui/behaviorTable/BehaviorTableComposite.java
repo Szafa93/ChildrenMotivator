@@ -22,8 +22,9 @@ import org.springframework.stereotype.Component;
 import pl.szafraniec.ChildrenMotivator.model.BehaviorTableDay;
 import pl.szafraniec.ChildrenMotivator.model.Child;
 import pl.szafraniec.ChildrenMotivator.model.ChildrenGroup;
+import pl.szafraniec.ChildrenMotivator.model.Holder;
 import pl.szafraniec.ChildrenMotivator.model.TableCell;
-import pl.szafraniec.ChildrenMotivator.repository.ChildrenGroupRepository;
+import pl.szafraniec.ChildrenMotivator.services.ChildrenGroupService;
 import pl.szafraniec.ChildrenMotivator.ui.AbstractMainComposite;
 import pl.szafraniec.ChildrenMotivator.ui.DayOfWeekLocalization;
 import pl.szafraniec.ChildrenMotivator.ui.Fonts;
@@ -49,7 +50,7 @@ public class BehaviorTableComposite extends AbstractMainComposite {
             true).create();
 
     @Autowired
-    private ChildrenGroupRepository childrenGroupRepository;
+    private ChildrenGroupService childrenGroupService;
 
     protected ChildrenGroup childrenGroup;
     private ScrolledComposite scrolledComposite;
@@ -179,11 +180,9 @@ public class BehaviorTableComposite extends AbstractMainComposite {
     }
 
     private void fillTableBehaviorComposite(Composite parent) {
-        List<BehaviorTableDay> days = childrenGroup.getBehaviorTable().getDays(startDate, endDate).orElseGet(() -> {
-            childrenGroup.getBehaviorTable().generateDay(startDate, endDate);
-            childrenGroup = childrenGroupRepository.saveAndFlush(childrenGroup);
-            return childrenGroup.getBehaviorTable().getDays(startDate, endDate).get();
-        });
+        Holder<ChildrenGroup> holder = Holder.of(childrenGroup);
+        List<BehaviorTableDay> days = childrenGroupService.getDays(holder, startDate, endDate);
+        childrenGroup = holder.get();
         generateHeader(days, parent);
         childrenGroup.getChildren().stream().forEachOrdered(child -> generateRowFor(child, days, parent));
     }

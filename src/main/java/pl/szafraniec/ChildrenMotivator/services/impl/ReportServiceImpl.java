@@ -10,8 +10,9 @@ import pl.szafraniec.ChildrenMotivator.model.Child;
 import pl.szafraniec.ChildrenMotivator.model.ChildActivitiesTableDay;
 import pl.szafraniec.ChildrenMotivator.model.ChildrenGroup;
 import pl.szafraniec.ChildrenMotivator.model.GradeScheme;
+import pl.szafraniec.ChildrenMotivator.services.ConfigurationService;
 import pl.szafraniec.ChildrenMotivator.services.EmailService;
-import pl.szafraniec.ChildrenMotivator.services.RaportService;
+import pl.szafraniec.ChildrenMotivator.services.ReportService;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -20,13 +21,16 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Component
-public class RaportServiceImpl implements RaportService {
+public class ReportServiceImpl implements ReportService {
 
     @Autowired
     private EmailService emailService;
 
+    @Autowired
+    private ConfigurationService configurationService;
+
     @Override
-    public void sendRaport(ChildrenGroup childrenGroup, LocalDate from, LocalDate to) {
+    public void sendReports(ChildrenGroup childrenGroup, LocalDate from, LocalDate to) {
         childrenGroup.getChildren().stream().filter(child -> child.getParentEmail() != null).forEach(child -> {
             try {
                 byte[] xlsx = generateStatisticsXlsx(child, from, to);
@@ -36,6 +40,11 @@ public class RaportServiceImpl implements RaportService {
                 e.printStackTrace();
             }
         });
+    }
+
+    @Override
+    public boolean canSendReports() {
+        return configurationService.getConfiguration().isConfigured();
     }
 
     private byte[] generateStatisticsXlsx(Child child, LocalDate startDate, LocalDate endDate) throws IOException {

@@ -16,13 +16,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
-import pl.szafraniec.ChildrenMotivator.model.ActivitiesTableScheme;
-import pl.szafraniec.ChildrenMotivator.model.BehaviorTableDay;
 import pl.szafraniec.ChildrenMotivator.model.Child;
-import pl.szafraniec.ChildrenMotivator.model.ChildrenGroup;
-import pl.szafraniec.ChildrenMotivator.model.TableCell;
-import pl.szafraniec.ChildrenMotivator.repository.ChildRepository;
-import pl.szafraniec.ChildrenMotivator.repository.ChildrenGroupRepository;
+import pl.szafraniec.ChildrenMotivator.services.ChildService;
 import pl.szafraniec.ChildrenMotivator.ui.AbstractMainComposite;
 import pl.szafraniec.ChildrenMotivator.ui.Fonts;
 import pl.szafraniec.ChildrenMotivator.ui.activities.dialog.ActivityTableSelectorDialog;
@@ -32,18 +27,18 @@ import pl.szafraniec.ChildrenMotivator.ui.child.dialog.EditChildDialog;
 import pl.szafraniec.ChildrenMotivator.ui.groups.dialog.GroupSelectorDialog;
 import pl.szafraniec.ChildrenMotivator.ui.groups.group.ChildrenGroupComposite;
 
-import java.util.ArrayList;
-
 @Component
 @Scope(scopeName = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 public class ChildComposite extends AbstractMainComposite {
-    // TODO add button for activity table
+
+    //    @Autowired
+    //    private ChildRepository childRepository;
+    //
+    //    @Autowired
+    //    private ChildrenGroupRepository childrenGroupRepository;
 
     @Autowired
-    private ChildRepository childRepository;
-
-    @Autowired
-    private ChildrenGroupRepository childrenGroupRepository;
+    private ChildService childService;
 
     private Child child;
 
@@ -146,24 +141,9 @@ public class ChildComposite extends AbstractMainComposite {
         if (child.getChildActivitiesTable().getActivitiesTableScheme() != null) {
             ActivitiesTableSchemeStatisticsComposite composite = (ActivitiesTableSchemeStatisticsComposite)
                     applicationContext.getBean("ActivitiesTableSchemeStatisticsComposite", parent, child.getChildActivitiesTable(),
-                            (Runnable) () -> child = childRepository.findOne(child.getId()));
+                            (Runnable) () -> child = childService.findOne(child.getId()));
             composite.setLayoutData(GridDataFactory.fillDefaults().align(SWT.FILL, SWT.FILL).grab(true, true).span(2, 1).create());
         }
-    }
-
-    private Control createTableButton(Composite parent) {
-        Composite composite = new Composite(parent, SWT.NONE);
-        composite.setLayoutData(DEFAULT_CONTROL_BUTTON_FACTORY.copy().grab(true, false).align(SWT.FILL,
-                SWT.CENTER).create());
-        composite.setLayout(GridLayoutFactory.fillDefaults().numColumns(3).create());
-        Button tableButton = new Button(composite, SWT.WRAP);
-        tableButton.setText(child.getChildActivitiesTable().getActivitiesTableScheme().getName());
-        //tableButton.setFont(FontDescriptor.createFrom(Fonts.DEFAULT_FONT_DATA).createFont(tableButton.getDisplay()));
-
-        tableButton.setLayoutData(DEFAULT_CONTROL_BUTTON_FACTORY.copy().grab(true, true).align(SWT.END,
-                SWT.CENTER).create());
-
-        return composite;
     }
 
     private Composite createDownControlsButtonsComposite(Composite parent) {
@@ -190,10 +170,7 @@ public class ChildComposite extends AbstractMainComposite {
             public void mouseUp(MouseEvent e) {
                 if (MessageDialog.openConfirm(shell, "Potwierdzenie usunięcia",
                         "Usunięta zostanie ta tablica wraz ze wszystkimi ocenami" + System.lineSeparator() + "Czy chcesz kontynuować?")) {
-                    child.getChildActivitiesTable().setActivitiesTableScheme(null);
-                    child.getChildActivitiesTable().setDays(new ArrayList<>());
-                    child = childRepository.saveAndFlush(child);
-
+                    child = childService.removeActivityTable(child);
                     applicationContext.getBean(ChildComposite.class, shell, child);
                     dispose();
                     shell.layout(true, true);
@@ -245,12 +222,7 @@ public class ChildComposite extends AbstractMainComposite {
     }
 
     private void removeChild() {
-        ChildrenGroup group = child.getChildrenGroup();
-        group.getChildren().remove(child);
-        childRepository.delete(child);
-        group.getBehaviorTable().getDays().stream().map(BehaviorTableDay::getGrades).forEach(gradeMap -> gradeMap.remove(child));
-        group = childrenGroupRepository.saveAndFlush(group);
-        applicationContext.getBean(ChildrenGroupComposite.class, shell, group);
+        applicationContext.getBean(ChildrenGroupComposite.class, shell, childService.removeChild(child));
         dispose();
         shell.layout(true, true);
     }
@@ -273,11 +245,7 @@ public class ChildComposite extends AbstractMainComposite {
                 "Edytuj", child.getId());
         applicationContext.getAutowireCapableBeanFactory().autowireBean(dialog);
         if (Window.OK == dialog.open()) {
-            child.setName(dialog.getName());
-            child.setSurname(dialog.getSurname());
-            child.setParentEmail(dialog.getParentEmail());
-            child.setPesel(dialog.getPesel());
-            child = childRepository.saveAndFlush(child);
+            childService.editChild(child, dialog.getName(), dialog.getSurname(), dialog.getPesel(), dialog.getParentEmail());
             for (Control control : childPropertiesComposite.getChildren()) {
                 control.dispose();
             }
@@ -291,16 +259,7 @@ public class ChildComposite extends AbstractMainComposite {
         GroupSelectorDialog dialog = new GroupSelectorDialog(shell, child.getChildrenGroup());
         applicationContext.getAutowireCapableBeanFactory().autowireBean(dialog);
         if (Window.OK == dialog.open()) {
-            ChildrenGroup originalGroup = child.getChildrenGroup();
-            ChildrenGroup newGroup = dialog.getChildrenGroup();
-            child.setChildrenGroup(dialog.getChildrenGroup());
-            newGroup.getChildren().add(child);
-            newGroup.getBehaviorTable().getDays().forEach(day -> day.getGrades().put(child, TableCell.TableCellBuilder.create()));
-            originalGroup.getChildren().remove(child);
-            originalGroup.getBehaviorTable().getDays().stream().map(BehaviorTableDay::getGrades).forEach(
-                    gradeMap -> gradeMap.remove(child));
-            childrenGroupRepository.save(newGroup);
-            child = childRepository.saveAndFlush(child);
+            child = childService.changeGroup(child, dialog.getChildrenGroup());
             for (Control control : childPropertiesComposite.getChildren()) {
                 control.dispose();
             }
@@ -314,26 +273,7 @@ public class ChildComposite extends AbstractMainComposite {
         ActivityTableSelectorDialog dialog = new ActivityTableSelectorDialog(shell, child.getChildActivitiesTable().getActivitiesTableScheme());
         applicationContext.getAutowireCapableBeanFactory().autowireBean(dialog);
         if (Window.OK == dialog.open()) {
-            ActivitiesTableScheme scheme = dialog.getActivitiesTableScheme();
-            ActivitiesTableScheme oldScheme = child.getChildActivitiesTable().getActivitiesTableScheme();
-            if (oldScheme != null) {
-                oldScheme.getListOfActivities()
-                        .stream()
-                        .filter(activity -> !scheme.getListOfActivities().contains(activity))
-                        .forEach(activity -> child.getChildActivitiesTable()
-                                .getDays()
-                                .forEach(day -> day.getGrades().remove(activity)));
-                scheme.getListOfActivities()
-                        .stream()
-                        .filter(activity -> !oldScheme.getListOfActivities().contains(activity))
-                        .forEach(activity -> child.getChildActivitiesTable()
-                                .getDays()
-                                .forEach(day -> day.getGrades().put(activity, TableCell.TableCellBuilder.create())));
-            }
-            child.getChildActivitiesTable().setActivitiesTableScheme(scheme);
-
-
-            child = childRepository.saveAndFlush(child);
+            childService.setActivityTable(child, dialog.getActivitiesTableScheme());
             applicationContext.getBean(ChildComposite.class, shell, child);
             dispose();
             shell.layout(true, true);

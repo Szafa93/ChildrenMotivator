@@ -1,5 +1,8 @@
 package pl.szafraniec.ChildrenMotivator.model;
 
+import org.apache.commons.validator.routines.EmailValidator;
+import org.apache.commons.validator.routines.IntegerValidator;
+
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -77,5 +80,15 @@ public class Configuration {
 
     public void setId(int id) {
         this.id = id;
+    }
+
+    public boolean isConfigured() {
+        return fromEmail.trim().length() > 0
+                && smtpHost.trim().length() > 0
+                && smtpPort.trim().length() > 0
+                && IntegerValidator.getInstance().isValid(smtpPort)
+                && mailUser.trim().length() > 0
+                && mailPassword.trim().length() > 0
+                && EmailValidator.getInstance().isValid(fromEmail);
     }
 }

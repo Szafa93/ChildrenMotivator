@@ -8,5 +8,9 @@ import java.util.List;
 public interface ActivitiesTableSchemeService {
     List<ActivitiesTableScheme> findAll();
 
-    ActivitiesTableScheme addActivitiesTableSchema(String name, List<Activity> activities);
+    ActivitiesTableScheme create(String name, List<Activity> activities);
+
+    ActivitiesTableScheme edit(ActivitiesTableScheme scheme, String name, List<Activity> activities);
+
+    void remove(ActivitiesTableScheme scheme);
 }

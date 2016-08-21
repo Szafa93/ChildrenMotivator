@@ -21,7 +21,7 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 import org.springframework.beans.factory.annotation.Autowired;
 import pl.szafraniec.ChildrenMotivator.model.GradeScheme;
-import pl.szafraniec.ChildrenMotivator.repository.GradeSchemeRepository;
+import pl.szafraniec.ChildrenMotivator.services.GradeSchemeService;
 import pl.szafraniec.ChildrenMotivator.ui.Images;
 
 import java.io.ByteArrayInputStream;
@@ -34,13 +34,17 @@ import java.util.StringJoiner;
 
 public class EditGradeSchemeDialog extends Dialog {
 
-    private final int id;
     @Autowired
-    private GradeSchemeRepository gradeSchemeRepository;
+    private GradeSchemeService gradeSchemeService;
+
+    private final int id;
 
     private String gradeValue;
+
     private String shellName;
+
     private byte[] fileData;
+
     private Label image;
 
     public EditGradeSchemeDialog(Shell shell) {
@@ -146,8 +150,7 @@ public class EditGradeSchemeDialog extends Dialog {
         if (value == null) {
             errors.add("Ocena nie jest liczbą całkowitą");
         } else {
-            GradeScheme gradeScheme = gradeSchemeRepository.findByValue(value);
-            if (gradeScheme != null && gradeScheme.getId() != id) {
+            if (gradeSchemeService.findByValue(value).map(GradeScheme::getId).map(id -> id != this.id).orElse(false)) {
                 errors.add("Ocena z ta wartością już istnieje");
             }
         }

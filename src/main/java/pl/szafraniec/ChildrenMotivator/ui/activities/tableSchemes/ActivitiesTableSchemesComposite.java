@@ -82,7 +82,7 @@ public class ActivitiesTableSchemesComposite extends AbstractMainComposite {
                 EditActivitiesTableSchemeDialog dialog = new EditActivitiesTableSchemeDialog(Display.getCurrent().getActiveShell());
                 applicationContext.getAutowireCapableBeanFactory().autowireBean(dialog);
                 if (Window.OK == dialog.open()) {
-                    ActivitiesTableScheme scheme = activitiesTableSchemeService.addActivitiesTableSchema(dialog.getActivitiesTableSchemeName(),
+                    ActivitiesTableScheme scheme = activitiesTableSchemeService.create(dialog.getActivitiesTableSchemeName(),
                             dialog.getActivities());
                     createActivitiesTableSchemeButton(scheme, activitiesTableSchemeComposite);
                     scrolledComposite.layout(true, true);

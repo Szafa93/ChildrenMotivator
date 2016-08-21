@@ -20,7 +20,7 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 import org.springframework.beans.factory.annotation.Autowired;
 import pl.szafraniec.ChildrenMotivator.model.GradeScheme;
-import pl.szafraniec.ChildrenMotivator.repository.GradeSchemeRepository;
+import pl.szafraniec.ChildrenMotivator.services.GradeSchemeService;
 import pl.szafraniec.ChildrenMotivator.ui.Fonts;
 import pl.szafraniec.ChildrenMotivator.ui.Images;
 
@@ -32,7 +32,7 @@ import java.util.stream.Collectors;
 public class GradeSelectorDialog extends Dialog {
 
     @Autowired
-    private GradeSchemeRepository gradeSchemeRepository;
+    private GradeSchemeService gradeSchemeService;
 
     private GradeScheme gradeScheme;
 
@@ -93,7 +93,7 @@ public class GradeSelectorDialog extends Dialog {
         activitiesComposite.setLayoutData(GridDataFactory.swtDefaults().grab(true, true).align(SWT.FILL, SWT.FILL).create());
         activitiesComposite.setLayout(GridLayoutFactory.swtDefaults().spacing(25, 25).numColumns(4).create());
 
-        gradeSchemeButtons = gradeSchemeRepository.findAll().stream().map(
+        gradeSchemeButtons = gradeSchemeService.findAll().stream().map(
                 gradeScheme -> createGradeSchemeButton(gradeScheme, activitiesComposite, button -> {
                     gradeSchemeButtons.stream().filter(b -> !b.equals(button)).forEach(b -> b.setSelection(false));
                 })).collect(Collectors.toList());

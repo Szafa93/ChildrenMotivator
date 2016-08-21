@@ -11,14 +11,15 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 import org.springframework.beans.factory.annotation.Autowired;
-import pl.szafraniec.ChildrenMotivator.repository.ChildRepository;
+import pl.szafraniec.ChildrenMotivator.model.Child;
+import pl.szafraniec.ChildrenMotivator.services.ChildService;
 
 import java.util.function.Consumer;
 
 public class EditChildDialog extends Dialog {
 
     @Autowired
-    private ChildRepository childRepository;
+    private ChildService childService;
 
     private String shellName;
     private final int id;
@@ -85,7 +86,7 @@ public class EditChildDialog extends Dialog {
         return name.trim().length() != 0
                 && surname.trim().length() != 0
                 && pesel.trim().length() != 0
-                && (childRepository.findByPesel(pesel) == null || childRepository.findByPesel(pesel).getId() == id)
+                && childService.findByPesel(pesel).map(Child::getId).map(id -> id == this.id).orElse(false)
                 && (parentEmail.trim().length() == 0 || EmailValidator.getInstance().isValid(parentEmail));
     }
 

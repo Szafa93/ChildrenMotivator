@@ -24,7 +24,7 @@ import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import pl.szafraniec.ChildrenMotivator.model.ChildrenGroup;
-import pl.szafraniec.ChildrenMotivator.repository.ChildrenGroupRepository;
+import pl.szafraniec.ChildrenMotivator.services.ChildrenGroupService;
 import pl.szafraniec.ChildrenMotivator.ui.AbstractMainComposite;
 import pl.szafraniec.ChildrenMotivator.ui.Fonts;
 import pl.szafraniec.ChildrenMotivator.ui.groups.dialog.EditChildrenGroupDialog;
@@ -38,7 +38,7 @@ import java.util.stream.Collectors;
 public class ChildrenGroupsComposite extends AbstractMainComposite {
 
     @Autowired
-    private ChildrenGroupRepository childrenGroupRepository;
+    private ChildrenGroupService childrenGroupService;
 
     private Composite childrenGroupComposite;
 
@@ -95,8 +95,7 @@ public class ChildrenGroupsComposite extends AbstractMainComposite {
 
     // TODO move to service
     private ChildrenGroup addChildrenGroup(String groupName) {
-        ChildrenGroup childrenGroup = ChildrenGroup.ChildrenGroupFactory.create(groupName);
-        return childrenGroupRepository.saveAndFlush(childrenGroup);
+        return childrenGroupService.create(groupName);
     }
 
     @Override
@@ -118,7 +117,7 @@ public class ChildrenGroupsComposite extends AbstractMainComposite {
         childrenGroupComposite.setLayoutData(GridDataFactory.swtDefaults().grab(true, true).align(SWT.FILL, SWT.FILL).create());
         childrenGroupComposite.setLayout(RowLayoutFactory.swtDefaults().pack(false).spacing(25).wrap(true).type(SWT.HORIZONTAL).create());
 
-        childrenGroupRepository.findAll().stream().map(group -> createChildrenGroupButton(group, childrenGroupComposite)).collect(
+        childrenGroupService.findAll().stream().map(group -> createChildrenGroupButton(group, childrenGroupComposite)).collect(
                 Collectors.toList());
 
         childrenGroupComposite.pack(true);

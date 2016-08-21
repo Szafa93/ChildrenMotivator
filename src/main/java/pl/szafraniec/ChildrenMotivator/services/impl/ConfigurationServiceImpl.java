@@ -19,4 +19,17 @@ public class ConfigurationServiceImpl implements ConfigurationService {
         }
         return configurationRepository.findAll().get(0);
     }
+
+    @Override
+    public Configuration editConfiguration(String fromEmail, String smtpHost, String smtpPort, String mailUser, String mailPassword,
+            boolean sslConnection) {
+        Configuration configuration = getConfiguration();
+        configuration.setFromEmail(fromEmail);
+        configuration.setMailPassword(mailPassword);
+        configuration.setMailUser(mailUser);
+        configuration.setSmtpHost(smtpHost);
+        configuration.setSmtpPort(smtpPort);
+        configuration.setSslConnection(sslConnection);
+        return configurationRepository.saveAndFlush(configuration);
+    }
 }

@@ -24,7 +24,7 @@ import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import pl.szafraniec.ChildrenMotivator.model.GradeScheme;
-import pl.szafraniec.ChildrenMotivator.repository.GradeSchemeRepository;
+import pl.szafraniec.ChildrenMotivator.services.GradeSchemeService;
 import pl.szafraniec.ChildrenMotivator.ui.AbstractMainComposite;
 import pl.szafraniec.ChildrenMotivator.ui.Fonts;
 import pl.szafraniec.ChildrenMotivator.ui.Images;
@@ -40,7 +40,7 @@ import java.util.stream.Collectors;
 public class GradesSchemesComposite extends AbstractMainComposite {
 
     @Autowired
-    private GradeSchemeRepository gradeSchemeRepository;
+    private GradeSchemeService gradeSchemeService;
 
     private Composite gradeSchemesComposite;
 
@@ -94,8 +94,7 @@ public class GradesSchemesComposite extends AbstractMainComposite {
     }
 
     private GradeScheme addGradeScheme(int value, byte[] image) {
-        GradeScheme gradeScheme = GradeScheme.GradeSchemeFactory.create(value, image);
-        return gradeSchemeRepository.saveAndFlush(gradeScheme);
+        return gradeSchemeService.create(value, image);
     }
 
     @Override
@@ -117,7 +116,7 @@ public class GradesSchemesComposite extends AbstractMainComposite {
         gradeSchemesComposite.setLayoutData(GridDataFactory.swtDefaults().grab(true, true).align(SWT.FILL, SWT.FILL).create());
         gradeSchemesComposite.setLayout(RowLayoutFactory.swtDefaults().pack(false).spacing(25).wrap(true).type(SWT.HORIZONTAL).create());
 
-        gradeSchemeRepository.findAll().stream().map(gradeScheme -> createGradeSchemeButton(gradeScheme, gradeSchemesComposite)).collect(
+        gradeSchemeService.findAll().stream().map(gradeScheme -> createGradeSchemeButton(gradeScheme, gradeSchemesComposite)).collect(
                 Collectors.toList());
 
         gradeSchemesComposite.pack(true);

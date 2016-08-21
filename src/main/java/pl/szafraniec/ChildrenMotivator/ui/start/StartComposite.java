@@ -14,7 +14,7 @@ import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import pl.szafraniec.ChildrenMotivator.model.Configuration;
-import pl.szafraniec.ChildrenMotivator.repository.ConfigurationRepository;
+import pl.szafraniec.ChildrenMotivator.services.ConfigurationService;
 import pl.szafraniec.ChildrenMotivator.ui.AbstractMainComposite;
 import pl.szafraniec.ChildrenMotivator.ui.ConfigurationDialog;
 import pl.szafraniec.ChildrenMotivator.ui.Fonts;
@@ -28,7 +28,7 @@ import pl.szafraniec.ChildrenMotivator.ui.groups.ChildrenGroupsComposite;
 public class StartComposite extends AbstractMainComposite {
 
     @Autowired
-    private ConfigurationRepository configurationRepository;
+    private ConfigurationService configurationService;
 
     public StartComposite(Composite parent) {
         super(parent, SWT.NONE);
@@ -61,7 +61,7 @@ public class StartComposite extends AbstractMainComposite {
     }
 
     private void editConfiguration() {
-        Configuration configuration = configurationRepository.findAll().get(0);
+        Configuration configuration = configurationService.getConfiguration();
         ConfigurationDialog dialog = new ConfigurationDialog(getShell(),
                 configuration.getFromEmail(),
                 configuration.getSmtpHost(),
@@ -70,13 +70,12 @@ public class StartComposite extends AbstractMainComposite {
                 configuration.getMailPassword(),
                 configuration.isSslConnection());
         if (Window.OK == dialog.open()) {
-            configuration.setFromEmail(dialog.getFromEmail());
-            configuration.setMailPassword(dialog.getMailPassword());
-            configuration.setMailUser(dialog.getMailUser());
-            configuration.setSmtpHost(dialog.getSmtpHost());
-            configuration.setSmtpPort(dialog.getSmtpPort());
-            configuration.setSslConnection(dialog.isSslConnection());
-            configuration = configurationRepository.saveAndFlush(configuration);
+            configurationService.editConfiguration(dialog.getFromEmail(),
+                    dialog.getSmtpHost(),
+                    dialog.getSmtpPort(),
+                    dialog.getMailUser(),
+                    dialog.getMailPassword(),
+                    dialog.isSslConnection());
         }
     }
 

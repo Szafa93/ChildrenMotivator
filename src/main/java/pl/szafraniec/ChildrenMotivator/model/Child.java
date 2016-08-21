@@ -41,7 +41,7 @@ public class Child {
     @PrimaryKeyJoinColumn
     private ChildActivitiesTable childActivitiesTable;
 
-    @ManyToOne(optional = false, cascade = { CascadeType.PERSIST, CascadeType.REFRESH })
+    @ManyToOne(cascade = { CascadeType.PERSIST, CascadeType.REFRESH })
     private ChildrenGroup childrenGroup;
 
     public int getId() {
@@ -120,19 +120,13 @@ public class Child {
 
     public static class ChildFactory {
 
-        public static Child create(String name, String surname, String pesel, String parentMail, ChildrenGroup childrenGroup) {
+        public static Child create(String name, String surname, String pesel, String parentMail) {
             Child child = new Child();
             child.setName(name);
             child.setSurname(surname);
             child.setPesel(pesel);
             child.setParentEmail(parentMail);
-            child.setChildrenGroup(childrenGroup);
             child.setChildActivitiesTable(ChildActivitiesTable.ChildActivitiesTableFactory.create(child));
-            childrenGroup.getChildren().add(child);
-            childrenGroup.getBehaviorTable().getDays().forEach(day -> {
-                day.getGrades().put(child, TableCell.TableCellBuilder.create());
-            });
-
             return child;
         }
     }

@@ -21,8 +21,9 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import pl.szafraniec.ChildrenMotivator.model.Child;
 import pl.szafraniec.ChildrenMotivator.model.ChildrenGroup;
-import pl.szafraniec.ChildrenMotivator.repository.ChildrenGroupRepository;
-import pl.szafraniec.ChildrenMotivator.services.RaportService;
+import pl.szafraniec.ChildrenMotivator.services.ChildService;
+import pl.szafraniec.ChildrenMotivator.services.ChildrenGroupService;
+import pl.szafraniec.ChildrenMotivator.services.ReportService;
 import pl.szafraniec.ChildrenMotivator.ui.AbstractMainComposite;
 import pl.szafraniec.ChildrenMotivator.ui.Fonts;
 import pl.szafraniec.ChildrenMotivator.ui.child.ChildComposite;
@@ -37,10 +38,13 @@ import java.util.stream.Collectors;
 public class ChildrenGroupComposite extends AbstractMainComposite {
 
     @Autowired
-    private ChildrenGroupRepository childrenGroupRepository;
+    private ChildrenGroupService childrenGroupService;
 
     @Autowired
-    private RaportService raportService;
+    private ChildService childService;
+
+    @Autowired
+    private ReportService reportService;
 
     private ChildrenGroup childrenGroup;
 
@@ -186,10 +190,11 @@ public class ChildrenGroupComposite extends AbstractMainComposite {
                 SendStatisticDialog dialog = new SendStatisticDialog(shell);
                 applicationContext.getAutowireCapableBeanFactory().autowireBean(dialog);
                 if (Window.OK == dialog.open()) {
-                    raportService.sendRaport(childrenGroup, dialog.getStart(), dialog.getEnd());
+                    reportService.sendReports(childrenGroup, dialog.getStart(), dialog.getEnd());
                 }
             }
         });
+        sendStatistic.setEnabled(reportService.canSendReports());
     }
 
     private void createEditButton(Composite parent) {
@@ -206,8 +211,8 @@ public class ChildrenGroupComposite extends AbstractMainComposite {
     }
 
     private void removeGroup() {
-        childrenGroupRepository.delete(childrenGroup);
-        childrenGroupRepository.flush();
+        childrenGroupService.removeGroup(childrenGroup);
+
 
         applicationContext.getBean(ChildrenGroupsComposite.class, shell);
         dispose();
@@ -236,14 +241,12 @@ public class ChildrenGroupComposite extends AbstractMainComposite {
     }
 
     private void editChildrenGroup(String groupName) {
-        childrenGroup.setName(groupName);
-        childrenGroup = childrenGroupRepository.saveAndFlush(childrenGroup);
+        childrenGroup = childrenGroupService.edit(childrenGroup, groupName);
         label.setText(childrenGroup.getName());
     }
 
     private void addChild(String name, String surname, String pesel, String parentMail, ChildrenGroup childrenGroup) {
-        Child.ChildFactory.create(name, surname, pesel, parentMail, childrenGroup);
-        this.childrenGroup = childrenGroupRepository.saveAndFlush(childrenGroup);
+        this.childrenGroup = childService.create(name, surname, pesel, parentMail, childrenGroup).getChildrenGroup();
     }
 
 }
