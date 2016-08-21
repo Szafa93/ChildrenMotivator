@@ -25,6 +25,7 @@ import pl.szafraniec.ChildrenMotivator.model.TableCell;
 import pl.szafraniec.ChildrenMotivator.services.ChildService;
 import pl.szafraniec.ChildrenMotivator.ui.Fonts;
 import pl.szafraniec.ChildrenMotivator.ui.Images;
+import pl.szafraniec.ChildrenMotivator.ui.backgroundImage.BackgroundImageSelectorDialog;
 import pl.szafraniec.ChildrenMotivator.ui.gradesSchemes.dialog.GradeSelectorDialog;
 
 import java.io.ByteArrayInputStream;
@@ -47,8 +48,27 @@ public class EditActivityTableComposite extends ActivityTableComposite {
         controlsButtonsComposite.setLayout(GridLayoutFactory.swtDefaults().numColumns(1).create());
 
         createSaveButton(controlsButtonsComposite);
+        createSelectBackgroundImageButton(controlsButtonsComposite);
 
         return controlsButtonsComposite;
+    }
+
+    private void createSelectBackgroundImageButton(Composite parent) {
+        Button saveButton = new Button(parent, SWT.PUSH);
+        saveButton.setLayoutData(DEFAULT_CONTROL_BUTTON_FACTORY.create());
+        saveButton.setText("Zapisz");
+        saveButton.setFont(FontDescriptor.createFrom(Fonts.DEFAULT_FONT_DATA).createFont(saveButton.getDisplay()));
+        saveButton.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseUp(MouseEvent e) {
+                BackgroundImageSelectorDialog dialog = new BackgroundImageSelectorDialog(getShell(), getTable().getBackgroundImage());
+                applicationContext.getAutowireCapableBeanFactory().autowireBean(dialog);
+                if (Window.OK == dialog.open()) {
+                    getTable().setBackgroundImage(dialog.getBackgroundImage());
+                    imageData = null;
+                }
+            }
+        });
     }
 
     private void createSaveButton(Composite parent) {

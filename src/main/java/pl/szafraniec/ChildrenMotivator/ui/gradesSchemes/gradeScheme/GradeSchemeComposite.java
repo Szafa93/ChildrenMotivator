@@ -33,12 +33,6 @@ import java.io.ByteArrayInputStream;
 @Scope(scopeName = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 public class GradeSchemeComposite extends AbstractMainComposite {
 
-    //    @Autowired
-    //    private GradeSchemeRepository gradeSchemeRepository;
-    //
-    //    @Autowired
-    //    private TableCellRepository tableCellRepository;
-
     @Autowired
     private GradeSchemeService gradeSchemeService;
 

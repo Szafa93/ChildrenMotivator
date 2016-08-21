@@ -45,6 +45,9 @@ public class ChildActivitiesTable {
     @JoinColumn(name = "ChildActivitiesTable_id", referencedColumnName = "id")
     private List<ChildActivitiesTableDay> days;
 
+    @ManyToOne
+    private BackgroundImage backgroundImage;
+
     public int getId() {
         return id;
     }
@@ -75,6 +78,14 @@ public class ChildActivitiesTable {
 
     public void setDays(List<ChildActivitiesTableDay> days) {
         this.days = days;
+    }
+
+    public BackgroundImage getBackgroundImage() {
+        return backgroundImage;
+    }
+
+    public void setBackgroundImage(BackgroundImage backgroundImage) {
+        this.backgroundImage = backgroundImage;
     }
 
     public Optional<List<ChildActivitiesTableDay>> getDays(LocalDate startDate, LocalDate endDate) {

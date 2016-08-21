@@ -20,6 +20,7 @@ import pl.szafraniec.ChildrenMotivator.ui.ConfigurationDialog;
 import pl.szafraniec.ChildrenMotivator.ui.Fonts;
 import pl.szafraniec.ChildrenMotivator.ui.activities.ActivitiesComposite;
 import pl.szafraniec.ChildrenMotivator.ui.activities.tableSchemes.ActivitiesTableSchemesComposite;
+import pl.szafraniec.ChildrenMotivator.ui.backgroundImage.BackgroundImagesComposite;
 import pl.szafraniec.ChildrenMotivator.ui.gradesSchemes.GradesSchemesComposite;
 import pl.szafraniec.ChildrenMotivator.ui.groups.ChildrenGroupsComposite;
 
@@ -39,7 +40,7 @@ public class StartComposite extends AbstractMainComposite {
         topPart.setLayout(GridLayoutFactory.swtDefaults().numColumns(2).equalWidth(false).create());
         topPart.setLayoutData(GridDataFactory.swtDefaults().grab(true, false).align(SWT.CENTER, SWT.CENTER).create());
 
-        createLabel(topPart, "Children Motivator");
+        createLabel(topPart, "System motywacji dzieci");
     }
 
     protected Composite createDownPart() {
@@ -55,8 +56,9 @@ public class StartComposite extends AbstractMainComposite {
         createButton(downPart, "Grupy", ChildrenGroupsComposite.class);
         createButton(downPart, "Możliwe oceny", GradesSchemesComposite.class);
         createButton(downPart, "Możliwe aktywności", ActivitiesComposite.class);
-        createButton(downPart, "Schematy tablic aktywności", ActivitiesTableSchemesComposite.class);
+        createButton(downPart, "Możliwe tła", BackgroundImagesComposite.class);
         createButton(downPart, "Ustawienia", this::editConfiguration);
+        createButton(downPart, "Schematy tablic aktywności", ActivitiesTableSchemesComposite.class);
         return downPart;
     }
 

@@ -11,7 +11,9 @@ import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
@@ -28,6 +30,7 @@ import pl.szafraniec.ChildrenMotivator.model.ChildActivitiesTableDay;
 import pl.szafraniec.ChildrenMotivator.model.Holder;
 import pl.szafraniec.ChildrenMotivator.model.TableCell;
 import pl.szafraniec.ChildrenMotivator.services.ChildService;
+import pl.szafraniec.ChildrenMotivator.services.GradeSchemeService;
 import pl.szafraniec.ChildrenMotivator.ui.AbstractMainComposite;
 import pl.szafraniec.ChildrenMotivator.ui.DayOfWeekLocalization;
 import pl.szafraniec.ChildrenMotivator.ui.Fonts;
@@ -58,6 +61,9 @@ public class ActivityTableComposite extends AbstractMainComposite {
             .create();
 
     @Autowired
+    GradeSchemeService gradeSchemeService;
+
+    @Autowired
     protected ChildService childService;
 
     protected final Holder<Child> child;
@@ -68,6 +74,7 @@ public class ActivityTableComposite extends AbstractMainComposite {
     protected LocalDate startDate;
     protected LocalDate endDate;
     protected Button forwardButton;
+    protected Image imageData;
 
     public ActivityTableComposite(Composite parent, Holder<Child> child) {
         super(parent, SWT.NONE);
@@ -206,6 +213,32 @@ public class ActivityTableComposite extends AbstractMainComposite {
         tableBehaviorComposite.setLayoutData(GridDataFactory.swtDefaults().grab(true, true).align(SWT.FILL, SWT.FILL).create());
         tableBehaviorComposite.setLayout(GridLayoutFactory.fillDefaults().numColumns(6).create());
 
+        if (shouldDrawBackground()) {
+
+            tableBehaviorComposite.addControlListener(new ControlAdapter() {
+                @Override
+                public void controlResized(ControlEvent e) {
+                    if (imageData == null) {
+                        imageData = new Image(getShell().getDisplay(), new ByteArrayInputStream(child.get().getChildActivitiesTable()
+                                .getBackgroundImage().getImage()));
+                    }
+                    Rectangle clientArea = scrolledComposite.getClientArea();
+                    if (clientArea.width * clientArea.height > 0) {
+                        Image scaled = new Image(getDisplay(), clientArea.width, clientArea.height);
+                        GC gc = new GC(scaled);
+                        gc.setAntialias(SWT.ON);
+                        gc.setInterpolation(SWT.HIGH);
+                        gc.drawImage(imageData, 0, 0,
+                                imageData.getImageData().width, imageData.getImageData().height, 0, 0, clientArea.width, clientArea.height);
+                        gc.dispose();
+                        tableBehaviorComposite.setBackgroundImage(scaled);
+                    }
+                }
+            });
+
+            tableBehaviorComposite.setBackgroundMode(SWT.INHERIT_FORCE);
+        }
+
         fillTableBehaviorComposite(tableBehaviorComposite);
 
         tableBehaviorComposite.pack(true);
@@ -219,6 +252,10 @@ public class ActivityTableComposite extends AbstractMainComposite {
         return scrolledComposite;
     }
 
+    protected boolean shouldDrawBackground() {
+        return true;
+    }
+
     protected void fillTableBehaviorComposite(Composite parent) {
         List<ChildActivitiesTableDay> days = childService.getDays(child, startDate, endDate);
         generateHeader(days, parent);
@@ -227,6 +264,7 @@ public class ActivityTableComposite extends AbstractMainComposite {
 
     private void generateHeader(List<ChildActivitiesTableDay> days, Composite parent) {
         Composite cornerComposite = new Composite(parent, SWT.NONE);
+        cornerComposite.setBackgroundMode(SWT.INHERIT_FORCE);
         cornerComposite.setLayoutData(GridDataFactory
                 .createFrom(TABLE_CELL_LAYOUT_DATA)
                 .hint(Images.IMAGE_WIDTH + MARGINS, Images.IMAGE_HEIGHT + MARGINS)

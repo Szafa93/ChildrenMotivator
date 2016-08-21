@@ -43,6 +43,11 @@ public class ActivitiesTableSchemeStatisticsComposite extends ActivityTableCompo
     }
 
     @Override
+    protected boolean shouldDrawBackground() {
+        return false;
+    }
+
+    @Override
     protected Button createBackButton(Composite parent) {
         return super.createBackButton(parent, SWT.ARROW | SWT.LEFT);
     }
