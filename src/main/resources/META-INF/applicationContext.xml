@@ -20,7 +20,7 @@
     <bean id="display" class="org.eclipse.swt.widgets.Display"/>
     <bean id="shell" class="org.eclipse.swt.widgets.Shell">
         <constructor-arg name="display" ref="display"/>
-        <property name="text" value="Children Motivator"/>
+        <property name="text" value="System motywacji dzieci"/>
     </bean>
 
     <bean id="propertyConfigurer" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">

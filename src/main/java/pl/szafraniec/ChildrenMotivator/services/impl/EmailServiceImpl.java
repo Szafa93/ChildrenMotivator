@@ -31,6 +31,7 @@ public class EmailServiceImpl implements EmailService {
 
             email.setSubject(subject);
             email.setMsg(message);
+            email.setCharset(org.apache.commons.mail.EmailConstants.UTF_8);
 
             email.setAuthentication(configuration.getMailUser(), configuration.getMailPassword());
             email.setFrom(configuration.getFromEmail());

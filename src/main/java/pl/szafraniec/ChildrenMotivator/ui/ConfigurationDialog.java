@@ -2,9 +2,10 @@ package pl.szafraniec.ChildrenMotivator.ui;
 
 import org.apache.commons.mail.Email;
 import org.apache.commons.mail.EmailException;
-import org.apache.commons.mail.HtmlEmail;
+import org.apache.commons.mail.SimpleEmail;
 import org.apache.commons.validator.routines.EmailValidator;
 import org.eclipse.jface.dialogs.Dialog;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.layout.GridLayoutFactory;
 import org.eclipse.swt.SWT;
@@ -19,6 +20,7 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 
+import javax.mail.AuthenticationFailedException;
 import java.util.function.Consumer;
 
 public class ConfigurationDialog extends Dialog {
@@ -134,8 +136,9 @@ public class ConfigurationDialog extends Dialog {
     }
 
     private void trySendMail() {
-        Email email = new HtmlEmail();
+        Email email = new SimpleEmail();
         try {
+            email.setCharset(org.apache.commons.mail.EmailConstants.UTF_8);
             email.setSubject("Testowy mail z aplikacji ChildrenMotivator");
             email.setMsg("Testowa zawartość z aplikacji ChildrenMotivator");
 
@@ -150,11 +153,19 @@ public class ConfigurationDialog extends Dialog {
             }
             email.setHostName(smtpHost);
             email.send();
+            getButton(OK).setEnabled(true);
         } catch (EmailException e) {
             e.printStackTrace();
+            if (e.getCause() instanceof AuthenticationFailedException) {
+                MessageDialog.openError(getShell(), "Niepoprawne dane logowania", "Wprowadzone dane logowania są nieprawne. Proszę "
+                        + "sprawdzić wprowadzone hasło i nazwę użytkownika");
+            } else {
+                MessageDialog.openError(getShell(), "Błędne dane", "Wprowadzone dane są błędne. Proszę sprawdzić wprowadzone dane z "
+                        + "danymi konfiguracji klienta pocztowego udostępnianymi przez serwer pocztowy.");
+            }
             getButton(OK).setEnabled(false);
+
         }
-        getButton(OK).setEnabled(true);
     }
 
     @Override
