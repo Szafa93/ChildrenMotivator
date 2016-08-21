@@ -24,8 +24,9 @@ import org.springframework.stereotype.Component;
 import pl.szafraniec.ChildrenMotivator.model.Activity;
 import pl.szafraniec.ChildrenMotivator.model.ChildActivitiesTable;
 import pl.szafraniec.ChildrenMotivator.model.ChildActivitiesTableDay;
+import pl.szafraniec.ChildrenMotivator.model.Holder;
 import pl.szafraniec.ChildrenMotivator.model.TableCell;
-import pl.szafraniec.ChildrenMotivator.repository.ChildRepository;
+import pl.szafraniec.ChildrenMotivator.services.ChildActivityTableService;
 import pl.szafraniec.ChildrenMotivator.ui.AbstractMainComposite;
 import pl.szafraniec.ChildrenMotivator.ui.DayOfWeekLocalization;
 import pl.szafraniec.ChildrenMotivator.ui.Fonts;
@@ -50,9 +51,9 @@ public class ActivityTableComposite extends AbstractMainComposite {
             true).create();
 
     @Autowired
-    private ChildRepository childRepository;
+    protected ChildActivityTableService childActivityTableService;
 
-    protected ChildActivitiesTable table;
+    protected Holder<ChildActivitiesTable> table;
     private final Runnable onDayAdded;
 
     private ScrolledComposite scrolledComposite;
@@ -64,7 +65,7 @@ public class ActivityTableComposite extends AbstractMainComposite {
 
     public ActivityTableComposite(Composite parent, ChildActivitiesTable table, Runnable onDayAdded) {
         super(parent, SWT.NONE);
-        this.table = table;
+        this.table = Holder.of(table);
         this.onDayAdded = onDayAdded;
         DayOfWeek today = LocalDate.now().getDayOfWeek();
         if (today.equals(DayOfWeek.SATURDAY) || today.equals(DayOfWeek.SUNDAY)) {
@@ -82,7 +83,7 @@ public class ActivityTableComposite extends AbstractMainComposite {
         topPart.setLayout(GridLayoutFactory.swtDefaults().numColumns(2).equalWidth(false).create());
         topPart.setLayoutData(GridDataFactory.swtDefaults().grab(true, false).align(SWT.FILL, SWT.CENTER).create());
 
-        createLabel(topPart, table.getChild().getName() + " " + table.getChild().getSurname());
+        createLabel(topPart, table.get().getChild().getName() + " " + table.get().getChild().getSurname());
         createTopControlsButtonsComposite(topPart);
     }
 
@@ -92,7 +93,7 @@ public class ActivityTableComposite extends AbstractMainComposite {
         controlsButtonsComposite.setLayout(GridLayoutFactory.swtDefaults().numColumns(1).create());
 
         createBackButton(controlsButtonsComposite, applicationContext, shell, ChildComposite.class,
-                () -> new Object[] { table.getChild() });
+                () -> new Object[] { table.get().getChild() });
         createEditButton(controlsButtonsComposite);
         return controlsButtonsComposite;
     }
@@ -105,7 +106,7 @@ public class ActivityTableComposite extends AbstractMainComposite {
         editButton.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseUp(MouseEvent e) {
-                applicationContext.getBean("EditActivityTableComposite", shell, table);
+                applicationContext.getBean("EditActivityTableComposite", shell, table.get());
                 dispose();
                 shell.layout(true, true);
             }
@@ -213,13 +214,9 @@ public class ActivityTableComposite extends AbstractMainComposite {
     }
 
     protected void fillTableBehaviorComposite(Composite parent) {
-        List<ChildActivitiesTableDay> days = table.getDays(startDate, endDate).orElseGet(() -> {
-            table.generateDay(startDate, endDate);
-            table = childRepository.saveAndFlush(table.getChild()).getChildActivitiesTable();
-            return table.getDays(startDate, endDate).get();
-        });
+        List<ChildActivitiesTableDay> days = childActivityTableService.getDays(table, startDate, endDate);
         generateHeader(days, parent);
-        table.getActivitiesTableScheme().getListOfActivities().stream().forEachOrdered(activity -> generateRowFor(activity, days, parent));
+        table.get().getActivitiesTableScheme().getListOfActivities().stream().forEachOrdered(activity -> generateRowFor(activity, days, parent));
     }
 
     private void generateHeader(List<ChildActivitiesTableDay> days, Composite parent) {

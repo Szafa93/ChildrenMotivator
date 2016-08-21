@@ -23,8 +23,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import pl.szafraniec.ChildrenMotivator.model.ActivitiesTableScheme;
-import pl.szafraniec.ChildrenMotivator.model.Activity;
-import pl.szafraniec.ChildrenMotivator.repository.ActivitiesTableSchemesRepository;
+import pl.szafraniec.ChildrenMotivator.services.ActivitiesTableSchemeService;
 import pl.szafraniec.ChildrenMotivator.ui.AbstractMainComposite;
 import pl.szafraniec.ChildrenMotivator.ui.Fonts;
 import pl.szafraniec.ChildrenMotivator.ui.Images;
@@ -32,7 +31,6 @@ import pl.szafraniec.ChildrenMotivator.ui.activities.tableSchemes.dialog.EditAct
 import pl.szafraniec.ChildrenMotivator.ui.activities.tableSchemes.tableScheme.ActivitiesTableSchemeComposite;
 import pl.szafraniec.ChildrenMotivator.ui.start.StartComposite;
 
-import java.util.List;
 import java.util.stream.Collectors;
 
 @Component
@@ -43,7 +41,7 @@ public class ActivitiesTableSchemesComposite extends AbstractMainComposite {
     private ApplicationContext applicationContext;
 
     @Autowired
-    private ActivitiesTableSchemesRepository activitiesTableSchemesRepository;
+    private ActivitiesTableSchemeService activitiesTableSchemeService;
 
     private Composite activitiesTableSchemeComposite;
 
@@ -81,26 +79,18 @@ public class ActivitiesTableSchemesComposite extends AbstractMainComposite {
         addActivityButton.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseUp(MouseEvent e) {
-                addActivitiesTableSchema();
+                EditActivitiesTableSchemeDialog dialog = new EditActivitiesTableSchemeDialog(Display.getCurrent().getActiveShell());
+                applicationContext.getAutowireCapableBeanFactory().autowireBean(dialog);
+                if (Window.OK == dialog.open()) {
+                    ActivitiesTableScheme scheme = activitiesTableSchemeService.addActivitiesTableSchema(dialog.getActivitiesTableSchemeName(),
+                            dialog.getActivities());
+                    createActivitiesTableSchemeButton(scheme, activitiesTableSchemeComposite);
+                    scrolledComposite.layout(true, true);
+                    Rectangle r = scrolledComposite.getClientArea();
+                    scrolledComposite.setMinSize(activitiesTableSchemeComposite.computeSize(r.width, SWT.DEFAULT));
+                }
             }
         });
-    }
-
-    private void addActivitiesTableSchema() {
-        EditActivitiesTableSchemeDialog dialog = new EditActivitiesTableSchemeDialog(Display.getCurrent().getActiveShell());
-        applicationContext.getAutowireCapableBeanFactory().autowireBean(dialog);
-        if (Window.OK == dialog.open()) {
-            ActivitiesTableScheme scheme = addActivitiesTableSchema(dialog.getActivitiesTableSchemeName(), dialog.getActivities());
-            createActivitiesTableSchemeButton(scheme, activitiesTableSchemeComposite);
-            scrolledComposite.layout(true, true);
-            Rectangle r = scrolledComposite.getClientArea();
-            scrolledComposite.setMinSize(activitiesTableSchemeComposite.computeSize(r.width, SWT.DEFAULT));
-        }
-    }
-
-    private ActivitiesTableScheme addActivitiesTableSchema(String name, List<Activity> activities) {
-        ActivitiesTableScheme scheme = ActivitiesTableScheme.ActivitiesTableSchemeFactory.create(name, activities);
-        return activitiesTableSchemesRepository.saveAndFlush(scheme);
     }
 
     @Override
@@ -127,7 +117,7 @@ public class ActivitiesTableSchemesComposite extends AbstractMainComposite {
                 .type(SWT.HORIZONTAL)
                 .create());
 
-        activitiesTableSchemesRepository.findAll().stream().map(
+        activitiesTableSchemeService.findAll().stream().map(
                 activity -> createActivitiesTableSchemeButton(activity, activitiesTableSchemeComposite)).collect(Collectors.toList());
 
         activitiesTableSchemeComposite.pack(true);

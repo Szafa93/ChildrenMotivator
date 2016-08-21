@@ -17,7 +17,7 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Shell;
 import org.springframework.beans.factory.annotation.Autowired;
 import pl.szafraniec.ChildrenMotivator.model.ActivitiesTableScheme;
-import pl.szafraniec.ChildrenMotivator.repository.ActivitiesTableSchemesRepository;
+import pl.szafraniec.ChildrenMotivator.services.ActivitiesTableSchemeService;
 import pl.szafraniec.ChildrenMotivator.ui.Fonts;
 import pl.szafraniec.ChildrenMotivator.ui.Images;
 
@@ -28,7 +28,7 @@ import java.util.stream.Collectors;
 public class ActivityTableSelectorDialog extends Dialog {
 
     @Autowired
-    private ActivitiesTableSchemesRepository activitiesTableSchemesRepository;
+    private ActivitiesTableSchemeService activitiesTableSchemeService;
 
     private ActivitiesTableScheme activitiesTableScheme;
 
@@ -73,7 +73,7 @@ public class ActivityTableSelectorDialog extends Dialog {
         activitiesComposite.setLayoutData(GridDataFactory.swtDefaults().grab(true, true).align(SWT.FILL, SWT.FILL).create());
         activitiesComposite.setLayout(GridLayoutFactory.swtDefaults().spacing(25, 25).numColumns(4).create());
 
-        activitiesTableSchemesButtons = activitiesTableSchemesRepository.findAll().stream().map(
+        activitiesTableSchemesButtons = activitiesTableSchemeService.findAll().stream().map(
                 gradeScheme -> createTableSchemeButton(gradeScheme, activitiesComposite, button -> {
                     activitiesTableSchemesButtons.stream().filter(b -> !b.equals(button)).forEach(b -> b.setSelection(false));
                 })).collect(Collectors.toList());

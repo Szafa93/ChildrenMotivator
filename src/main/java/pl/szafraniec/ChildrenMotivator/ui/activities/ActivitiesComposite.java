@@ -24,7 +24,7 @@ import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import pl.szafraniec.ChildrenMotivator.model.Activity;
-import pl.szafraniec.ChildrenMotivator.repository.ActivityRepository;
+import pl.szafraniec.ChildrenMotivator.services.ActivityService;
 import pl.szafraniec.ChildrenMotivator.ui.AbstractMainComposite;
 import pl.szafraniec.ChildrenMotivator.ui.Fonts;
 import pl.szafraniec.ChildrenMotivator.ui.Images;
@@ -40,7 +40,7 @@ import java.util.stream.Collectors;
 public class ActivitiesComposite extends AbstractMainComposite {
 
     @Autowired
-    private ActivityRepository activityRepository;
+    private ActivityService activityService;
 
     private Composite activitiesComposite;
 
@@ -78,23 +78,14 @@ public class ActivitiesComposite extends AbstractMainComposite {
         addActivityButton.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseUp(MouseEvent e) {
-                addActivity();
+                EditActivityDialog dialog = new EditActivityDialog(Display.getCurrent().getActiveShell());
+                if (Window.OK == dialog.open()) {
+                    Activity activity = activityService.addActivity(dialog.getActivityName(), dialog.getImageByte());
+                    createActivityButton(activity, activitiesComposite);
+                    scrolledComposite.layout(true, true);
+                }
             }
         });
-    }
-
-    private void addActivity() {
-        EditActivityDialog dialog = new EditActivityDialog(Display.getCurrent().getActiveShell());
-        if (Window.OK == dialog.open()) {
-            Activity activity = addActivity(dialog.getActivityName(), dialog.getImageByte());
-            createActivityButton(activity, activitiesComposite);
-            scrolledComposite.layout(true, true);
-        }
-    }
-
-    private Activity addActivity(String activityName, byte[] image) {
-        Activity activity = Activity.ActivityFactory.create(activityName, image);
-        return activityRepository.saveAndFlush(activity);
     }
 
     @Override
@@ -116,7 +107,7 @@ public class ActivitiesComposite extends AbstractMainComposite {
         activitiesComposite.setLayoutData(GridDataFactory.swtDefaults().grab(true, true).align(SWT.FILL, SWT.FILL).create());
         activitiesComposite.setLayout(RowLayoutFactory.swtDefaults().pack(false).spacing(25).wrap(true).type(SWT.HORIZONTAL).create());
 
-        activityRepository.findAll().stream().map(activity -> createActivityButton(activity, activitiesComposite)).collect(
+        activityService.findAll().stream().map(activity -> createActivityButton(activity, activitiesComposite)).collect(
                 Collectors.toList());
 
         activitiesComposite.pack(true);
@@ -136,7 +127,6 @@ public class ActivitiesComposite extends AbstractMainComposite {
         activityButton.setText(activity.getName());
         activityButton.setToolTipText(activity.getName());
         activityButton.setFont(FontDescriptor.createFrom(Fonts.DEFAULT_FONT_DATA).createFont(activityButton.getDisplay()));
-        // TODO uncommect this if you want image as button
         Image imageData = new Image(getShell().getDisplay(), new ByteArrayInputStream(activity.getImage()));
         imageData = Images.resize(getShell().getDisplay(), imageData);
         activityButton.setImage(imageData);

@@ -18,34 +18,28 @@ import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import pl.szafraniec.ChildrenMotivator.model.Activity;
-import pl.szafraniec.ChildrenMotivator.model.BehaviorTableDay;
-import pl.szafraniec.ChildrenMotivator.model.Child;
 import pl.szafraniec.ChildrenMotivator.model.ChildActivitiesTable;
 import pl.szafraniec.ChildrenMotivator.model.ChildActivitiesTableDay;
-import pl.szafraniec.ChildrenMotivator.model.GradeScheme;
 import pl.szafraniec.ChildrenMotivator.model.TableCell;
-import pl.szafraniec.ChildrenMotivator.repository.ChildRepository;
-import pl.szafraniec.ChildrenMotivator.repository.GradeSchemeRepository;
+import pl.szafraniec.ChildrenMotivator.services.ChildService;
 import pl.szafraniec.ChildrenMotivator.ui.Fonts;
 import pl.szafraniec.ChildrenMotivator.ui.Images;
 import pl.szafraniec.ChildrenMotivator.ui.gradesSchemes.dialog.GradeSelectorDialog;
 
 import java.io.ByteArrayInputStream;
-import java.time.LocalDate;
-import java.util.Comparator;
-import java.util.Map;
-import java.util.OptionalDouble;
-import java.util.stream.Collectors;
 
 @Component("EditActivityTableComposite")
 @Scope(scopeName = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 public class EditActivityTableComposite extends ActivityTableComposite {
 
-    @Autowired
-    private ChildRepository childRepository;
+    //    @Autowired
+    //    private ChildRepository childRepository;
+
+    //    @Autowired
+    //    private GradeSchemeRepository gradeSchemeRepository;
 
     @Autowired
-    private GradeSchemeRepository gradeSchemeRepository;
+    private ChildService childService;
 
     public EditActivityTableComposite(Composite parent, ChildActivitiesTable childActivitiesTable) {
         super(parent, childActivitiesTable, () -> {
@@ -59,22 +53,9 @@ public class EditActivityTableComposite extends ActivityTableComposite {
         controlsButtonsComposite.setLayout(GridLayoutFactory.swtDefaults().numColumns(1).create());
 
         createSaveButton(controlsButtonsComposite);
-        //                createRemoveButton(controlsButtonsComposite, this::removeActivityTableScheme,
-        //                        "Usunięta zostanie ta tablica wraz ze wszystkimi ocenami");
 
         return controlsButtonsComposite;
     }
-
-    //    private void removeActivityTableScheme() {
-    //        Child child = table.getChild();
-    //        child.getActivitiesTableList().remove(table);
-    //        childActivitiesTableRepository.delete(table);
-    //        child = childRepository.saveAndFlush(child);
-    //
-    //        applicationContext.getBean(ChildComposite.class, shell, child);
-    //        dispose();
-    //        shell.layout(true, true);
-    //    }
 
     private void createSaveButton(Composite parent) {
         Button saveButton = new Button(parent, SWT.PUSH);
@@ -84,58 +65,10 @@ public class EditActivityTableComposite extends ActivityTableComposite {
         saveButton.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseUp(MouseEvent e) {
+                table.set(childService.recalculateGrades(table.get().getChild()).getChildActivitiesTable());
                 // recalculate grades
-                Child child = table.getChild();
-                LocalDate start = table.getDays().stream()
-                        .map(ChildActivitiesTableDay::getLocalDate)
-                        .sorted()
-                        .findFirst()
-                        .get();
-                LocalDate end = table.getDays().stream()
-                        .map(ChildActivitiesTableDay::getLocalDate)
-                        .sorted(Comparator.reverseOrder())
-                        .findFirst()
-                        .get();
-                Map<LocalDate, TableCell> grades = child.getChildrenGroup()
-                        .getBehaviorTable()
-                        .getDays(start, end).orElseGet(() -> {
-                            child.getChildrenGroup().getBehaviorTable().generateDay(start, end);
-                            return child.getChildrenGroup().getBehaviorTable().getDays(start, end).get();
-                        })
-                        .stream()
-                        .collect(Collectors.toMap(BehaviorTableDay::getLocalDate, day -> day.getGrades().get(child)));
-                Map<LocalDate, OptionalDouble> averageGrades = table.getDays()
-                        .stream()
-                        .collect(Collectors.toMap(
-                                ChildActivitiesTableDay::getLocalDate,
-                                day -> day.getGrades()
-                                        .values()
-                                        .stream()
-                                        .map(TableCell::getGradeScheme)
-                                        .filter(gradeScheme -> gradeScheme != null)
-                                        .mapToInt(GradeScheme::getValue)
-                                        .average()
-                        ));
 
-                averageGrades.entrySet().stream().forEach(entry -> {
-                    TableCell grade = grades.get(entry.getKey());
-                    if (entry.getValue().isPresent()) {
-                        long roundAvg = Math.round(entry.getValue().getAsDouble());
-                        GradeScheme gradeScheme = gradeSchemeRepository.findAll()
-                                .stream()
-                                .sorted((first, second) ->
-                                        Double.compare(Math.abs(roundAvg - first.getValue()), Math.abs(roundAvg - second.getValue())))
-                                .findFirst().orElse(null);
-                        grade.setGradeScheme(gradeScheme);
-                        grade.setGradeComment(Double.toString(entry.getValue().getAsDouble()));
-                    } else {
-                        grade.setGradeScheme(null);
-                        grade.setGradeComment("");
-                    }
-                });
-
-                table = childRepository.saveAndFlush(child).getChildActivitiesTable();
-                applicationContext.getBean("ActivityTableComposite", shell, table, (Runnable) () -> {
+                applicationContext.getBean("ActivityTableComposite", shell, table.get(), (Runnable) () -> {
                 });
                 dispose();
                 shell.layout(true, true);

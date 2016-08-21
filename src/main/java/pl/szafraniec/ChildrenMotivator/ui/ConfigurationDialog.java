@@ -24,8 +24,6 @@ import java.util.function.Consumer;
 public class ConfigurationDialog extends Dialog {
     private static final int TEST_BUTTON = 1000;
 
-    private boolean successfulSend = false;
-
     private String fromEmail;
 
     private String smtpHost;

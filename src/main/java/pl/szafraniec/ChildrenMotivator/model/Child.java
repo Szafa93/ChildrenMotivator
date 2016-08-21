@@ -41,7 +41,7 @@ public class Child {
     @PrimaryKeyJoinColumn
     private ChildActivitiesTable childActivitiesTable;
 
-    @ManyToOne(optional = false, cascade = { CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH })
+    @ManyToOne(optional = false, cascade = { CascadeType.PERSIST, CascadeType.REFRESH })
     private ChildrenGroup childrenGroup;
 
     public int getId() {

@@ -24,8 +24,9 @@ import pl.szafraniec.ChildrenMotivator.model.Activity;
 import pl.szafraniec.ChildrenMotivator.model.ChildActivitiesTable;
 import pl.szafraniec.ChildrenMotivator.model.ChildActivitiesTableDay;
 import pl.szafraniec.ChildrenMotivator.model.GradeScheme;
+import pl.szafraniec.ChildrenMotivator.model.Holder;
 import pl.szafraniec.ChildrenMotivator.model.TableCell;
-import pl.szafraniec.ChildrenMotivator.repository.ChildRepository;
+import pl.szafraniec.ChildrenMotivator.services.ChildActivityTableService;
 import pl.szafraniec.ChildrenMotivator.ui.AbstractMainComposite;
 import pl.szafraniec.ChildrenMotivator.ui.DoubleBufferedChartPanel;
 import pl.szafraniec.ChildrenMotivator.ui.child.ChildComposite;
@@ -48,10 +49,13 @@ import java.util.stream.Stream;
 @Scope(scopeName = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 public class ChartComposite extends AbstractMainComposite {
 
-    @Autowired
-    private ChildRepository childRepository;
+    //    @Autowired
+    //    private ChildRepository childRepository;
 
-    private ChildActivitiesTable table;
+    @Autowired
+    private ChildActivityTableService childActivityTableService;
+
+    private Holder<ChildActivitiesTable> table;
 
     private Composite chartComposite;
 
@@ -61,11 +65,9 @@ public class ChartComposite extends AbstractMainComposite {
     private LocalDate endDate;
     private Button forwardButton;
 
-    private ChartPanel jfreeChartPanel;
-
     public ChartComposite(Composite parent, ChildActivitiesTable table) {
         super(parent, SWT.NONE);
-        this.table = table;
+        this.table = Holder.of(table);
         DayOfWeek today = LocalDate.now().getDayOfWeek();
         if (today.equals(DayOfWeek.SATURDAY) || today.equals(DayOfWeek.SUNDAY)) {
             startDate = LocalDate.now().with(TemporalAdjusters.previous(DayOfWeek.MONDAY));
@@ -82,7 +84,7 @@ public class ChartComposite extends AbstractMainComposite {
         topPart.setLayout(GridLayoutFactory.swtDefaults().numColumns(2).equalWidth(false).create());
         topPart.setLayoutData(GridDataFactory.swtDefaults().grab(true, false).align(SWT.FILL, SWT.CENTER).create());
 
-        createLabel(topPart, table.getChild().getName() + " " + table.getChild().getSurname());
+        createLabel(topPart, table.get().getChild().getName() + " " + table.get().getChild().getSurname());
         createTopControlsButtonsComposite(topPart);
     }
 
@@ -92,7 +94,7 @@ public class ChartComposite extends AbstractMainComposite {
         controlsButtonsComposite.setLayout(GridLayoutFactory.swtDefaults().numColumns(1).create());
 
         createBackButton(controlsButtonsComposite, applicationContext, shell, ChildComposite.class,
-                () -> new Object[] { table.getChild() });
+                () -> new Object[] { table.get().getChild() });
         return controlsButtonsComposite;
     }
 
@@ -183,11 +185,7 @@ public class ChartComposite extends AbstractMainComposite {
     }
 
     private void fillChart(Composite chartComposite) {
-        List<ChildActivitiesTableDay> days = table.getDays(startDate, endDate).orElseGet(() -> {
-            table.generateDay(startDate, endDate);
-            table = childRepository.saveAndFlush(table.getChild()).getChildActivitiesTable();
-            return table.getDays(startDate, endDate).get();
-        });
+        List<ChildActivitiesTableDay> days = childActivityTableService.getDays(table, startDate, endDate);
 
         OptionalDouble maxGrade = days.stream()
                 .map(ChildActivitiesTableDay::getGrades)
@@ -201,7 +199,7 @@ public class ChartComposite extends AbstractMainComposite {
                 .max();
 
         CategoryDataset dataset = new GradeChartCategoryDataset(startDate, endDate,
-                table.getActivitiesTableScheme()
+                table.get().getActivitiesTableScheme()
                         .getListOfActivities()
                         .stream()
                         .collect(Collectors.toMap(
@@ -212,7 +210,7 @@ public class ChartComposite extends AbstractMainComposite {
                                         ))
                         )));
 
-        JFreeChart chart = ChartFactory.createLineChart(table.getActivitiesTableScheme().getName(), "Dzień", "Ocena", dataset);
+        JFreeChart chart = ChartFactory.createLineChart(table.get().getActivitiesTableScheme().getName(), "Dzień", "Ocena", dataset);
         ValueAxis rangeAxis = chart.getCategoryPlot().getRangeAxis();
         rangeAxis.setAutoRange(false);
         rangeAxis.setLowerBound(0);
@@ -224,7 +222,7 @@ public class ChartComposite extends AbstractMainComposite {
         chartPanel.setBackground(new java.awt.Color(backgroundColor.getRed(),
                 backgroundColor.getGreen(),
                 backgroundColor.getBlue()));
-        jfreeChartPanel = new DoubleBufferedChartPanel(chart, false);
+        ChartPanel jfreeChartPanel = new DoubleBufferedChartPanel(chart, false);
         chartPanel.add(jfreeChartPanel, BorderLayout.CENTER);
         chartPanel.pack();
     }
