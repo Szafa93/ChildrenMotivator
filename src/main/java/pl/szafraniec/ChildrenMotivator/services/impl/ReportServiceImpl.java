@@ -1,5 +1,12 @@
 package pl.szafraniec.ChildrenMotivator.services.impl;
 
+import org.apache.commons.validator.routines.EmailValidator;
+import org.apache.poi.ss.usermodel.RichTextString;
+import org.apache.poi.xssf.usermodel.XSSFCell;
+import org.apache.poi.xssf.usermodel.XSSFClientAnchor;
+import org.apache.poi.xssf.usermodel.XSSFComment;
+import org.apache.poi.xssf.usermodel.XSSFCreationHelper;
+import org.apache.poi.xssf.usermodel.XSSFDrawing;
 import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
@@ -9,7 +16,7 @@ import pl.szafraniec.ChildrenMotivator.model.Activity;
 import pl.szafraniec.ChildrenMotivator.model.Child;
 import pl.szafraniec.ChildrenMotivator.model.ChildActivitiesTableDay;
 import pl.szafraniec.ChildrenMotivator.model.ChildrenGroup;
-import pl.szafraniec.ChildrenMotivator.model.GradeScheme;
+import pl.szafraniec.ChildrenMotivator.model.TableCell;
 import pl.szafraniec.ChildrenMotivator.services.ConfigurationService;
 import pl.szafraniec.ChildrenMotivator.services.EmailService;
 import pl.szafraniec.ChildrenMotivator.services.ReportService;
@@ -31,7 +38,10 @@ public class ReportServiceImpl implements ReportService {
 
     @Override
     public void sendReports(ChildrenGroup childrenGroup, LocalDate from, LocalDate to) {
-        childrenGroup.getChildren().stream().filter(child -> child.getParentEmail() != null).forEach(child -> {
+        childrenGroup.getChildren().stream()
+                .filter(child -> child.getParentEmail() != null && EmailValidator.getInstance().isValid(child.getParentEmail()))
+                .filter(child -> child.getChildActivitiesTable().getActivitiesTableScheme() != null)
+                .forEach(child -> {
             try {
                 byte[] xlsx = generateStatisticsXlsx(child, from, to);
                 String message = "Raport dla " + child.getName() + " " + child.getSurname() + " z dni " + from + "-" + to;
@@ -83,9 +93,13 @@ public class ReportServiceImpl implements ReportService {
                 dayRow.createCell(0).setCellValue(day.getLocalDate().toString());
                 j = 1;
                 for (Activity activity : activities) {
-                    GradeScheme gradeScheme = day.getGrades().get(activity).getGradeScheme();
-                    if (gradeScheme != null) {
-                        dayRow.createCell(j++).setCellValue(gradeScheme.getValue());
+                    TableCell cell = day.getGrades().get(activity);
+                    if (cell.getGradeScheme() != null) {
+                        XSSFCell xssfCell = dayRow.createCell(j++);
+                        xssfCell.setCellValue(cell.getGradeScheme().getValue());
+                        if (cell.getGradeComment().trim().length() != 0) {
+                            addComment(workbook, sheet, xssfCell, cell.getGradeComment());
+                        }
                     }
                 }
             }
@@ -96,5 +110,15 @@ public class ReportServiceImpl implements ReportService {
         }
         outputStream.close();
         return outputStream.toByteArray();
+    }
+
+    private void addComment(XSSFWorkbook workbook, XSSFSheet sheet, XSSFCell cell, String value) {
+        XSSFCreationHelper factory = workbook.getCreationHelper();
+        XSSFDrawing drawing = sheet.createDrawingPatriarch();
+        XSSFClientAnchor anchor = factory.createClientAnchor();
+        XSSFComment comment = drawing.createCellComment(anchor);
+        RichTextString str1 = factory.createRichTextString(value);
+        comment.setString(str1);
+        cell.setCellComment(comment);
     }
 }

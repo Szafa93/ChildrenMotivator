@@ -26,4 +26,6 @@ public interface ChildrenGroupService {
     void removeGroup(ChildrenGroup childrenGroup);
 
     ChildrenGroup edit(ChildrenGroup childrenGroup, String groupName);
+
+    ChildrenGroup recalculateGrades(Child child);
 }

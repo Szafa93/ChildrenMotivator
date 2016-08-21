@@ -18,8 +18,9 @@ import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import pl.szafraniec.ChildrenMotivator.model.Activity;
-import pl.szafraniec.ChildrenMotivator.model.ChildActivitiesTable;
+import pl.szafraniec.ChildrenMotivator.model.Child;
 import pl.szafraniec.ChildrenMotivator.model.ChildActivitiesTableDay;
+import pl.szafraniec.ChildrenMotivator.model.Holder;
 import pl.szafraniec.ChildrenMotivator.model.TableCell;
 import pl.szafraniec.ChildrenMotivator.services.ChildService;
 import pl.szafraniec.ChildrenMotivator.ui.Fonts;
@@ -32,18 +33,11 @@ import java.io.ByteArrayInputStream;
 @Scope(scopeName = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 public class EditActivityTableComposite extends ActivityTableComposite {
 
-    //    @Autowired
-    //    private ChildRepository childRepository;
-
-    //    @Autowired
-    //    private GradeSchemeRepository gradeSchemeRepository;
-
     @Autowired
     private ChildService childService;
 
-    public EditActivityTableComposite(Composite parent, ChildActivitiesTable childActivitiesTable) {
-        super(parent, childActivitiesTable, () -> {
-        });
+    public EditActivityTableComposite(Composite parent, Holder<Child> child) {
+        super(parent, child);
     }
 
     @Override
@@ -65,11 +59,8 @@ public class EditActivityTableComposite extends ActivityTableComposite {
         saveButton.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseUp(MouseEvent e) {
-                table.set(childService.recalculateGrades(table.get().getChild()).getChildActivitiesTable());
-                // recalculate grades
-
-                applicationContext.getBean("ActivityTableComposite", shell, table.get(), (Runnable) () -> {
-                });
+                child.set(childService.editGrades(child.get()));
+                applicationContext.getBean("ActivityTableComposite", shell, child);
                 dispose();
                 shell.layout(true, true);
             }

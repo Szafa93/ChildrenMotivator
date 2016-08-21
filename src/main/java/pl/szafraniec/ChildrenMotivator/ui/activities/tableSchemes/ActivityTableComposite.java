@@ -22,11 +22,12 @@ import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import pl.szafraniec.ChildrenMotivator.model.Activity;
+import pl.szafraniec.ChildrenMotivator.model.Child;
 import pl.szafraniec.ChildrenMotivator.model.ChildActivitiesTable;
 import pl.szafraniec.ChildrenMotivator.model.ChildActivitiesTableDay;
 import pl.szafraniec.ChildrenMotivator.model.Holder;
 import pl.szafraniec.ChildrenMotivator.model.TableCell;
-import pl.szafraniec.ChildrenMotivator.services.ChildActivityTableService;
+import pl.szafraniec.ChildrenMotivator.services.ChildService;
 import pl.szafraniec.ChildrenMotivator.ui.AbstractMainComposite;
 import pl.szafraniec.ChildrenMotivator.ui.DayOfWeekLocalization;
 import pl.szafraniec.ChildrenMotivator.ui.Fonts;
@@ -44,17 +45,22 @@ import java.util.stream.Stream;
 @Component("ActivityTableComposite")
 @Scope(scopeName = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 public class ActivityTableComposite extends AbstractMainComposite {
-    protected static final GridData TABLE_CELL_LAYOUT_DATA = GridDataFactory.fillDefaults().align(SWT.FILL, SWT.FILL).hint(
-            Images.IMAGE_WIDTH, Images.IMAGE_HEIGHT).create();
+    protected static final int MARGINS = 25;
 
-    protected static final GridData INSIDE_TABLE_CELL_LAYOUT_DATA = GridDataFactory.fillDefaults().align(SWT.CENTER, SWT.CENTER).grab(true,
-            true).create();
+    protected static final GridData TABLE_CELL_LAYOUT_DATA = GridDataFactory.fillDefaults()
+            .align(SWT.FILL, SWT.FILL)
+            .hint(Images.IMAGE_WIDTH, Images.IMAGE_HEIGHT)
+            .create();
+
+    protected static final GridData INSIDE_TABLE_CELL_LAYOUT_DATA = GridDataFactory.fillDefaults()
+            .align(SWT.CENTER, SWT.CENTER)
+            .grab(true, true)
+            .create();
 
     @Autowired
-    protected ChildActivityTableService childActivityTableService;
+    protected ChildService childService;
 
-    protected Holder<ChildActivitiesTable> table;
-    private final Runnable onDayAdded;
+    protected final Holder<Child> child;
 
     private ScrolledComposite scrolledComposite;
     private Composite tableBehaviorComposite;
@@ -63,10 +69,9 @@ public class ActivityTableComposite extends AbstractMainComposite {
     protected LocalDate endDate;
     protected Button forwardButton;
 
-    public ActivityTableComposite(Composite parent, ChildActivitiesTable table, Runnable onDayAdded) {
+    public ActivityTableComposite(Composite parent, Holder<Child> child) {
         super(parent, SWT.NONE);
-        this.table = Holder.of(table);
-        this.onDayAdded = onDayAdded;
+        this.child = child;
         DayOfWeek today = LocalDate.now().getDayOfWeek();
         if (today.equals(DayOfWeek.SATURDAY) || today.equals(DayOfWeek.SUNDAY)) {
             startDate = LocalDate.now().with(TemporalAdjusters.previous(DayOfWeek.MONDAY));
@@ -77,13 +82,17 @@ public class ActivityTableComposite extends AbstractMainComposite {
         }
     }
 
+    protected ChildActivitiesTable getTable() {
+        return child.get().getChildActivitiesTable();
+    }
+
     @Override
     protected void createTopPart() {
         Composite topPart = new Composite(this, SWT.NONE);
         topPart.setLayout(GridLayoutFactory.swtDefaults().numColumns(2).equalWidth(false).create());
         topPart.setLayoutData(GridDataFactory.swtDefaults().grab(true, false).align(SWT.FILL, SWT.CENTER).create());
 
-        createLabel(topPart, table.get().getChild().getName() + " " + table.get().getChild().getSurname());
+        createLabel(topPart, getTable().getChild().getName() + " " + getTable().getChild().getSurname());
         createTopControlsButtonsComposite(topPart);
     }
 
@@ -92,8 +101,7 @@ public class ActivityTableComposite extends AbstractMainComposite {
         controlsButtonsComposite.setLayoutData(GridDataFactory.swtDefaults().align(SWT.CENTER, SWT.TOP).create());
         controlsButtonsComposite.setLayout(GridLayoutFactory.swtDefaults().numColumns(1).create());
 
-        createBackButton(controlsButtonsComposite, applicationContext, shell, ChildComposite.class,
-                () -> new Object[] { table.get().getChild() });
+        createBackButton(controlsButtonsComposite, applicationContext, shell, ChildComposite.class, () -> new Object[] { child });
         createEditButton(controlsButtonsComposite);
         return controlsButtonsComposite;
     }
@@ -106,7 +114,7 @@ public class ActivityTableComposite extends AbstractMainComposite {
         editButton.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseUp(MouseEvent e) {
-                applicationContext.getBean("EditActivityTableComposite", shell, table.get());
+                applicationContext.getBean("EditActivityTableComposite", shell, child);
                 dispose();
                 shell.layout(true, true);
             }
@@ -143,7 +151,6 @@ public class ActivityTableComposite extends AbstractMainComposite {
                 Stream.of(tableBehaviorComposite.getChildren()).forEach(Widget::dispose);
                 fillTableBehaviorComposite(tableBehaviorComposite);
                 scrolledComposite.layout(true, true);
-                onDayAdded.run();
             }
         });
         return backButton;
@@ -168,7 +175,6 @@ public class ActivityTableComposite extends AbstractMainComposite {
                 Stream.of(tableBehaviorComposite.getChildren()).forEach(Widget::dispose);
                 fillTableBehaviorComposite(tableBehaviorComposite);
                 scrolledComposite.layout(true, true);
-                onDayAdded.run();
             }
         });
         forwardButton.setEnabled(canShowNextWeek());
@@ -214,19 +220,25 @@ public class ActivityTableComposite extends AbstractMainComposite {
     }
 
     protected void fillTableBehaviorComposite(Composite parent) {
-        List<ChildActivitiesTableDay> days = childActivityTableService.getDays(table, startDate, endDate);
+        List<ChildActivitiesTableDay> days = childService.getDays(child, startDate, endDate);
         generateHeader(days, parent);
-        table.get().getActivitiesTableScheme().getListOfActivities().stream().forEachOrdered(activity -> generateRowFor(activity, days, parent));
+        getTable().getActivitiesTableScheme().getListOfActivities().stream().forEachOrdered(activity -> generateRowFor(activity, days, parent));
     }
 
     private void generateHeader(List<ChildActivitiesTableDay> days, Composite parent) {
-        Composite cornerComposite = new Composite(parent, SWT.BORDER);
-        cornerComposite.setLayoutData(TABLE_CELL_LAYOUT_DATA);
+        Composite cornerComposite = new Composite(parent, SWT.NONE);
+        cornerComposite.setLayoutData(GridDataFactory
+                .createFrom(TABLE_CELL_LAYOUT_DATA)
+                .hint(Images.IMAGE_WIDTH + MARGINS, Images.IMAGE_HEIGHT + MARGINS)
+                .create());
         cornerComposite.setLayout(GridLayoutFactory.fillDefaults().create());
         Label corner = new Label(cornerComposite, SWT.NONE);
         corner.setLayoutData(INSIDE_TABLE_CELL_LAYOUT_DATA);
         days.stream().forEachOrdered(day -> {
-            Composite dayHeaderComposite = new Composite(parent, SWT.BORDER);
+            Composite composite = new Composite(parent, SWT.NONE);
+            composite.setLayout(GridLayoutFactory.fillDefaults().spacing(0, 0).create());
+            composite.setLayoutData(GridDataFactory.fillDefaults().create());
+            Composite dayHeaderComposite = new Composite(composite, SWT.BORDER);
             dayHeaderComposite.setLayoutData(TABLE_CELL_LAYOUT_DATA);
             dayHeaderComposite.setLayout(GridLayoutFactory.fillDefaults().create());
             Label dayHeader = new Label(dayHeaderComposite, SWT.NONE);
@@ -240,7 +252,10 @@ public class ActivityTableComposite extends AbstractMainComposite {
     }
 
     private void generateRowFor(Activity activity, List<ChildActivitiesTableDay> days, Composite parent) {
-        Composite childRowHeaderComposite = new Composite(parent, SWT.BORDER);
+        Composite composite = new Composite(parent, SWT.NONE);
+        composite.setLayout(GridLayoutFactory.fillDefaults().spacing(0, 0).create());
+        composite.setLayoutData(GridDataFactory.fillDefaults().create());
+        Composite childRowHeaderComposite = new Composite(composite, SWT.BORDER);
         childRowHeaderComposite.setLayoutData(TABLE_CELL_LAYOUT_DATA);
         childRowHeaderComposite.setLayout(GridLayoutFactory.fillDefaults().create());
         Label childRowHeader = new Label(childRowHeaderComposite, SWT.NONE);

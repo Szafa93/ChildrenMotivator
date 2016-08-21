@@ -42,12 +42,17 @@ import java.util.stream.Stream;
 @Component("BehaviorTableComposite")
 @Scope(scopeName = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 public class BehaviorTableComposite extends AbstractMainComposite {
-    protected static final GridData TABLE_CELL_LAYOUT_DATA = GridDataFactory.fillDefaults().align(SWT.FILL, SWT.FILL).hint(
-            Images.IMAGE_WIDTH,
-            Images.IMAGE_HEIGHT).create();
+    protected static final int MARGINS = 25;
 
-    protected static final GridData INSIDE_TABLE_CELL_LAYOUT_DATA = GridDataFactory.fillDefaults().align(SWT.CENTER, SWT.CENTER).grab(true,
-            true).create();
+    protected static final GridData TABLE_CELL_LAYOUT_DATA = GridDataFactory.fillDefaults()
+            .align(SWT.FILL, SWT.FILL)
+            .hint(Images.IMAGE_WIDTH, Images.IMAGE_HEIGHT)
+            .create();
+
+    protected static final GridData INSIDE_TABLE_CELL_LAYOUT_DATA = GridDataFactory.fillDefaults()
+            .align(SWT.CENTER, SWT.CENTER)
+            .grab(true, true)
+            .create();
 
     @Autowired
     private ChildrenGroupService childrenGroupService;
@@ -188,13 +193,19 @@ public class BehaviorTableComposite extends AbstractMainComposite {
     }
 
     private void generateHeader(List<BehaviorTableDay> days, Composite parent) {
-        Composite cornerComposite = new Composite(parent, SWT.BORDER);
-        cornerComposite.setLayoutData(TABLE_CELL_LAYOUT_DATA);
+        Composite cornerComposite = new Composite(parent, SWT.NONE);
+        cornerComposite.setLayoutData(GridDataFactory
+                .createFrom(TABLE_CELL_LAYOUT_DATA)
+                .hint(Images.IMAGE_WIDTH + MARGINS, Images.IMAGE_HEIGHT + MARGINS)
+                .create());
         cornerComposite.setLayout(GridLayoutFactory.fillDefaults().create());
         Label corner = new Label(cornerComposite, SWT.NONE);
         corner.setLayoutData(INSIDE_TABLE_CELL_LAYOUT_DATA);
         days.stream().forEachOrdered(day -> {
-            Composite dayHeaderComposite = new Composite(parent, SWT.BORDER);
+            Composite composite = new Composite(parent, SWT.NONE);
+            composite.setLayout(GridLayoutFactory.fillDefaults().spacing(0, 0).create());
+            composite.setLayoutData(GridDataFactory.fillDefaults().create());
+            Composite dayHeaderComposite = new Composite(composite, SWT.BORDER);
             dayHeaderComposite.setLayoutData(TABLE_CELL_LAYOUT_DATA);
             dayHeaderComposite.setLayout(GridLayoutFactory.fillDefaults().create());
             Label dayHeader = new Label(dayHeaderComposite, SWT.WRAP);
@@ -208,7 +219,10 @@ public class BehaviorTableComposite extends AbstractMainComposite {
     }
 
     private void generateRowFor(Child child, List<BehaviorTableDay> days, Composite parent) {
-        Composite childRowHeaderComposite = new Composite(parent, SWT.BORDER);
+        Composite composite = new Composite(parent, SWT.NONE);
+        composite.setLayout(GridLayoutFactory.fillDefaults().spacing(0, 0).create());
+        composite.setLayoutData(GridDataFactory.fillDefaults().create());
+        Composite childRowHeaderComposite = new Composite(composite, SWT.BORDER);
         childRowHeaderComposite.setLayoutData(TABLE_CELL_LAYOUT_DATA);
         childRowHeaderComposite.setLayout(GridLayoutFactory.fillDefaults().create());
         Label childRowHeader = new Label(childRowHeaderComposite, SWT.NONE);

@@ -86,7 +86,7 @@ public class EditChildDialog extends Dialog {
         return name.trim().length() != 0
                 && surname.trim().length() != 0
                 && pesel.trim().length() != 0
-                && childService.findByPesel(pesel).map(Child::getId).map(id -> id == this.id).orElse(false)
+                && childService.findByPesel(pesel).map(Child::getId).map(id -> id == this.id).orElse(true)
                 && (parentEmail.trim().length() == 0 || EmailValidator.getInstance().isValid(parentEmail));
     }
 

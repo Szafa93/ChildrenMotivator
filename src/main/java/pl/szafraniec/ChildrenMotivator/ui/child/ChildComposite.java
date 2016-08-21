@@ -17,6 +17,7 @@ import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import pl.szafraniec.ChildrenMotivator.model.Child;
+import pl.szafraniec.ChildrenMotivator.model.Holder;
 import pl.szafraniec.ChildrenMotivator.services.ChildService;
 import pl.szafraniec.ChildrenMotivator.ui.AbstractMainComposite;
 import pl.szafraniec.ChildrenMotivator.ui.Fonts;
@@ -31,22 +32,16 @@ import pl.szafraniec.ChildrenMotivator.ui.groups.group.ChildrenGroupComposite;
 @Scope(scopeName = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 public class ChildComposite extends AbstractMainComposite {
 
-    //    @Autowired
-    //    private ChildRepository childRepository;
-    //
-    //    @Autowired
-    //    private ChildrenGroupRepository childrenGroupRepository;
-
     @Autowired
     private ChildService childService;
 
-    private Child child;
+    private Holder<Child> child;
 
     private Composite childPropertiesComposite;
 
     private Label label;
 
-    public ChildComposite(Composite parent, Child child) {
+    public ChildComposite(Composite parent, Holder<Child> child) {
         super(parent, SWT.NONE);
         this.child = child;
     }
@@ -57,7 +52,7 @@ public class ChildComposite extends AbstractMainComposite {
         topPart.setLayout(GridLayoutFactory.swtDefaults().numColumns(2).equalWidth(false).create());
         topPart.setLayoutData(GridDataFactory.swtDefaults().grab(true, false).align(SWT.FILL, SWT.CENTER).create());
 
-        label = createLabel(topPart, child.getName() + " " + child.getSurname());
+        label = createLabel(topPart, child.get().getName() + " " + child.get().getSurname());
         createTopControlsButtonsComposite(topPart);
     }
 
@@ -67,7 +62,7 @@ public class ChildComposite extends AbstractMainComposite {
         controlsButtonsComposite.setLayout(GridLayoutFactory.swtDefaults().numColumns(1).create());
 
         createBackButton(controlsButtonsComposite, applicationContext, shell, ChildrenGroupComposite.class,
-                () -> new Object[] { child.getChildrenGroup() });
+                () -> new Object[] { child.get().getChildrenGroup() });
         return controlsButtonsComposite;
     }
 
@@ -93,11 +88,11 @@ public class ChildComposite extends AbstractMainComposite {
     private void fillChildProperties(Composite childPropertiesComposite) {
         childPropertiesComposite.setLayoutData(GridDataFactory.fillDefaults().grab(true, true).align(SWT.FILL, SWT.FILL).create());
         childPropertiesComposite.setLayout(GridLayoutFactory.fillDefaults().numColumns(2).create());
-        createChildProperty(childPropertiesComposite, "Imię:", child.getName());
-        createChildProperty(childPropertiesComposite, "Nazwisko:", child.getSurname());
-        createChildProperty(childPropertiesComposite, "PESEL:", child.getPesel());
-        createChildProperty(childPropertiesComposite, "Email rodzica:", child.getParentEmail());
-        createChildProperty(childPropertiesComposite, "Grupa:", child.getChildrenGroup().getName());
+        createChildProperty(childPropertiesComposite, "Imię:", child.get().getName());
+        createChildProperty(childPropertiesComposite, "Nazwisko:", child.get().getSurname());
+        createChildProperty(childPropertiesComposite, "PESEL:", child.get().getPesel());
+        createChildProperty(childPropertiesComposite, "Email rodzica:", child.get().getParentEmail());
+        createChildProperty(childPropertiesComposite, "Grupa:", child.get().getChildrenGroup().getName());
         createActivityTableProperties(childPropertiesComposite, "Tablica aktywności:");
         createActivityTableStatistics(childPropertiesComposite, "Średnia ocen z aktywności");
     }
@@ -115,16 +110,15 @@ public class ChildComposite extends AbstractMainComposite {
         Label activityTableLabel = new Label(parent, SWT.NONE);
         activityTableLabel.setLayoutData(GridDataFactory.fillDefaults().align(SWT.BEGINNING, SWT.CENTER).grab(false, false).create());
         activityTableLabel.setText(propertyName);
-        if (child.getChildActivitiesTable().getActivitiesTableScheme() != null) {
+        if (child.get().getChildActivitiesTable().getActivitiesTableScheme() != null) {
             //            Label propertyValueLabel = new Label(parent, SWT.RIGHT | SWT.BORDER);
             Button propertyValueLabel = new Button(parent, SWT.RIGHT);
             propertyValueLabel.setLayoutData(GridDataFactory.fillDefaults().align(SWT.FILL, SWT.CENTER).grab(true, false).create());
-            propertyValueLabel.setText(child.getChildActivitiesTable().getActivitiesTableScheme().getName());
+            propertyValueLabel.setText(child.get().getChildActivitiesTable().getActivitiesTableScheme().getName());
             propertyValueLabel.addMouseListener(new MouseAdapter() {
                 @Override
                 public void mouseUp(MouseEvent e) {
-                    applicationContext.getBean("ActivityTableComposite", shell, child.getChildActivitiesTable(), (Runnable) () -> {
-                    });
+                    applicationContext.getBean("ActivityTableComposite", shell, child);
                     dispose();
                     shell.layout(true, true);
                 }
@@ -138,10 +132,9 @@ public class ChildComposite extends AbstractMainComposite {
         Label label = new Label(parent, SWT.NONE);
         label.setText(compositeName);
         label.setLayoutData(GridDataFactory.fillDefaults().grab(true, false).align(SWT.CENTER, SWT.CENTER).span(2, 1).create());
-        if (child.getChildActivitiesTable().getActivitiesTableScheme() != null) {
+        if (child.get().getChildActivitiesTable().getActivitiesTableScheme() != null) {
             ActivitiesTableSchemeStatisticsComposite composite = (ActivitiesTableSchemeStatisticsComposite)
-                    applicationContext.getBean("ActivitiesTableSchemeStatisticsComposite", parent, child.getChildActivitiesTable(),
-                            (Runnable) () -> child = childService.findOne(child.getId()));
+                    applicationContext.getBean("ActivitiesTableSchemeStatisticsComposite", parent, child);
             composite.setLayoutData(GridDataFactory.fillDefaults().align(SWT.FILL, SWT.FILL).grab(true, true).span(2, 1).create());
         }
     }
@@ -161,38 +154,39 @@ public class ChildComposite extends AbstractMainComposite {
     }
 
     private void createRemoveActivityTableButton(Composite parent) {
-        Button addGroupButton = new Button(parent, SWT.PUSH | SWT.WRAP);
-        addGroupButton.setLayoutData(DEFAULT_CONTROL_BUTTON_FACTORY.create());
-        addGroupButton.setText("Usuń tablicę aktywności");
-        addGroupButton.setFont(FontDescriptor.createFrom(Fonts.DEFAULT_FONT_DATA).createFont(addGroupButton.getDisplay()));
-        addGroupButton.addMouseListener(new MouseAdapter() {
+        Button removeTable = new Button(parent, SWT.PUSH | SWT.WRAP);
+        removeTable.setLayoutData(DEFAULT_CONTROL_BUTTON_FACTORY.create());
+        removeTable.setText("Usuń tablicę aktywności");
+        removeTable.setFont(FontDescriptor.createFrom(Fonts.DEFAULT_FONT_DATA).createFont(removeTable.getDisplay()));
+        removeTable.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseUp(MouseEvent e) {
                 if (MessageDialog.openConfirm(shell, "Potwierdzenie usunięcia",
                         "Usunięta zostanie ta tablica wraz ze wszystkimi ocenami" + System.lineSeparator() + "Czy chcesz kontynuować?")) {
-                    child = childService.removeActivityTable(child);
+                    child.set(childService.removeActivityTable(child.get()));
                     applicationContext.getBean(ChildComposite.class, shell, child);
                     dispose();
                     shell.layout(true, true);
                 }
             }
         });
+        removeTable.setEnabled(child.get().getChildActivitiesTable().getActivitiesTableScheme() != null);
     }
 
     private void createShowChartButton(Composite parent) {
-        Button addGroupButton = new Button(parent, SWT.PUSH);
-        addGroupButton.setLayoutData(DEFAULT_CONTROL_BUTTON_FACTORY.create());
-        addGroupButton.setText("Wykres ocen");
-        addGroupButton.setFont(FontDescriptor.createFrom(Fonts.DEFAULT_FONT_DATA).createFont(addGroupButton.getDisplay()));
-        addGroupButton.addMouseListener(new MouseAdapter() {
+        Button showChart = new Button(parent, SWT.PUSH);
+        showChart.setLayoutData(DEFAULT_CONTROL_BUTTON_FACTORY.create());
+        showChart.setText("Wykres ocen");
+        showChart.setFont(FontDescriptor.createFrom(Fonts.DEFAULT_FONT_DATA).createFont(showChart.getDisplay()));
+        showChart.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseUp(MouseEvent e) {
-                applicationContext.getBean(ChartComposite.class, shell, child.getChildActivitiesTable());
+                applicationContext.getBean(ChartComposite.class, shell, child.get().getChildActivitiesTable());
                 dispose();
                 shell.layout(true, true);
             }
         });
-        addGroupButton.setEnabled(child.getChildActivitiesTable().getActivitiesTableScheme() != null);
+        showChart.setEnabled(child.get().getChildActivitiesTable().getActivitiesTableScheme() != null);
     }
 
     private void createChangeGroupButton(Composite parent) {
@@ -222,7 +216,7 @@ public class ChildComposite extends AbstractMainComposite {
     }
 
     private void removeChild() {
-        applicationContext.getBean(ChildrenGroupComposite.class, shell, childService.removeChild(child));
+        applicationContext.getBean(ChildrenGroupComposite.class, shell, childService.removeChild(child.get()));
         dispose();
         shell.layout(true, true);
     }
@@ -241,39 +235,43 @@ public class ChildComposite extends AbstractMainComposite {
     }
 
     private void editChild() {
-        EditChildDialog dialog = new EditChildDialog(shell, child.getName(), child.getSurname(), child.getPesel(), child.getParentEmail(),
-                "Edytuj", child.getId());
+        EditChildDialog dialog = new EditChildDialog(shell, child.get().getName(), child.get().getSurname(), child.get().getPesel(), child.get().getParentEmail(),
+                "Edytuj", child.get().getId());
         applicationContext.getAutowireCapableBeanFactory().autowireBean(dialog);
         if (Window.OK == dialog.open()) {
-            childService.editChild(child, dialog.getName(), dialog.getSurname(), dialog.getPesel(), dialog.getParentEmail());
+            child.set(childService.editChild(child.get(),
+                    dialog.getName(),
+                    dialog.getSurname(),
+                    dialog.getPesel(),
+                    dialog.getParentEmail()));
             for (Control control : childPropertiesComposite.getChildren()) {
                 control.dispose();
             }
-            label.setText(child.getName() + " " + child.getSurname());
+            label.setText(child.get().getName() + " " + child.get().getSurname());
             fillChildProperties(childPropertiesComposite);
             childPropertiesComposite.layout(true, true);
         }
     }
 
     private void changeGroup() {
-        GroupSelectorDialog dialog = new GroupSelectorDialog(shell, child.getChildrenGroup());
+        GroupSelectorDialog dialog = new GroupSelectorDialog(shell, child.get().getChildrenGroup());
         applicationContext.getAutowireCapableBeanFactory().autowireBean(dialog);
         if (Window.OK == dialog.open()) {
-            child = childService.changeGroup(child, dialog.getChildrenGroup());
+            child.set(childService.changeGroup(child.get(), dialog.getChildrenGroup()));
             for (Control control : childPropertiesComposite.getChildren()) {
                 control.dispose();
             }
-            label.setText(child.getName() + " " + child.getSurname());
+            label.setText(child.get().getName() + " " + child.get().getSurname());
             fillChildProperties(childPropertiesComposite);
             childPropertiesComposite.layout(true, true);
         }
     }
 
     private void selectActivityTable() {
-        ActivityTableSelectorDialog dialog = new ActivityTableSelectorDialog(shell, child.getChildActivitiesTable().getActivitiesTableScheme());
+        ActivityTableSelectorDialog dialog = new ActivityTableSelectorDialog(shell, child.get().getChildActivitiesTable().getActivitiesTableScheme());
         applicationContext.getAutowireCapableBeanFactory().autowireBean(dialog);
         if (Window.OK == dialog.open()) {
-            childService.setActivityTable(child, dialog.getActivitiesTableScheme());
+            child.set(childService.setActivityTable(child.get(), dialog.getActivitiesTableScheme()));
             applicationContext.getBean(ChildComposite.class, shell, child);
             dispose();
             shell.layout(true, true);

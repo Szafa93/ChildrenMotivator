@@ -2,12 +2,15 @@ package pl.szafraniec.ChildrenMotivator.services.impl;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import pl.szafraniec.ChildrenMotivator.model.ChildrenGroup;
 import pl.szafraniec.ChildrenMotivator.model.GradeScheme;
 import pl.szafraniec.ChildrenMotivator.model.TableCell;
 import pl.szafraniec.ChildrenMotivator.repository.GradeSchemeRepository;
 import pl.szafraniec.ChildrenMotivator.repository.TableCellRepository;
+import pl.szafraniec.ChildrenMotivator.services.ChildrenGroupService;
 import pl.szafraniec.ChildrenMotivator.services.GradeSchemeService;
 
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -20,6 +23,9 @@ public class GradeSchemeServiceImpl implements GradeSchemeService {
 
     @Autowired
     private TableCellRepository tableCellRepository;
+
+    @Autowired
+    private ChildrenGroupService childrenGroupService;
 
     @Override
     public List<GradeScheme> findAll() {
@@ -59,6 +65,13 @@ public class GradeSchemeServiceImpl implements GradeSchemeService {
     public GradeScheme edit(GradeScheme gradeScheme, int gradeValue, byte[] imageByte) {
         gradeScheme.setValue(gradeValue);
         gradeScheme.setImage(imageByte);
-        return gradeSchemeRepository.saveAndFlush(gradeScheme);
+        GradeScheme grade = gradeSchemeRepository.saveAndFlush(gradeScheme);
+        childrenGroupService.findAll()
+                .stream()
+                .map(ChildrenGroup::getChildren)
+                .flatMap(Collection::stream)
+                .forEach(child -> childrenGroupService.recalculateGrades(child));
+        gradeSchemeRepository.flush();
+        return grade;
     }
 }

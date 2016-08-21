@@ -21,6 +21,7 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import pl.szafraniec.ChildrenMotivator.model.Child;
 import pl.szafraniec.ChildrenMotivator.model.ChildrenGroup;
+import pl.szafraniec.ChildrenMotivator.model.Holder;
 import pl.szafraniec.ChildrenMotivator.services.ChildService;
 import pl.szafraniec.ChildrenMotivator.services.ChildrenGroupService;
 import pl.szafraniec.ChildrenMotivator.services.ReportService;
@@ -129,7 +130,7 @@ public class ChildrenGroupComposite extends AbstractMainComposite {
         groupButton.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseUp(MouseEvent e) {
-                applicationContext.getBean(ChildComposite.class, shell, child);
+                applicationContext.getBean(ChildComposite.class, shell, Holder.of(child));
                 dispose();
                 shell.layout(true, true);
             }

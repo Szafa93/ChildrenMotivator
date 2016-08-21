@@ -6,13 +6,16 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
-import pl.szafraniec.ChildrenMotivator.model.ChildActivitiesTable;
+import pl.szafraniec.ChildrenMotivator.model.Child;
 import pl.szafraniec.ChildrenMotivator.model.ChildActivitiesTableDay;
 import pl.szafraniec.ChildrenMotivator.model.GradeScheme;
+import pl.szafraniec.ChildrenMotivator.model.Holder;
 import pl.szafraniec.ChildrenMotivator.model.TableCell;
+import pl.szafraniec.ChildrenMotivator.services.ChildService;
 
 import java.util.List;
 import java.util.OptionalDouble;
@@ -21,8 +24,11 @@ import java.util.OptionalDouble;
 @Scope(scopeName = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 public class ActivitiesTableSchemeStatisticsComposite extends ActivityTableComposite {
 
-    public ActivitiesTableSchemeStatisticsComposite(Composite parent, ChildActivitiesTable table, Runnable onDayAdded) {
-        super(parent, table, onDayAdded);
+    @Autowired
+    private ChildService childService;
+
+    public ActivitiesTableSchemeStatisticsComposite(Composite parent, Holder<Child> child) {
+        super(parent, child);
     }
 
     @Override
@@ -55,8 +61,8 @@ public class ActivitiesTableSchemeStatisticsComposite extends ActivityTableCompo
         Label label = new Label(parent, SWT.NONE);
         label.setText(startDate.toString() + " - " + endDate.toString());
         label.setLayoutData(GridDataFactory.fillDefaults().grab(true, false).align(SWT.CENTER, SWT.CENTER).span(2, 1).create());
-        List<ChildActivitiesTableDay> days = childActivityTableService.getDays(table, startDate, endDate);
-        table.get().getActivitiesTableScheme().getListOfActivities().stream().forEach(activity -> {
+        List<ChildActivitiesTableDay> days = childService.getDays(child, startDate, endDate);
+        child.get().getChildActivitiesTable().getActivitiesTableScheme().getListOfActivities().stream().forEach(activity -> {
             OptionalDouble avg = days.stream()
                     .map(ChildActivitiesTableDay::getGrades)
                     .map(map -> map.get(activity))
