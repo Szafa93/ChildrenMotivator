@@ -44,7 +44,7 @@ public class BackgroundImageSelectorDialog extends Dialog {
     @Override
     protected void configureShell(Shell shell) {
         super.configureShell(shell);
-        shell.setText("Wybierz ocenę");
+        shell.setText("Wybierz tło");
     }
 
     @Override

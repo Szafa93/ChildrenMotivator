@@ -45,6 +45,24 @@ public class BackgroundImage {
         this.image = image;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o)
+            return true;
+        if (o == null || getClass() != o.getClass())
+            return false;
+
+        BackgroundImage that = (BackgroundImage) o;
+
+        return id == that.id;
+
+    }
+
+    @Override
+    public int hashCode() {
+        return id;
+    }
+
     public static class BackgroundImageFactory {
         public static BackgroundImage create(String name, byte[] image) {
             BackgroundImage backgroundImage = new BackgroundImage();
