@@ -1,5 +1,6 @@
 package pl.szafraniec.ChildrenMotivator.services;
 
+import pl.szafraniec.ChildrenMotivator.model.BackgroundImage;
 import pl.szafraniec.ChildrenMotivator.model.BehaviorTableDay;
 import pl.szafraniec.ChildrenMotivator.model.Child;
 import pl.szafraniec.ChildrenMotivator.model.ChildrenGroup;
@@ -28,4 +29,6 @@ public interface ChildrenGroupService {
     ChildrenGroup edit(ChildrenGroup childrenGroup, String groupName);
 
     ChildrenGroup recalculateGrades(Child child);
+
+    ChildrenGroup setBackground(ChildrenGroup childrenGroup, BackgroundImage backgroundImage);
 }

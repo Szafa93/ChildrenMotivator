@@ -10,7 +10,6 @@ import org.eclipse.swt.events.ControlAdapter;
 import org.eclipse.swt.events.ControlEvent;
 import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
-import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
@@ -23,11 +22,10 @@ import pl.szafraniec.ChildrenMotivator.model.Activity;
 import pl.szafraniec.ChildrenMotivator.services.ActivityService;
 import pl.szafraniec.ChildrenMotivator.ui.AbstractMainComposite;
 import pl.szafraniec.ChildrenMotivator.ui.Fonts;
+import pl.szafraniec.ChildrenMotivator.ui.ImageCanvas;
 import pl.szafraniec.ChildrenMotivator.ui.Images;
 import pl.szafraniec.ChildrenMotivator.ui.activities.ActivitiesComposite;
 import pl.szafraniec.ChildrenMotivator.ui.activities.dialog.EditActivityDialog;
-
-import java.io.ByteArrayInputStream;
 
 @Component
 @Scope(scopeName = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
@@ -44,7 +42,7 @@ public class ActivityComposite extends AbstractMainComposite {
 
     private Label label;
 
-    private Label image;
+    private ImageCanvas image;
 
     public ActivityComposite(Composite parent, Activity activity) {
         super(parent, SWT.NONE);
@@ -90,10 +88,7 @@ public class ActivityComposite extends AbstractMainComposite {
         activityComposite.setLayoutData(GridDataFactory.swtDefaults().grab(true, true).align(SWT.FILL, SWT.FILL).create());
         activityComposite.setLayout(GridLayoutFactory.swtDefaults().numColumns(1).create());
 
-        image = new Label(activityComposite, SWT.WRAP | SWT.BORDER);
-        Image imageData = new Image(getShell().getDisplay(), new ByteArrayInputStream(activity.getImage()));
-        imageData = Images.resize(getShell().getDisplay(), imageData);
-        image.setImage(imageData);
+        image = new ImageCanvas(activityComposite, SWT.NONE, activity.getImage());
         image.setLayoutData(GridDataFactory.swtDefaults().align(SWT.CENTER, SWT.CENTER).grab(true, true).minSize(Images.IMAGE_WIDTH,
                 Images.IMAGE_HEIGHT).hint(Images.IMAGE_WIDTH, Images.IMAGE_HEIGHT).create());
         image.pack(true);
@@ -133,10 +128,9 @@ public class ActivityComposite extends AbstractMainComposite {
                 if (Window.OK == dialog.open()) {
                     activity = activityService.editActivity(activity, dialog.getActivityName(), dialog.getImageByte());
 
+
                     label.setText(activity.getName());
-                    Image imageData = new Image(getShell().getDisplay(), new ByteArrayInputStream(activity.getImage()));
-                    imageData = Images.resize(getShell().getDisplay(), imageData);
-                    image.setImage(imageData);
+                    image.setImage(activity.getImage());
 
                     scrolledComposite.layout(true, true);
                 }

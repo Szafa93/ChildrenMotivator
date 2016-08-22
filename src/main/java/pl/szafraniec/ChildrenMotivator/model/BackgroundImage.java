@@ -18,7 +18,7 @@ public class BackgroundImage {
     private String name;
 
     @Lob
-    @Column(nullable = false)
+    @Column(nullable = false, length = 64000)
     private byte[] image;
 
     public int getId() {

@@ -12,13 +12,11 @@ import org.eclipse.swt.events.ControlAdapter;
 import org.eclipse.swt.events.ControlEvent;
 import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
-import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Label;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
@@ -27,12 +25,12 @@ import pl.szafraniec.ChildrenMotivator.model.Activity;
 import pl.szafraniec.ChildrenMotivator.services.ActivityService;
 import pl.szafraniec.ChildrenMotivator.ui.AbstractMainComposite;
 import pl.szafraniec.ChildrenMotivator.ui.Fonts;
+import pl.szafraniec.ChildrenMotivator.ui.ImageCanvas;
 import pl.szafraniec.ChildrenMotivator.ui.Images;
 import pl.szafraniec.ChildrenMotivator.ui.activities.activity.ActivityComposite;
 import pl.szafraniec.ChildrenMotivator.ui.activities.dialog.EditActivityDialog;
 import pl.szafraniec.ChildrenMotivator.ui.start.StartComposite;
 
-import java.io.ByteArrayInputStream;
 import java.util.stream.Collectors;
 
 @Component
@@ -123,13 +121,9 @@ public class ActivitiesComposite extends AbstractMainComposite {
     }
 
     private Control createActivityButton(Activity activity, Composite parent) {
-        Label activityButton = new Label(parent, SWT.WRAP | SWT.BORDER);
-        activityButton.setText(activity.getName());
+        ImageCanvas activityButton = new ImageCanvas(parent, SWT.NO_REDRAW_RESIZE, activity.getImage());
         activityButton.setToolTipText(activity.getName());
         activityButton.setFont(FontDescriptor.createFrom(Fonts.DEFAULT_FONT_DATA).createFont(activityButton.getDisplay()));
-        Image imageData = new Image(getShell().getDisplay(), new ByteArrayInputStream(activity.getImage()));
-        imageData = Images.resize(getShell().getDisplay(), imageData);
-        activityButton.setImage(imageData);
 
         activityButton.setLayoutData(RowDataFactory.swtDefaults().hint(Images.IMAGE_WIDTH, Images.IMAGE_HEIGHT).create());
         activityButton.addMouseListener(new MouseAdapter() {

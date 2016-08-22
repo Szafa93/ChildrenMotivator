@@ -9,7 +9,6 @@ import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.MouseMoveListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Button;
@@ -22,9 +21,9 @@ import org.eclipse.swt.widgets.Text;
 import org.springframework.beans.factory.annotation.Autowired;
 import pl.szafraniec.ChildrenMotivator.model.GradeScheme;
 import pl.szafraniec.ChildrenMotivator.services.GradeSchemeService;
+import pl.szafraniec.ChildrenMotivator.ui.ImageCanvas;
 import pl.szafraniec.ChildrenMotivator.ui.Images;
 
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -45,7 +44,7 @@ public class EditGradeSchemeDialog extends Dialog {
 
     private byte[] fileData;
 
-    private Label image;
+    private ImageCanvas image;
 
     public EditGradeSchemeDialog(Shell shell) {
         this(shell, null, null, "Dodaj ocenę", -1);
@@ -113,9 +112,7 @@ public class EditGradeSchemeDialog extends Dialog {
                 if (selected != null) {
                     try {
                         fileData = Files.readAllBytes(Paths.get(selected));
-                        Image imageData = new Image(getShell().getDisplay(), new ByteArrayInputStream(fileData));
-                        imageData = Images.resize(getShell().getDisplay(), imageData);
-                        image.setImage(imageData);
+                        image.setImage(fileData);
                     } catch (IOException e1) {
 
                     }
@@ -129,13 +126,11 @@ public class EditGradeSchemeDialog extends Dialog {
             }
         });
 
-        image = new Label(gradeSchemePropertiesComposite, SWT.BORDER);
+        image = new ImageCanvas(gradeSchemePropertiesComposite, SWT.BORDER);
         image.setLayoutData(GridDataFactory.swtDefaults().span(2, 1).align(SWT.CENTER, SWT.CENTER).hint(Images.IMAGE_WIDTH,
                 Images.IMAGE_HEIGHT).minSize(Images.IMAGE_WIDTH, Images.IMAGE_HEIGHT).create());
         if (fileData != null) {
-            Image imageData = new Image(getShell().getDisplay(), new ByteArrayInputStream(fileData));
-            imageData = Images.resize(getShell().getDisplay(), imageData);
-            image.setImage(imageData);
+            image.setImage(fileData);
         }
         gradeSchemePropertiesComposite.layout(true, true);
     }

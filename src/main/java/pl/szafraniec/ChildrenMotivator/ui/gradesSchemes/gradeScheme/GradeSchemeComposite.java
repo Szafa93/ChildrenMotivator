@@ -10,7 +10,6 @@ import org.eclipse.swt.events.ControlAdapter;
 import org.eclipse.swt.events.ControlEvent;
 import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
-import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
@@ -23,11 +22,10 @@ import pl.szafraniec.ChildrenMotivator.model.GradeScheme;
 import pl.szafraniec.ChildrenMotivator.services.GradeSchemeService;
 import pl.szafraniec.ChildrenMotivator.ui.AbstractMainComposite;
 import pl.szafraniec.ChildrenMotivator.ui.Fonts;
+import pl.szafraniec.ChildrenMotivator.ui.ImageCanvas;
 import pl.szafraniec.ChildrenMotivator.ui.Images;
 import pl.szafraniec.ChildrenMotivator.ui.gradesSchemes.GradesSchemesComposite;
 import pl.szafraniec.ChildrenMotivator.ui.gradesSchemes.dialog.EditGradeSchemeDialog;
-
-import java.io.ByteArrayInputStream;
 
 @Component
 @Scope(scopeName = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
@@ -44,7 +42,7 @@ public class GradeSchemeComposite extends AbstractMainComposite {
 
     private Label label;
 
-    private Label image;
+    private ImageCanvas image;
 
     public GradeSchemeComposite(Composite parent, GradeScheme gradeScheme) {
         super(parent, SWT.NONE);
@@ -90,10 +88,8 @@ public class GradeSchemeComposite extends AbstractMainComposite {
         gradeSchemeComposite.setLayoutData(GridDataFactory.swtDefaults().grab(true, true).align(SWT.FILL, SWT.FILL).create());
         gradeSchemeComposite.setLayout(GridLayoutFactory.swtDefaults().numColumns(1).create());
 
-        image = new Label(gradeSchemeComposite, SWT.WRAP | SWT.BORDER);
-        Image imageData = new Image(getShell().getDisplay(), new ByteArrayInputStream(gradeScheme.getImage()));
-        imageData = Images.resize(getShell().getDisplay(), imageData);
-        image.setImage(imageData);
+        image = new ImageCanvas(gradeSchemeComposite, SWT.WRAP | SWT.BORDER);
+        image.setImage(gradeScheme.getImage());
         image.setLayoutData(GridDataFactory.swtDefaults().align(SWT.CENTER, SWT.CENTER).grab(true, true).minSize(Images.IMAGE_WIDTH,
                 Images.IMAGE_HEIGHT).hint(Images.IMAGE_WIDTH, Images.IMAGE_HEIGHT).create());
         image.pack(true);
@@ -156,8 +152,6 @@ public class GradeSchemeComposite extends AbstractMainComposite {
     private void editGradeScheme(int gradeValue, byte[] imageByte) {
         gradeScheme = gradeSchemeService.edit(gradeScheme, gradeValue, imageByte);
         label.setText(Integer.toString(gradeValue));
-        Image imageData = new Image(getShell().getDisplay(), new ByteArrayInputStream(gradeScheme.getImage()));
-        imageData = Images.resize(getShell().getDisplay(), imageData);
-        image.setImage(imageData);
+        image.setImage(imageByte);
     }
 }

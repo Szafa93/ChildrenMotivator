@@ -3,13 +3,18 @@ package pl.szafraniec.ChildrenMotivator.ui.behaviorTable;
 import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.layout.GridLayoutFactory;
 import org.eclipse.jface.resource.FontDescriptor;
+import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.ScrolledComposite;
 import org.eclipse.swt.events.ControlAdapter;
 import org.eclipse.swt.events.ControlEvent;
+import org.eclipse.swt.events.MouseAdapter;
+import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
@@ -28,7 +33,9 @@ import pl.szafraniec.ChildrenMotivator.services.ChildrenGroupService;
 import pl.szafraniec.ChildrenMotivator.ui.AbstractMainComposite;
 import pl.szafraniec.ChildrenMotivator.ui.DayOfWeekLocalization;
 import pl.szafraniec.ChildrenMotivator.ui.Fonts;
+import pl.szafraniec.ChildrenMotivator.ui.ImageCanvas;
 import pl.szafraniec.ChildrenMotivator.ui.Images;
+import pl.szafraniec.ChildrenMotivator.ui.backgroundImage.BackgroundImageSelectorDialog;
 import pl.szafraniec.ChildrenMotivator.ui.groups.group.ChildrenGroupComposite;
 
 import java.io.ByteArrayInputStream;
@@ -50,6 +57,11 @@ public class BehaviorTableComposite extends AbstractMainComposite {
             .create();
 
     protected static final GridData INSIDE_TABLE_CELL_LAYOUT_DATA = GridDataFactory.fillDefaults()
+            .align(SWT.FILL, SWT.FILL)
+            .grab(true, true)
+            .create();
+
+    protected static final GridData TEXT_INSIDE_TABLE_CELL_LAYOUT_DATA = GridDataFactory.fillDefaults()
             .align(SWT.CENTER, SWT.CENTER)
             .grab(true, true)
             .create();
@@ -64,6 +76,7 @@ public class BehaviorTableComposite extends AbstractMainComposite {
     private LocalDate startDate;
     private LocalDate endDate;
     private Button forwardButton;
+    private Image imageData;
 
     public BehaviorTableComposite(Composite parent, ChildrenGroup childrenGroup) {
         super(parent, SWT.NONE);
@@ -95,7 +108,27 @@ public class BehaviorTableComposite extends AbstractMainComposite {
 
         createBackButton(controlsButtonsComposite, applicationContext, shell, ChildrenGroupComposite.class,
                 () -> new Object[] { childrenGroup });
+        createSelectBackgroundImageButton(controlsButtonsComposite);
         return controlsButtonsComposite;
+    }
+
+    private void createSelectBackgroundImageButton(Composite parent) {
+        Button saveButton = new Button(parent, SWT.PUSH);
+        saveButton.setLayoutData(DEFAULT_CONTROL_BUTTON_FACTORY.create());
+        saveButton.setText("Wybierz tło");
+        saveButton.setFont(FontDescriptor.createFrom(Fonts.DEFAULT_FONT_DATA).createFont(saveButton.getDisplay()));
+        saveButton.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseUp(MouseEvent e) {
+                BackgroundImageSelectorDialog dialog = new BackgroundImageSelectorDialog(getShell(), childrenGroup.getBehaviorTable().getBackgroundImage());
+                applicationContext.getAutowireCapableBeanFactory().autowireBean(dialog);
+                if (Window.OK == dialog.open()) {
+                    childrenGroup = childrenGroupService.setBackground(childrenGroup, dialog.getBackgroundImage());
+                    imageData = null;
+                    refreshBackground();
+                }
+            }
+        });
     }
 
     @Override
@@ -170,6 +203,13 @@ public class BehaviorTableComposite extends AbstractMainComposite {
         tableBehaviorComposite = new Composite(scrolledComposite, SWT.NONE);
         tableBehaviorComposite.setLayoutData(GridDataFactory.swtDefaults().grab(true, true).align(SWT.FILL, SWT.FILL).create());
         tableBehaviorComposite.setLayout(GridLayoutFactory.fillDefaults().numColumns(6).create());
+        tableBehaviorComposite.addControlListener(new ControlAdapter() {
+            @Override
+            public void controlResized(ControlEvent e) {
+                refreshBackground();
+            }
+        });
+        scrolledComposite.setBackgroundMode(SWT.INHERIT_FORCE);
 
         fillTableBehaviorComposite(tableBehaviorComposite);
 
@@ -182,6 +222,25 @@ public class BehaviorTableComposite extends AbstractMainComposite {
         });
         scrolledComposite.layout(true, true);
         return scrolledComposite;
+    }
+
+    private void refreshBackground() {
+        if (childrenGroup.getBehaviorTable().getBackgroundImage() != null) {
+            if (imageData == null) {
+                imageData = new Image(getShell().getDisplay(), new ByteArrayInputStream(childrenGroup.getBehaviorTable().getBackgroundImage().getImage()));
+            }
+            Rectangle clientArea = scrolledComposite.getClientArea();
+            if (clientArea.width * clientArea.height > 0) {
+                Image scaled = new Image(getDisplay(), clientArea.width, clientArea.height);
+                GC gc = new GC(scaled);
+                gc.setAntialias(SWT.ON);
+                gc.setInterpolation(SWT.HIGH);
+                gc.drawImage(imageData, 0, 0,
+                        imageData.getImageData().width, imageData.getImageData().height, 0, 0, clientArea.width, clientArea.height);
+                gc.dispose();
+                scrolledComposite.setBackgroundImage(scaled);
+            }
+        }
     }
 
     private void fillTableBehaviorComposite(Composite parent) {
@@ -214,7 +273,7 @@ public class BehaviorTableComposite extends AbstractMainComposite {
                     + day.getLocalDate().toString());
             dayHeader.setFont(FontDescriptor.createFrom(Fonts.DEFAULT_FONT_DATA).createFont(dayHeader.getDisplay()));
             dayHeader.setAlignment(SWT.CENTER);
-            dayHeader.setLayoutData(INSIDE_TABLE_CELL_LAYOUT_DATA);
+            dayHeader.setLayoutData(TEXT_INSIDE_TABLE_CELL_LAYOUT_DATA);
         });
     }
 
@@ -226,7 +285,7 @@ public class BehaviorTableComposite extends AbstractMainComposite {
         childRowHeaderComposite.setLayoutData(TABLE_CELL_LAYOUT_DATA);
         childRowHeaderComposite.setLayout(GridLayoutFactory.fillDefaults().create());
         Label childRowHeader = new Label(childRowHeaderComposite, SWT.NONE);
-        childRowHeader.setLayoutData(INSIDE_TABLE_CELL_LAYOUT_DATA);
+        childRowHeader.setLayoutData(TEXT_INSIDE_TABLE_CELL_LAYOUT_DATA);
         childRowHeader.setText(String.format("%s\n%s", child.getName(), child.getSurname()));
         childRowHeader.setFont(FontDescriptor.createFrom(Fonts.DEFAULT_FONT_DATA).createFont(childRowHeader.getDisplay()));
         days.stream().forEachOrdered(day -> createTableCell(child, day, parent));
@@ -237,15 +296,13 @@ public class BehaviorTableComposite extends AbstractMainComposite {
         Composite dayGradeComposite = new Composite(parent, SWT.BORDER);
         dayGradeComposite.setLayoutData(TABLE_CELL_LAYOUT_DATA);
         dayGradeComposite.setLayout(GridLayoutFactory.fillDefaults().create());
-        Label dayGrade = new Label(dayGradeComposite, SWT.NONE);
-        dayGrade.setLayoutData(INSIDE_TABLE_CELL_LAYOUT_DATA);
+        ImageCanvas canvas = new ImageCanvas(dayGradeComposite, SWT.NO_REDRAW_RESIZE);
+        canvas.setLayoutData(INSIDE_TABLE_CELL_LAYOUT_DATA);
         if (grade.getGradeScheme() == null) {
-            dayGrade.setToolTipText("Brak oceny");
+            canvas.setToolTipText("Brak oceny");
         } else {
-            dayGrade.setToolTipText(grade.getGradeComment());
-            Image imageData = new Image(getShell().getDisplay(), new ByteArrayInputStream(grade.getGradeScheme().getImage()));
-            imageData = Images.resize(getShell().getDisplay(), imageData);
-            dayGrade.setImage(imageData);
+            canvas.setToolTipText(grade.getGradeComment());
+            canvas.setImage(grade.getGradeScheme().getImage());
         }
     }
 }

@@ -26,7 +26,7 @@ public class GradeScheme {
     private int value;
 
     @Lob
-    @Column(nullable = false)
+    @Column(nullable = false, length = 64000)
     private byte[] image;
 
     public int getId() {

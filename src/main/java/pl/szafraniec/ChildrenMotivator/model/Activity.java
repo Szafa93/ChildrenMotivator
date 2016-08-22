@@ -7,6 +7,7 @@ package pl.szafraniec.ChildrenMotivator.model;
 
 import org.hibernate.validator.constraints.NotBlank;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -28,6 +29,7 @@ public class Activity {
     private String name;
 
     @Lob
+    @Column(nullable = false, length = 64000)
     private byte[] image;
 
     public int getId() {

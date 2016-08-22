@@ -34,6 +34,7 @@ import pl.szafraniec.ChildrenMotivator.services.GradeSchemeService;
 import pl.szafraniec.ChildrenMotivator.ui.AbstractMainComposite;
 import pl.szafraniec.ChildrenMotivator.ui.DayOfWeekLocalization;
 import pl.szafraniec.ChildrenMotivator.ui.Fonts;
+import pl.szafraniec.ChildrenMotivator.ui.ImageCanvas;
 import pl.szafraniec.ChildrenMotivator.ui.Images;
 import pl.szafraniec.ChildrenMotivator.ui.child.ChildComposite;
 
@@ -56,6 +57,11 @@ public class ActivityTableComposite extends AbstractMainComposite {
             .create();
 
     protected static final GridData INSIDE_TABLE_CELL_LAYOUT_DATA = GridDataFactory.fillDefaults()
+            .align(SWT.FILL, SWT.FILL)
+            .grab(true, true)
+            .create();
+
+    protected static final GridData TEXT_INSIDE_TABLE_CELL_LAYOUT_DATA = GridDataFactory.fillDefaults()
             .align(SWT.CENTER, SWT.CENTER)
             .grab(true, true)
             .create();
@@ -69,7 +75,7 @@ public class ActivityTableComposite extends AbstractMainComposite {
     protected final Holder<Child> child;
 
     private ScrolledComposite scrolledComposite;
-    private Composite tableBehaviorComposite;
+    protected Composite tableBehaviorComposite;
 
     protected LocalDate startDate;
     protected LocalDate endDate;
@@ -218,25 +224,11 @@ public class ActivityTableComposite extends AbstractMainComposite {
             tableBehaviorComposite.addControlListener(new ControlAdapter() {
                 @Override
                 public void controlResized(ControlEvent e) {
-                    if (imageData == null) {
-                        imageData = new Image(getShell().getDisplay(), new ByteArrayInputStream(child.get().getChildActivitiesTable()
-                                .getBackgroundImage().getImage()));
-                    }
-                    Rectangle clientArea = scrolledComposite.getClientArea();
-                    if (clientArea.width * clientArea.height > 0) {
-                        Image scaled = new Image(getDisplay(), clientArea.width, clientArea.height);
-                        GC gc = new GC(scaled);
-                        gc.setAntialias(SWT.ON);
-                        gc.setInterpolation(SWT.HIGH);
-                        gc.drawImage(imageData, 0, 0,
-                                imageData.getImageData().width, imageData.getImageData().height, 0, 0, clientArea.width, clientArea.height);
-                        gc.dispose();
-                        tableBehaviorComposite.setBackgroundImage(scaled);
-                    }
+                    refreshBackground();
                 }
             });
 
-            tableBehaviorComposite.setBackgroundMode(SWT.INHERIT_FORCE);
+            scrolledComposite.setBackgroundMode(SWT.INHERIT_FORCE);
         }
 
         fillTableBehaviorComposite(tableBehaviorComposite);
@@ -250,6 +242,26 @@ public class ActivityTableComposite extends AbstractMainComposite {
         });
         scrolledComposite.layout(true, true);
         return scrolledComposite;
+    }
+
+    protected void refreshBackground() {
+        if (child.get().getChildActivitiesTable().getBackgroundImage() != null) {
+            if (imageData == null) {
+                imageData = new Image(getShell().getDisplay(), new ByteArrayInputStream(child.get().getChildActivitiesTable()
+                        .getBackgroundImage().getImage()));
+            }
+            Rectangle clientArea = scrolledComposite.getClientArea();
+            if (clientArea.width * clientArea.height > 0) {
+                Image scaled = new Image(getDisplay(), clientArea.width, clientArea.height);
+                GC gc = new GC(scaled);
+                gc.setAntialias(SWT.ON);
+                gc.setInterpolation(SWT.HIGH);
+                gc.drawImage(imageData, 0, 0,
+                        imageData.getImageData().width, imageData.getImageData().height, 0, 0, clientArea.width, clientArea.height);
+                gc.dispose();
+                scrolledComposite.setBackgroundImage(scaled);
+            }
+        }
     }
 
     protected boolean shouldDrawBackground() {
@@ -270,8 +282,6 @@ public class ActivityTableComposite extends AbstractMainComposite {
                 .hint(Images.IMAGE_WIDTH + MARGINS, Images.IMAGE_HEIGHT + MARGINS)
                 .create());
         cornerComposite.setLayout(GridLayoutFactory.fillDefaults().create());
-        Label corner = new Label(cornerComposite, SWT.NONE);
-        corner.setLayoutData(INSIDE_TABLE_CELL_LAYOUT_DATA);
         days.stream().forEachOrdered(day -> {
             Composite composite = new Composite(parent, SWT.NONE);
             composite.setLayout(GridLayoutFactory.fillDefaults().spacing(0, 0).create());
@@ -285,7 +295,7 @@ public class ActivityTableComposite extends AbstractMainComposite {
                     + day.getLocalDate().toString());
             dayHeader.setFont(FontDescriptor.createFrom(Fonts.DEFAULT_FONT_DATA).createFont(dayHeader.getDisplay()));
             dayHeader.setAlignment(SWT.CENTER);
-            dayHeader.setLayoutData(INSIDE_TABLE_CELL_LAYOUT_DATA);
+            dayHeader.setLayoutData(TEXT_INSIDE_TABLE_CELL_LAYOUT_DATA);
         });
     }
 
@@ -296,15 +306,9 @@ public class ActivityTableComposite extends AbstractMainComposite {
         Composite childRowHeaderComposite = new Composite(composite, SWT.BORDER);
         childRowHeaderComposite.setLayoutData(TABLE_CELL_LAYOUT_DATA);
         childRowHeaderComposite.setLayout(GridLayoutFactory.fillDefaults().create());
-        Label childRowHeader = new Label(childRowHeaderComposite, SWT.NONE);
+        ImageCanvas childRowHeader = new ImageCanvas(childRowHeaderComposite, SWT.NONE, activity.getImage());
         childRowHeader.setLayoutData(INSIDE_TABLE_CELL_LAYOUT_DATA);
-        childRowHeader.setText(activity.getName());
-        childRowHeader.setFont(FontDescriptor.createFrom(Fonts.DEFAULT_FONT_DATA).createFont(childRowHeader.getDisplay()));
         childRowHeader.setToolTipText(activity.getName());
-        Image imageData = new Image(getShell().getDisplay(), new ByteArrayInputStream(activity.getImage()));
-        imageData = Images.resize(getShell().getDisplay(), imageData);
-        childRowHeader.setImage(imageData);
-
         days.stream().forEachOrdered(day -> createTableCell(activity, day, parent));
     }
 
@@ -313,15 +317,13 @@ public class ActivityTableComposite extends AbstractMainComposite {
         Composite dayGradeComposite = new Composite(parent, SWT.BORDER);
         dayGradeComposite.setLayoutData(TABLE_CELL_LAYOUT_DATA);
         dayGradeComposite.setLayout(GridLayoutFactory.fillDefaults().create());
-        Label dayGrade = new Label(dayGradeComposite, SWT.NONE);
-        dayGrade.setLayoutData(INSIDE_TABLE_CELL_LAYOUT_DATA);
+        ImageCanvas canvas = new ImageCanvas(dayGradeComposite, SWT.NO_REDRAW_RESIZE);
+        canvas.setLayoutData(INSIDE_TABLE_CELL_LAYOUT_DATA);
         if (grade.getGradeScheme() == null) {
-            dayGrade.setToolTipText("Brak oceny");
+            canvas.setToolTipText("Brak oceny");
         } else {
-            dayGrade.setToolTipText(grade.getGradeComment());
-            Image imageData = new Image(getShell().getDisplay(), new ByteArrayInputStream(grade.getGradeScheme().getImage()));
-            imageData = Images.resize(getShell().getDisplay(), imageData);
-            dayGrade.setImage(imageData);
+            canvas.setToolTipText(grade.getGradeComment());
+            canvas.setImage(grade.getGradeScheme().getImage());
         }
     }
 }

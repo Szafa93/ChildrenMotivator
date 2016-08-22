@@ -8,11 +8,9 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.MouseListener;
-import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Label;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
@@ -24,11 +22,9 @@ import pl.szafraniec.ChildrenMotivator.model.Holder;
 import pl.szafraniec.ChildrenMotivator.model.TableCell;
 import pl.szafraniec.ChildrenMotivator.services.ChildService;
 import pl.szafraniec.ChildrenMotivator.ui.Fonts;
-import pl.szafraniec.ChildrenMotivator.ui.Images;
+import pl.szafraniec.ChildrenMotivator.ui.ImageCanvas;
 import pl.szafraniec.ChildrenMotivator.ui.backgroundImage.BackgroundImageSelectorDialog;
 import pl.szafraniec.ChildrenMotivator.ui.gradesSchemes.dialog.GradeSelectorDialog;
-
-import java.io.ByteArrayInputStream;
 
 @Component("EditActivityTableComposite")
 @Scope(scopeName = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
@@ -56,7 +52,7 @@ public class EditActivityTableComposite extends ActivityTableComposite {
     private void createSelectBackgroundImageButton(Composite parent) {
         Button saveButton = new Button(parent, SWT.PUSH);
         saveButton.setLayoutData(DEFAULT_CONTROL_BUTTON_FACTORY.create());
-        saveButton.setText("Zapisz");
+        saveButton.setText("Wybierz tło");
         saveButton.setFont(FontDescriptor.createFrom(Fonts.DEFAULT_FONT_DATA).createFont(saveButton.getDisplay()));
         saveButton.addMouseListener(new MouseAdapter() {
             @Override
@@ -66,6 +62,7 @@ public class EditActivityTableComposite extends ActivityTableComposite {
                 if (Window.OK == dialog.open()) {
                     getTable().setBackgroundImage(dialog.getBackgroundImage());
                     imageData = null;
+                    refreshBackground();
                 }
             }
         });
@@ -93,7 +90,7 @@ public class EditActivityTableComposite extends ActivityTableComposite {
         Composite tableCellComposite = new Composite(parent, SWT.BORDER);
         tableCellComposite.setLayoutData(TABLE_CELL_LAYOUT_DATA);
         tableCellComposite.setLayout(GridLayoutFactory.fillDefaults().create());
-        Label tableCell = new Label(tableCellComposite, SWT.NONE);
+        ImageCanvas tableCell = new ImageCanvas(tableCellComposite, SWT.NONE);
         fillTableCellLabel(tableCell, grade);
         MouseListener mouseListener = new MouseAdapter() {
 
@@ -114,16 +111,14 @@ public class EditActivityTableComposite extends ActivityTableComposite {
         tableCellComposite.addMouseListener(mouseListener);
     }
 
-    private void fillTableCellLabel(Label tableCell, TableCell grade) {
+    private void fillTableCellLabel(ImageCanvas tableCell, TableCell grade) {
         tableCell.setLayoutData(INSIDE_TABLE_CELL_LAYOUT_DATA);
         if (grade.getGradeScheme() == null) {
             tableCell.setToolTipText("Brak oceny");
             tableCell.setText("Brak oceny");
         } else {
             tableCell.setToolTipText(grade.getGradeComment());
-            Image imageData = new Image(getShell().getDisplay(), new ByteArrayInputStream(grade.getGradeScheme().getImage()));
-            imageData = Images.resize(getShell().getDisplay(), imageData);
-            tableCell.setImage(imageData);
+            tableCell.setImage(grade.getGradeScheme().getImage());
         }
     }
 }

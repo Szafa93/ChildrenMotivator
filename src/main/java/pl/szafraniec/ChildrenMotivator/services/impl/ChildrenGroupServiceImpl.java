@@ -2,6 +2,7 @@ package pl.szafraniec.ChildrenMotivator.services.impl;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import pl.szafraniec.ChildrenMotivator.model.BackgroundImage;
 import pl.szafraniec.ChildrenMotivator.model.BehaviorTableDay;
 import pl.szafraniec.ChildrenMotivator.model.Child;
 import pl.szafraniec.ChildrenMotivator.model.ChildActivitiesTable;
@@ -155,5 +156,11 @@ public class ChildrenGroupServiceImpl implements ChildrenGroupService {
         ChildrenGroup group = childrenGroupRepository.save(child.getChildrenGroup());
         child.setChildrenGroup(group);
         return group;
+    }
+
+    @Override
+    public ChildrenGroup setBackground(ChildrenGroup childrenGroup, BackgroundImage backgroundImage) {
+        childrenGroup.getBehaviorTable().setBackgroundImage(backgroundImage);
+        return childrenGroupRepository.saveAndFlush(childrenGroup);
     }
 }

@@ -3,6 +3,7 @@ package pl.szafraniec.ChildrenMotivator.services.impl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import pl.szafraniec.ChildrenMotivator.model.BackgroundImage;
+import pl.szafraniec.ChildrenMotivator.model.BehaviorTable;
 import pl.szafraniec.ChildrenMotivator.model.Child;
 import pl.szafraniec.ChildrenMotivator.model.ChildActivitiesTable;
 import pl.szafraniec.ChildrenMotivator.model.ChildrenGroup;
@@ -37,6 +38,12 @@ public class BackgroundImageServiceImpl implements BackgroundImageService {
     @Override
     public boolean canRemove(BackgroundImage backgroundImage) {
         return !childrenGroupService.findAll()
+                .stream()
+                .map(ChildrenGroup::getBehaviorTable)
+                .map(BehaviorTable::getBackgroundImage)
+                .filter(image -> image != null)
+                .anyMatch(image -> image.getId() == backgroundImage.getId())
+                && !childrenGroupService.findAll()
                 .stream()
                 .map(ChildrenGroup::getChildren)
                 .flatMap(Collection::stream)

@@ -11,6 +11,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.PrimaryKeyJoinColumn;
@@ -42,6 +43,9 @@ public class BehaviorTable {
     @PrimaryKeyJoinColumn
     private ChildrenGroup childrenGroup;
 
+    @ManyToOne
+    private BackgroundImage backgroundImage;
+
     public List<BehaviorTableDay> getDays() {
         Collections.sort(days, (o1, o2) -> o1.getLocalDate().compareTo(o2.getLocalDate()));
         return days;
@@ -57,6 +61,18 @@ public class BehaviorTable {
 
     public void setId(int id) {
         this.id = id;
+    }
+
+    public void setChildrenGroup(ChildrenGroup childrenGroup) {
+        this.childrenGroup = childrenGroup;
+    }
+
+    public void setBackgroundImage(BackgroundImage backgroundImage) {
+        this.backgroundImage = backgroundImage;
+    }
+
+    public BackgroundImage getBackgroundImage() {
+        return backgroundImage;
     }
 
     public Optional<List<BehaviorTableDay>> getDays(LocalDate startDate, LocalDate endDate) {

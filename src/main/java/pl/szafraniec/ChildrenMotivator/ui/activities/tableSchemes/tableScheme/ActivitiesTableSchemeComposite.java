@@ -12,7 +12,6 @@ import org.eclipse.swt.events.ControlAdapter;
 import org.eclipse.swt.events.ControlEvent;
 import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
-import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
@@ -27,11 +26,11 @@ import pl.szafraniec.ChildrenMotivator.model.Activity;
 import pl.szafraniec.ChildrenMotivator.services.ActivitiesTableSchemeService;
 import pl.szafraniec.ChildrenMotivator.ui.AbstractMainComposite;
 import pl.szafraniec.ChildrenMotivator.ui.Fonts;
+import pl.szafraniec.ChildrenMotivator.ui.ImageCanvas;
 import pl.szafraniec.ChildrenMotivator.ui.Images;
 import pl.szafraniec.ChildrenMotivator.ui.activities.tableSchemes.ActivitiesTableSchemesComposite;
 import pl.szafraniec.ChildrenMotivator.ui.activities.tableSchemes.dialog.EditActivitiesTableSchemeDialog;
 
-import java.io.ByteArrayInputStream;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -112,14 +111,12 @@ public class ActivitiesTableSchemeComposite extends AbstractMainComposite {
     }
 
     private Control createActivityButton(Activity activity, Composite parent) {
-        Label activityButton = new Label(parent, SWT.WRAP | SWT.BORDER);
+        ImageCanvas activityButton = new ImageCanvas(parent, SWT.WRAP | SWT.BORDER);
         activityButton.setText(activity.getName());
         activityButton.setToolTipText(activity.getName());
         activityButton.setFont(FontDescriptor.createFrom(Fonts.DEFAULT_FONT_DATA).createFont(activityButton.getDisplay()));
 
-        Image imageData = new Image(getShell().getDisplay(), new ByteArrayInputStream(activity.getImage()));
-        imageData = Images.resize(getShell().getDisplay(), imageData);
-        activityButton.setImage(imageData);
+        activityButton.setImage(activity.getImage());
 
         activityButton.setLayoutData(RowDataFactory.swtDefaults().hint(Images.IMAGE_WIDTH, Images.IMAGE_HEIGHT).create());
         return activityButton;

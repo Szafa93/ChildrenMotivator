@@ -12,13 +12,11 @@ import org.eclipse.swt.events.ControlAdapter;
 import org.eclipse.swt.events.ControlEvent;
 import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
-import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Label;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
@@ -27,12 +25,12 @@ import pl.szafraniec.ChildrenMotivator.model.GradeScheme;
 import pl.szafraniec.ChildrenMotivator.services.GradeSchemeService;
 import pl.szafraniec.ChildrenMotivator.ui.AbstractMainComposite;
 import pl.szafraniec.ChildrenMotivator.ui.Fonts;
+import pl.szafraniec.ChildrenMotivator.ui.ImageCanvas;
 import pl.szafraniec.ChildrenMotivator.ui.Images;
 import pl.szafraniec.ChildrenMotivator.ui.gradesSchemes.dialog.EditGradeSchemeDialog;
 import pl.szafraniec.ChildrenMotivator.ui.gradesSchemes.gradeScheme.GradeSchemeComposite;
 import pl.szafraniec.ChildrenMotivator.ui.start.StartComposite;
 
-import java.io.ByteArrayInputStream;
 import java.util.stream.Collectors;
 
 @Component
@@ -132,14 +130,11 @@ public class GradesSchemesComposite extends AbstractMainComposite {
     }
 
     private Control createGradeSchemeButton(GradeScheme gradeScheme, Composite parent) {
-        Label activityButton = new Label(parent, SWT.WRAP | SWT.BORDER);
+        ImageCanvas activityButton = new ImageCanvas(parent, SWT.WRAP | SWT.BORDER);
         activityButton.setText(Integer.toString(gradeScheme.getValue()));
         activityButton.setToolTipText(Integer.toString(gradeScheme.getValue()));
         activityButton.setFont(FontDescriptor.createFrom(Fonts.DEFAULT_FONT_DATA).createFont(activityButton.getDisplay()));
-        // TODO uncommect this if you want image as button
-        Image imageData = new Image(getShell().getDisplay(), new ByteArrayInputStream(gradeScheme.getImage()));
-        imageData = Images.resize(getShell().getDisplay(), imageData);
-        activityButton.setImage(imageData);
+        activityButton.setImage(gradeScheme.getImage());
 
         activityButton.setLayoutData(RowDataFactory.swtDefaults().hint(Images.IMAGE_WIDTH, Images.IMAGE_HEIGHT).create());
         activityButton.addMouseListener(new MouseAdapter() {

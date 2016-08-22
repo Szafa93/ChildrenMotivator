@@ -63,14 +63,17 @@ public class GradeSchemeServiceImpl implements GradeSchemeService {
 
     @Override
     public GradeScheme edit(GradeScheme gradeScheme, int gradeValue, byte[] imageByte) {
+        int oldValue = gradeScheme.getValue();
         gradeScheme.setValue(gradeValue);
         gradeScheme.setImage(imageByte);
         GradeScheme grade = gradeSchemeRepository.saveAndFlush(gradeScheme);
-        childrenGroupService.findAll()
-                .stream()
-                .map(ChildrenGroup::getChildren)
-                .flatMap(Collection::stream)
-                .forEach(child -> childrenGroupService.recalculateGrades(child));
+        if (oldValue != gradeValue) {
+            childrenGroupService.findAll()
+                    .stream()
+                    .map(ChildrenGroup::getChildren)
+                    .flatMap(Collection::stream)
+                    .forEach(child -> childrenGroupService.recalculateGrades(child));
+        }
         gradeSchemeRepository.flush();
         return grade;
     }

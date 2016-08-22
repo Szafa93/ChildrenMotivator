@@ -6,7 +6,6 @@ import org.eclipse.jface.layout.GridLayoutFactory;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
@@ -14,9 +13,9 @@ import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
+import pl.szafraniec.ChildrenMotivator.ui.ImageCanvas;
 import pl.szafraniec.ChildrenMotivator.ui.Images;
 
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -25,7 +24,7 @@ public class EditActivityDialog extends Dialog {
     private String activityName;
     private String shellName;
     private byte[] fileData;
-    private Label image;
+    private ImageCanvas image;
 
     public EditActivityDialog(Shell shell) {
         this(shell, "", null, "Dodaj aktywność");
@@ -84,9 +83,7 @@ public class EditActivityDialog extends Dialog {
                 if (selected != null) {
                     try {
                         fileData = Files.readAllBytes(Paths.get(selected));
-                        Image imageData = new Image(getShell().getDisplay(), new ByteArrayInputStream(fileData));
-                        imageData = Images.resize(getShell().getDisplay(), imageData);
-                        image.setImage(imageData);
+                        image.setImage(fileData);
                     } catch (IOException e1) {
 
                     }
@@ -96,7 +93,7 @@ public class EditActivityDialog extends Dialog {
             }
         });
 
-        image = new Label(groupPropertiesComposite, SWT.BORDER);
+        image = new ImageCanvas(groupPropertiesComposite, SWT.NONE);
         image.setLayoutData(GridDataFactory.swtDefaults()
                 .span(2, 1)
                 .align(SWT.CENTER, SWT.CENTER)
@@ -104,9 +101,7 @@ public class EditActivityDialog extends Dialog {
                 .minSize(Images.IMAGE_WIDTH, Images.IMAGE_HEIGHT)
                 .create());
         if (fileData != null) {
-            Image imageData = new Image(getShell().getDisplay(), new ByteArrayInputStream(fileData));
-            imageData = Images.resize(getShell().getDisplay(), imageData);
-            image.setImage(imageData);
+            image.setImage(fileData);
         }
         groupPropertiesComposite.layout(true, true);
     }
