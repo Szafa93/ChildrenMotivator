@@ -4,6 +4,13 @@ import pl.szafraniec.ChildrenMotivator.model.Configuration;
 
 public class ConfigurationFactory {
     public static Configuration create() {
-        return new Configuration();
+        Configuration configuration = new Configuration();
+        configuration.setFromEmail("");
+        configuration.setMailPassword("");
+        configuration.setMailUser("");
+        configuration.setSmtpHost("");
+        configuration.setSmtpPort("");
+        configuration.setSslConnection(false);
+        return configuration;
     }
 }

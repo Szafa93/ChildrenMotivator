@@ -26,13 +26,13 @@ public interface DialogProvider {
 
     ActivityTableSelectorDialog createActivityTableSelectorDialog(ActivitiesTableScheme activitiesTableScheme);
 
-    ActivityDialog createEditActivityDialog();
+    ActivityDialog createActivityDialog();
 
-    ActivityDialog createEditActivityDialog(String activityName, byte[] fileData);
+    ActivityDialog createActivityDialog(String activityName, byte[] fileData);
 
-    ActivitiesTableSchemeDialog createEditActivitiesTableSchemeDialog();
+    ActivitiesTableSchemeDialog createActivitiesTableSchemeDialog();
 
-    ActivitiesTableSchemeDialog createEditActivitiesTableSchemeDialog(String activitiesTableSchemeName, List<Activity> activities);
+    ActivitiesTableSchemeDialog createActivitiesTableSchemeDialog(String activitiesTableSchemeName, List<Activity> activities);
 
     BackgroundImageDialog createBackgroundImageDialog();
 
@@ -40,21 +40,21 @@ public interface DialogProvider {
 
     BackgroundImageSelectorDialog createBackgroundImageSelectorDialog(BackgroundImage backgroundImage);
 
-    ChildDialog createEditChildDialog();
+    ChildDialog createChildDialog();
 
-    ChildDialog createEditChildDialog(String name, String surname, String pesel, String parentEmail, int id);
+    ChildDialog createChildDialog(String name, String surname, String pesel, String parentEmail, int id);
 
-    GradeSchemeDialog createEditGradeSchemeDialog();
+    GradeSchemeDialog createGradeSchemeDialog();
 
-    GradeSchemeDialog createEditGradeSchemeDialog(Integer gradeValue, byte[] fileData, int id);
+    GradeSchemeDialog createGradeSchemeDialog(Integer gradeValue, byte[] fileData, int id);
 
     GradeSelectorDialog createGradeSelectorDialog(GradeScheme gradeScheme, String gradeComment);
 
-    ChildrenGroupDialog createEditChildrenGroupDialog();
+    ChildrenGroupDialog createChildrenGroupDialog();
 
-    ChildrenGroupDialog createEditChildrenGroupDialog(String groupName);
+    ChildrenGroupDialog createChildrenGroupDialog(String groupName);
 
     GroupSelectorDialog createGroupSelectorDialog(ChildrenGroup childrenGroup);
 
-    SelectDatesForReportsDialog createSendStatisticDialog();
+    SelectDatesForReportsDialog createSelectDatesForReportsDialog();
 }

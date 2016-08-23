@@ -47,22 +47,22 @@ public class DialogProviderImpl implements DialogProvider {
     }
 
     @Override
-    public ActivityDialog createEditActivityDialog() {
+    public ActivityDialog createActivityDialog() {
         return injectDependency(new ActivityDialog(shell, "", null, "Dodaj aktywność"));
     }
 
     @Override
-    public ActivityDialog createEditActivityDialog(String activityName, byte[] fileData) {
+    public ActivityDialog createActivityDialog(String activityName, byte[] fileData) {
         return injectDependency(new ActivityDialog(shell, activityName, fileData, "Edytuj aktywność"));
     }
 
     @Override
-    public ActivitiesTableSchemeDialog createEditActivitiesTableSchemeDialog() {
+    public ActivitiesTableSchemeDialog createActivitiesTableSchemeDialog() {
         return injectDependency(new ActivitiesTableSchemeDialog(shell, "", new ArrayList<>(), "Dodaj schemat"));
     }
 
     @Override
-    public ActivitiesTableSchemeDialog createEditActivitiesTableSchemeDialog(String activitiesTableSchemeName,
+    public ActivitiesTableSchemeDialog createActivitiesTableSchemeDialog(String activitiesTableSchemeName,
             List<Activity> activities) {
         return injectDependency(new ActivitiesTableSchemeDialog(shell, activitiesTableSchemeName, activities,
                 "Edytuj schemat tabeli aktywności"));
@@ -84,22 +84,22 @@ public class DialogProviderImpl implements DialogProvider {
     }
 
     @Override
-    public ChildDialog createEditChildDialog() {
+    public ChildDialog createChildDialog() {
         return injectDependency(new ChildDialog(shell, "", "", "", "", "Wprowadź dane dziecka", -1));
     }
 
     @Override
-    public ChildDialog createEditChildDialog(String name, String surname, String pesel, String parentEmail, int id) {
+    public ChildDialog createChildDialog(String name, String surname, String pesel, String parentEmail, int id) {
         return injectDependency(new ChildDialog(shell, name, surname, pesel, parentEmail, "Edytuj dane dziecka", id));
     }
 
     @Override
-    public GradeSchemeDialog createEditGradeSchemeDialog() {
+    public GradeSchemeDialog createGradeSchemeDialog() {
         return injectDependency(new GradeSchemeDialog(shell, null, null, "Dodaj ocenę", -1));
     }
 
     @Override
-    public GradeSchemeDialog createEditGradeSchemeDialog(Integer gradeValue, byte[] fileData, int id) {
+    public GradeSchemeDialog createGradeSchemeDialog(Integer gradeValue, byte[] fileData, int id) {
         return injectDependency(new GradeSchemeDialog(shell, gradeValue, fileData, "Edytuj ocenę", id));
     }
 
@@ -109,12 +109,12 @@ public class DialogProviderImpl implements DialogProvider {
     }
 
     @Override
-    public ChildrenGroupDialog createEditChildrenGroupDialog() {
+    public ChildrenGroupDialog createChildrenGroupDialog() {
         return injectDependency(new ChildrenGroupDialog(shell, "", "Dodaj grupę"));
     }
 
     @Override
-    public ChildrenGroupDialog createEditChildrenGroupDialog(String groupName) {
+    public ChildrenGroupDialog createChildrenGroupDialog(String groupName) {
         return injectDependency(new ChildrenGroupDialog(shell, groupName, "Edytuj dane grupy"));
     }
 
@@ -124,7 +124,7 @@ public class DialogProviderImpl implements DialogProvider {
     }
 
     @Override
-    public SelectDatesForReportsDialog createSendStatisticDialog() {
+    public SelectDatesForReportsDialog createSelectDatesForReportsDialog() {
         return injectDependency(new SelectDatesForReportsDialog(shell));
     }
 

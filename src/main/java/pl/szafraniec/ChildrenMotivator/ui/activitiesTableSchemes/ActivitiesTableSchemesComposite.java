@@ -81,7 +81,7 @@ public class ActivitiesTableSchemesComposite extends AbstractMainComposite {
         addActivityButton.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseUp(MouseEvent e) {
-                ActivitiesTableSchemeDialog dialog = dialogProvider.createEditActivitiesTableSchemeDialog();
+                ActivitiesTableSchemeDialog dialog = dialogProvider.createActivitiesTableSchemeDialog();
                 applicationContext.getAutowireCapableBeanFactory().autowireBean(dialog);
                 if (Window.OK == dialog.open()) {
                     ActivitiesTableScheme scheme = activitiesTableSchemeService.create(dialog.getActivitiesTableSchemeName(),

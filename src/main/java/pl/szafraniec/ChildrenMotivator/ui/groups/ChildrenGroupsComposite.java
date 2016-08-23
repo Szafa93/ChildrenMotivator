@@ -84,7 +84,7 @@ public class ChildrenGroupsComposite extends AbstractMainComposite {
     }
 
     private void addGroup() {
-        ChildrenGroupDialog dialog = dialogProvider.createEditChildrenGroupDialog();
+        ChildrenGroupDialog dialog = dialogProvider.createChildrenGroupDialog();
         if (Window.OK == dialog.open()) {
             ChildrenGroup childrenGroup = addChildrenGroup(dialog.getGroupName());
             createChildrenGroupButton(childrenGroup, childrenGroupComposite);

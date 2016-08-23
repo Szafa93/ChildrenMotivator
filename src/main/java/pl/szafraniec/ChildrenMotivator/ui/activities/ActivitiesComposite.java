@@ -78,7 +78,7 @@ public class ActivitiesComposite extends AbstractMainComposite {
         addActivityButton.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseUp(MouseEvent e) {
-                ActivityDialog dialog = dialogProvider.createEditActivityDialog();
+                ActivityDialog dialog = dialogProvider.createActivityDialog();
                 if (Window.OK == dialog.open()) {
                     Activity activity = activityService.addActivity(dialog.getActivityName(), dialog.getImageByte());
                     createActivityButton(activity, activitiesComposite);

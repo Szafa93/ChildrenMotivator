@@ -224,7 +224,7 @@ public class ChildrenGroupComposite extends AbstractMainComposite {
     }
 
     private void addChild() {
-        ChildDialog dialog = dialogProvider.createEditChildDialog();
+        ChildDialog dialog = dialogProvider.createChildDialog();
         applicationContext.getAutowireCapableBeanFactory().autowireBean(dialog);
         if (Window.OK == dialog.open()) {
             addChild(dialog.getName(), dialog.getSurname(), dialog.getPesel(), dialog.getParentEmail(), childrenGroup);
