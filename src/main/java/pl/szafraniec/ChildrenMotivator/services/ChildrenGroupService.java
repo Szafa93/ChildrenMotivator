@@ -12,10 +12,6 @@ import java.util.List;
 public interface ChildrenGroupService {
     List<BehaviorTableDay> getDays(Holder<ChildrenGroup> holder, LocalDate from, LocalDate to);
 
-    ChildrenGroup removeDaysForChild(Child child);
-
-    ChildrenGroup generateDaysForChild(Child child);
-
     ChildrenGroup removeChildFromGroup(Child child);
 
     ChildrenGroup assignChildToGroup(Child child, ChildrenGroup childrenGroup);

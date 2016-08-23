@@ -16,7 +16,6 @@ import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Display;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
@@ -25,11 +24,11 @@ import pl.szafraniec.ChildrenMotivator.model.GradeScheme;
 import pl.szafraniec.ChildrenMotivator.services.GradeSchemeService;
 import pl.szafraniec.ChildrenMotivator.ui.AbstractMainComposite;
 import pl.szafraniec.ChildrenMotivator.ui.Fonts;
-import pl.szafraniec.ChildrenMotivator.ui.ImageCanvas;
 import pl.szafraniec.ChildrenMotivator.ui.Images;
-import pl.szafraniec.ChildrenMotivator.ui.gradesSchemes.dialog.EditGradeSchemeDialog;
-import pl.szafraniec.ChildrenMotivator.ui.gradesSchemes.gradeScheme.GradeSchemeComposite;
+import pl.szafraniec.ChildrenMotivator.ui.gradesSchemes.dialogs.EditGradeSchemeDialog;
+import pl.szafraniec.ChildrenMotivator.ui.services.DialogProvider;
 import pl.szafraniec.ChildrenMotivator.ui.start.StartComposite;
+import pl.szafraniec.ChildrenMotivator.ui.utils.ImageCanvas;
 
 import java.util.stream.Collectors;
 
@@ -39,6 +38,9 @@ public class GradesSchemesComposite extends AbstractMainComposite {
 
     @Autowired
     private GradeSchemeService gradeSchemeService;
+
+    @Autowired
+    private DialogProvider dialogProvider;
 
     private Composite gradeSchemesComposite;
 
@@ -82,7 +84,7 @@ public class GradesSchemesComposite extends AbstractMainComposite {
     }
 
     private void addGradeScheme() {
-        EditGradeSchemeDialog dialog = new EditGradeSchemeDialog(Display.getCurrent().getActiveShell());
+        EditGradeSchemeDialog dialog = dialogProvider.createEditGradeSchemeDialog();
         applicationContext.getAutowireCapableBeanFactory().autowireBean(dialog);
         if (Window.OK == dialog.open()) {
             GradeScheme gradeScheme = addGradeScheme(dialog.getGradeValue(), dialog.getImageByte());

@@ -16,13 +16,13 @@ import org.springframework.stereotype.Component;
 import pl.szafraniec.ChildrenMotivator.model.Configuration;
 import pl.szafraniec.ChildrenMotivator.services.ConfigurationService;
 import pl.szafraniec.ChildrenMotivator.ui.AbstractMainComposite;
-import pl.szafraniec.ChildrenMotivator.ui.ConfigurationDialog;
 import pl.szafraniec.ChildrenMotivator.ui.Fonts;
 import pl.szafraniec.ChildrenMotivator.ui.activities.ActivitiesComposite;
-import pl.szafraniec.ChildrenMotivator.ui.activities.tableSchemes.ActivitiesTableSchemesComposite;
-import pl.szafraniec.ChildrenMotivator.ui.backgroundImage.BackgroundImagesComposite;
+import pl.szafraniec.ChildrenMotivator.ui.activitiesTableSchemes.ActivitiesTableSchemesComposite;
+import pl.szafraniec.ChildrenMotivator.ui.backgroundImages.BackgroundImagesComposite;
 import pl.szafraniec.ChildrenMotivator.ui.gradesSchemes.GradesSchemesComposite;
 import pl.szafraniec.ChildrenMotivator.ui.groups.ChildrenGroupsComposite;
+import pl.szafraniec.ChildrenMotivator.ui.start.dialogs.ConfigurationDialog;
 
 @Component
 @Scope(scopeName = ConfigurableBeanFactory.SCOPE_PROTOTYPE)

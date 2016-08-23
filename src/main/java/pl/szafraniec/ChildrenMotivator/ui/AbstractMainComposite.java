@@ -25,7 +25,7 @@ public abstract class AbstractMainComposite extends Composite {
             .align(SWT.FILL, SWT.CENTER)
             .minSize(200, 35)
             .hint(200, SWT.DEFAULT);
-    
+
     @Autowired
     protected Shell shell;
 

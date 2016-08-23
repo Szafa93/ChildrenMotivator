@@ -21,12 +21,12 @@ import pl.szafraniec.ChildrenMotivator.model.Holder;
 import pl.szafraniec.ChildrenMotivator.services.ChildService;
 import pl.szafraniec.ChildrenMotivator.ui.AbstractMainComposite;
 import pl.szafraniec.ChildrenMotivator.ui.Fonts;
-import pl.szafraniec.ChildrenMotivator.ui.activities.dialog.ActivityTableSelectorDialog;
-import pl.szafraniec.ChildrenMotivator.ui.activities.tableSchemes.ActivitiesTableSchemeStatisticsComposite;
-import pl.szafraniec.ChildrenMotivator.ui.activities.tableSchemes.ChartComposite;
-import pl.szafraniec.ChildrenMotivator.ui.child.dialog.EditChildDialog;
-import pl.szafraniec.ChildrenMotivator.ui.groups.dialog.GroupSelectorDialog;
-import pl.szafraniec.ChildrenMotivator.ui.groups.group.ChildrenGroupComposite;
+import pl.szafraniec.ChildrenMotivator.ui.activities.dialogs.ActivityTableSelectorDialog;
+import pl.szafraniec.ChildrenMotivator.ui.child.childActivitiesTable.ChildActivitiesTableChartComposite;
+import pl.szafraniec.ChildrenMotivator.ui.child.childActivitiesTable.ChildActivitiesTableStatisticsComposite;
+import pl.szafraniec.ChildrenMotivator.ui.child.dialogs.EditChildDialog;
+import pl.szafraniec.ChildrenMotivator.ui.groups.ChildrenGroupComposite;
+import pl.szafraniec.ChildrenMotivator.ui.groups.GroupSelectorDialog;
 
 @Component
 @Scope(scopeName = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
@@ -133,7 +133,7 @@ public class ChildComposite extends AbstractMainComposite {
         label.setText(compositeName);
         label.setLayoutData(GridDataFactory.fillDefaults().grab(true, false).align(SWT.CENTER, SWT.CENTER).span(2, 1).create());
         if (child.get().getChildActivitiesTable().getActivitiesTableScheme() != null) {
-            ActivitiesTableSchemeStatisticsComposite composite = (ActivitiesTableSchemeStatisticsComposite)
+            ChildActivitiesTableStatisticsComposite composite = (ChildActivitiesTableStatisticsComposite)
                     applicationContext.getBean("ActivitiesTableSchemeStatisticsComposite", parent, child);
             composite.setLayoutData(GridDataFactory.fillDefaults().align(SWT.FILL, SWT.FILL).grab(true, true).span(2, 1).create());
         }
@@ -181,7 +181,7 @@ public class ChildComposite extends AbstractMainComposite {
         showChart.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseUp(MouseEvent e) {
-                applicationContext.getBean(ChartComposite.class, shell, child);
+                applicationContext.getBean(ChildActivitiesTableChartComposite.class, shell, child);
                 dispose();
                 shell.layout(true, true);
             }

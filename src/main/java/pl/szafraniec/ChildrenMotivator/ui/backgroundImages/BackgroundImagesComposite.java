@@ -1,4 +1,4 @@
-package pl.szafraniec.ChildrenMotivator.ui.groups;
+package pl.szafraniec.ChildrenMotivator.ui.backgroundImages;
 
 import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.layout.GridLayoutFactory;
@@ -12,41 +12,43 @@ import org.eclipse.swt.events.ControlAdapter;
 import org.eclipse.swt.events.ControlEvent;
 import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Label;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
-import pl.szafraniec.ChildrenMotivator.model.ChildrenGroup;
-import pl.szafraniec.ChildrenMotivator.services.ChildrenGroupService;
+import pl.szafraniec.ChildrenMotivator.model.BackgroundImage;
+import pl.szafraniec.ChildrenMotivator.services.BackgroundImageService;
 import pl.szafraniec.ChildrenMotivator.ui.AbstractMainComposite;
 import pl.szafraniec.ChildrenMotivator.ui.Fonts;
-import pl.szafraniec.ChildrenMotivator.ui.groups.dialogs.EditChildrenGroupDialog;
+import pl.szafraniec.ChildrenMotivator.ui.Images;
+import pl.szafraniec.ChildrenMotivator.ui.backgroundImages.dialogs.BackgroundImageDialog;
 import pl.szafraniec.ChildrenMotivator.ui.services.DialogProvider;
 import pl.szafraniec.ChildrenMotivator.ui.start.StartComposite;
 
+import java.io.ByteArrayInputStream;
 import java.util.stream.Collectors;
 
 @Component
 @Scope(scopeName = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
-public class ChildrenGroupsComposite extends AbstractMainComposite {
+public class BackgroundImagesComposite extends AbstractMainComposite {
 
     @Autowired
-    private ChildrenGroupService childrenGroupService;
+    private BackgroundImageService backgroundImageService;
 
     @Autowired
     private DialogProvider dialogProvider;
 
-    private Composite childrenGroupComposite;
+    private Composite backgroundImagesComposite;
 
     private ScrolledComposite scrolledComposite;
 
-    public ChildrenGroupsComposite(Composite parent) {
+    public BackgroundImagesComposite(Composite parent) {
         super(parent, SWT.NONE);
     }
 
@@ -56,7 +58,7 @@ public class ChildrenGroupsComposite extends AbstractMainComposite {
         topPart.setLayout(GridLayoutFactory.swtDefaults().numColumns(2).equalWidth(false).create());
         topPart.setLayoutData(GridDataFactory.swtDefaults().grab(true, false).align(SWT.FILL, SWT.CENTER).create());
 
-        createLabel(topPart, "Grupy");
+        createLabel(topPart, "Możliwe tła");
         createControlsButtonsComposite(topPart);
     }
 
@@ -66,35 +68,31 @@ public class ChildrenGroupsComposite extends AbstractMainComposite {
         controlsButtonsComposite.setLayout(GridLayoutFactory.swtDefaults().numColumns(1).create());
 
         createBackButton(controlsButtonsComposite, applicationContext, shell, StartComposite.class);
-        createAddGroupButton(controlsButtonsComposite);
+        createAddGradeShemeButton(controlsButtonsComposite);
         return controlsButtonsComposite;
     }
 
-    private void createAddGroupButton(Composite parent) {
-        Button addGroupButton = new Button(parent, SWT.PUSH);
-        addGroupButton.setLayoutData(DEFAULT_CONTROL_BUTTON_FACTORY.create());
-        addGroupButton.setText("Dodaj grupę");
-        addGroupButton.setFont(FontDescriptor.createFrom(Fonts.DEFAULT_FONT_DATA).createFont(addGroupButton.getDisplay()));
-        addGroupButton.addMouseListener(new MouseAdapter() {
+    private void createAddGradeShemeButton(Composite parent) {
+        Button addGradeSchemeButton = new Button(parent, SWT.PUSH);
+        addGradeSchemeButton.setLayoutData(DEFAULT_CONTROL_BUTTON_FACTORY.create());
+        addGradeSchemeButton.setText("Dodaj tło");
+        addGradeSchemeButton.setFont(FontDescriptor.createFrom(Fonts.DEFAULT_FONT_DATA).createFont(addGradeSchemeButton.getDisplay()));
+        addGradeSchemeButton.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseUp(MouseEvent e) {
-                addGroup();
+                addGradeScheme();
             }
         });
     }
 
-    private void addGroup() {
-        EditChildrenGroupDialog dialog = dialogProvider.createEditChildrenGroupDialog();
+    private void addGradeScheme() {
+        BackgroundImageDialog dialog = dialogProvider.createBackgroundImageDialog();
+        applicationContext.getAutowireCapableBeanFactory().autowireBean(dialog);
         if (Window.OK == dialog.open()) {
-            ChildrenGroup childrenGroup = addChildrenGroup(dialog.getGroupName());
-            createChildrenGroupButton(childrenGroup, childrenGroupComposite);
+            BackgroundImage backgroundImage = backgroundImageService.create(dialog.getName(), dialog.getImageByte());
+            createBackgroundImageButton(backgroundImage, backgroundImagesComposite);
             scrolledComposite.layout(true, true);
         }
-    }
-
-    // TODO move to service
-    private ChildrenGroup addChildrenGroup(String groupName) {
-        return childrenGroupService.create(groupName);
     }
 
     @Override
@@ -102,49 +100,53 @@ public class ChildrenGroupsComposite extends AbstractMainComposite {
         Composite downPart = new Composite(this, SWT.NONE);
         downPart.setLayout(GridLayoutFactory.swtDefaults().numColumns(1).create());
         downPart.setLayoutData(GridDataFactory.swtDefaults().grab(true, true).align(SWT.FILL, SWT.FILL).create());
-        createChildrenGroupsComposite(downPart);
+        createGradeSchemesComposite(downPart);
         return downPart;
     }
 
-    private Composite createChildrenGroupsComposite(Composite parent) {
+    private Composite createGradeSchemesComposite(Composite parent) {
         scrolledComposite = new ScrolledComposite(parent, SWT.V_SCROLL | SWT.H_SCROLL | SWT.BORDER);
         scrolledComposite.setLayoutData(GridDataFactory.swtDefaults().grab(true, true).align(SWT.FILL, SWT.FILL).create());
         scrolledComposite.setExpandVertical(true);
         scrolledComposite.setExpandHorizontal(true);
 
-        childrenGroupComposite = new Composite(scrolledComposite, SWT.NONE);
-        childrenGroupComposite.setLayoutData(GridDataFactory.swtDefaults().grab(true, true).align(SWT.FILL, SWT.FILL).create());
-        childrenGroupComposite.setLayout(RowLayoutFactory.swtDefaults().pack(false).spacing(25).wrap(true).type(SWT.HORIZONTAL).create());
+        backgroundImagesComposite = new Composite(scrolledComposite, SWT.NONE);
+        backgroundImagesComposite.setLayoutData(GridDataFactory.swtDefaults().grab(true, true).align(SWT.FILL, SWT.FILL).create());
+        backgroundImagesComposite.setLayout(RowLayoutFactory.swtDefaults().pack(false).spacing(25).wrap(true).type(SWT.HORIZONTAL).create());
 
-        childrenGroupService.findAll().stream().map(group -> createChildrenGroupButton(group, childrenGroupComposite)).collect(
+        backgroundImageService.findAll().stream().map(gradeScheme -> createBackgroundImageButton(gradeScheme, backgroundImagesComposite)).collect(
                 Collectors.toList());
 
-        childrenGroupComposite.pack(true);
-        scrolledComposite.setContent(childrenGroupComposite);
+        backgroundImagesComposite.pack(true);
+        scrolledComposite.setContent(backgroundImagesComposite);
         scrolledComposite.addControlListener(new ControlAdapter() {
             public void controlResized(ControlEvent e) {
                 Rectangle r = scrolledComposite.getClientArea();
-                scrolledComposite.setMinSize(childrenGroupComposite.computeSize(r.width, SWT.DEFAULT));
+                scrolledComposite.setMinSize(backgroundImagesComposite.computeSize(r.width, SWT.DEFAULT));
             }
         });
         scrolledComposite.layout(true, true);
-        return childrenGroupComposite;
+        return backgroundImagesComposite;
     }
 
-    private Control createChildrenGroupButton(ChildrenGroup childrenGroup, Composite parent) {
-        Button groupButton = new Button(parent, SWT.WRAP);
-        groupButton.setText(childrenGroup.getName());
-        groupButton.setFont(FontDescriptor.createFrom(Fonts.DEFAULT_FONT_DATA).createFont(groupButton.getDisplay()));
+    private Control createBackgroundImageButton(BackgroundImage backgroundImage, Composite parent) {
+        Label backgroundImageButton = new Label(parent, SWT.WRAP | SWT.BORDER);
+        backgroundImageButton.setText(backgroundImage.getName());
+        backgroundImageButton.setToolTipText(backgroundImage.getName());
+        backgroundImageButton.setFont(FontDescriptor.createFrom(Fonts.DEFAULT_FONT_DATA).createFont(backgroundImageButton.getDisplay()));
+        Image imageData = new Image(getShell().getDisplay(), new ByteArrayInputStream(backgroundImage.getImage()));
+        imageData = Images.resize(getShell().getDisplay(), imageData);
+        backgroundImageButton.setImage(imageData);
 
-        groupButton.setLayoutData(RowDataFactory.swtDefaults().hint(150, 150).create());
-        groupButton.addSelectionListener(new SelectionAdapter() {
+        backgroundImageButton.setLayoutData(RowDataFactory.swtDefaults().hint(Images.IMAGE_WIDTH, Images.IMAGE_HEIGHT).create());
+        backgroundImageButton.addMouseListener(new MouseAdapter() {
             @Override
-            public void widgetSelected(SelectionEvent e) {
-                applicationContext.getBean(ChildrenGroupComposite.class, shell, childrenGroup);
+            public void mouseUp(MouseEvent e) {
+                applicationContext.getBean(BackgroundImageComposite.class, shell, backgroundImage);
                 dispose();
                 shell.layout(true, true);
             }
         });
-        return groupButton;
+        return backgroundImageButton;
     }
 }

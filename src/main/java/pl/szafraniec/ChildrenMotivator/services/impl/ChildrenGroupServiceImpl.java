@@ -41,19 +41,7 @@ public class ChildrenGroupServiceImpl implements ChildrenGroupService {
         });
     }
 
-    @Override
-    public ChildrenGroup removeDaysForChild(Child child) {
-        child.getChildrenGroup()
-                .getBehaviorTable()
-                .getDays()
-                .stream()
-                .map(BehaviorTableDay::getGrades)
-                .forEach(gradeMap -> gradeMap.remove(child));
-        return child.getChildrenGroup();
-    }
-
-    @Override
-    public ChildrenGroup generateDaysForChild(Child child) {
+    private ChildrenGroup generateDaysForChild(Child child) {
         child.getChildrenGroup()
                 .getBehaviorTable()
                 .getDays()
@@ -67,6 +55,16 @@ public class ChildrenGroupServiceImpl implements ChildrenGroupService {
         ChildrenGroup group = child.getChildrenGroup();
         group.getChildren().remove(child);
         return childrenGroupRepository.save(group);
+    }
+
+    private ChildrenGroup removeDaysForChild(Child child) {
+        child.getChildrenGroup()
+                .getBehaviorTable()
+                .getDays()
+                .stream()
+                .map(BehaviorTableDay::getGrades)
+                .forEach(gradeMap -> gradeMap.remove(child));
+        return child.getChildrenGroup();
     }
 
     @Override
