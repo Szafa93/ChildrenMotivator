@@ -28,8 +28,8 @@ import pl.szafraniec.ChildrenMotivator.services.ReportService;
 import pl.szafraniec.ChildrenMotivator.ui.AbstractMainComposite;
 import pl.szafraniec.ChildrenMotivator.ui.Fonts;
 import pl.szafraniec.ChildrenMotivator.ui.child.ChildComposite;
-import pl.szafraniec.ChildrenMotivator.ui.child.dialogs.EditChildDialog;
-import pl.szafraniec.ChildrenMotivator.ui.groups.dialogs.EditChildrenGroupDialog;
+import pl.szafraniec.ChildrenMotivator.ui.child.dialogs.ChildDialog;
+import pl.szafraniec.ChildrenMotivator.ui.groups.dialogs.ChildrenGroupDialog;
 import pl.szafraniec.ChildrenMotivator.ui.groups.dialogs.SelectDatesForReportsDialog;
 import pl.szafraniec.ChildrenMotivator.ui.services.DialogProvider;
 
@@ -224,7 +224,7 @@ public class ChildrenGroupComposite extends AbstractMainComposite {
     }
 
     private void addChild() {
-        EditChildDialog dialog = dialogProvider.createEditChildDialog();
+        ChildDialog dialog = dialogProvider.createEditChildDialog();
         applicationContext.getAutowireCapableBeanFactory().autowireBean(dialog);
         if (Window.OK == dialog.open()) {
             addChild(dialog.getName(), dialog.getSurname(), dialog.getPesel(), dialog.getParentEmail(), childrenGroup);
@@ -237,7 +237,7 @@ public class ChildrenGroupComposite extends AbstractMainComposite {
     }
 
     private void editGroup() {
-        EditChildrenGroupDialog dialog = new EditChildrenGroupDialog(shell, childrenGroup.getName(), "Edytuj grupę");
+        ChildrenGroupDialog dialog = new ChildrenGroupDialog(shell, childrenGroup.getName(), "Edytuj grupę");
         if (Window.OK == dialog.open()) {
             editChildrenGroup(dialog.getGroupName());
             scrolledComposite.layout(true, true);

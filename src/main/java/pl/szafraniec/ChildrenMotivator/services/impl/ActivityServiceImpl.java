@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import pl.szafraniec.ChildrenMotivator.model.ActivitiesTableScheme;
 import pl.szafraniec.ChildrenMotivator.model.Activity;
+import pl.szafraniec.ChildrenMotivator.model.factories.ActivityFactory;
 import pl.szafraniec.ChildrenMotivator.repository.ActivityRepository;
 import pl.szafraniec.ChildrenMotivator.services.ActivitiesTableSchemeService;
 import pl.szafraniec.ChildrenMotivator.services.ActivityService;
@@ -22,7 +23,7 @@ public class ActivityServiceImpl implements ActivityService {
 
     @Override
     public Activity addActivity(String activityName, byte[] image) {
-        Activity activity = Activity.ActivityFactory.create(activityName, image);
+        Activity activity = ActivityFactory.create(activityName, image);
         return activityRepository.saveAndFlush(activity);
     }
 

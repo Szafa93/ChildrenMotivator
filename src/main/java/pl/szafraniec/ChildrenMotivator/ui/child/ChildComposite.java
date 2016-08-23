@@ -21,10 +21,10 @@ import pl.szafraniec.ChildrenMotivator.model.Holder;
 import pl.szafraniec.ChildrenMotivator.services.ChildService;
 import pl.szafraniec.ChildrenMotivator.ui.AbstractMainComposite;
 import pl.szafraniec.ChildrenMotivator.ui.Fonts;
-import pl.szafraniec.ChildrenMotivator.ui.activities.dialogs.ActivityTableSelectorDialog;
+import pl.szafraniec.ChildrenMotivator.ui.activitiesTableSchemes.dialogs.ActivityTableSelectorDialog;
 import pl.szafraniec.ChildrenMotivator.ui.child.childActivitiesTable.ChildActivitiesTableChartComposite;
 import pl.szafraniec.ChildrenMotivator.ui.child.childActivitiesTable.ChildActivitiesTableStatisticsComposite;
-import pl.szafraniec.ChildrenMotivator.ui.child.dialogs.EditChildDialog;
+import pl.szafraniec.ChildrenMotivator.ui.child.dialogs.ChildDialog;
 import pl.szafraniec.ChildrenMotivator.ui.groups.ChildrenGroupComposite;
 import pl.szafraniec.ChildrenMotivator.ui.groups.GroupSelectorDialog;
 
@@ -235,7 +235,7 @@ public class ChildComposite extends AbstractMainComposite {
     }
 
     private void editChild() {
-        EditChildDialog dialog = new EditChildDialog(shell, child.get().getName(), child.get().getSurname(), child.get().getPesel(), child.get().getParentEmail(),
+        ChildDialog dialog = new ChildDialog(shell, child.get().getName(), child.get().getSurname(), child.get().getPesel(), child.get().getParentEmail(),
                 "Edytuj", child.get().getId());
         applicationContext.getAutowireCapableBeanFactory().autowireBean(dialog);
         if (Window.OK == dialog.open()) {

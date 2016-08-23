@@ -31,7 +31,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.StringJoiner;
 
-public class EditGradeSchemeDialog extends Dialog {
+public class GradeSchemeDialog extends Dialog {
 
     @Autowired
     private GradeSchemeService gradeSchemeService;
@@ -46,7 +46,7 @@ public class EditGradeSchemeDialog extends Dialog {
 
     private ImageCanvas image;
 
-    public EditGradeSchemeDialog(Shell shell, Integer gradeValue, byte[] fileData, String shellName, int id) {
+    public GradeSchemeDialog(Shell shell, Integer gradeValue, byte[] fileData, String shellName, int id) {
         super(shell);
         this.id = id;
         if (gradeValue != null) {

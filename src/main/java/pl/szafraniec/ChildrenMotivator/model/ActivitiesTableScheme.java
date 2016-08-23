@@ -15,7 +15,6 @@ import javax.persistence.Id;
 import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
 import javax.persistence.OrderBy;
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -87,15 +86,5 @@ public class ActivitiesTableScheme {
 
     public void setChildActivitiesTables(List<ChildActivitiesTable> childActivitiesTables) {
         this.childActivitiesTables = childActivitiesTables;
-    }
-
-    public static class ActivitiesTableSchemeFactory {
-        public static ActivitiesTableScheme create(String name, List<Activity> activities) {
-            ActivitiesTableScheme scheme = new ActivitiesTableScheme();
-            scheme.setName(name);
-            scheme.listOfActivities = activities;
-            scheme.childActivitiesTables = new ArrayList<>();
-            return scheme;
-        }
     }
 }

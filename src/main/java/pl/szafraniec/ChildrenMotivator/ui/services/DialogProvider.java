@@ -5,16 +5,16 @@ import pl.szafraniec.ChildrenMotivator.model.Activity;
 import pl.szafraniec.ChildrenMotivator.model.BackgroundImage;
 import pl.szafraniec.ChildrenMotivator.model.ChildrenGroup;
 import pl.szafraniec.ChildrenMotivator.model.GradeScheme;
-import pl.szafraniec.ChildrenMotivator.ui.activities.dialogs.ActivityTableSelectorDialog;
-import pl.szafraniec.ChildrenMotivator.ui.activities.dialogs.EditActivityDialog;
-import pl.szafraniec.ChildrenMotivator.ui.activitiesTableSchemes.dialogs.EditActivitiesTableSchemeDialog;
+import pl.szafraniec.ChildrenMotivator.ui.activities.dialogs.ActivityDialog;
+import pl.szafraniec.ChildrenMotivator.ui.activitiesTableSchemes.dialogs.ActivitiesTableSchemeDialog;
+import pl.szafraniec.ChildrenMotivator.ui.activitiesTableSchemes.dialogs.ActivityTableSelectorDialog;
 import pl.szafraniec.ChildrenMotivator.ui.backgroundImages.dialogs.BackgroundImageDialog;
 import pl.szafraniec.ChildrenMotivator.ui.backgroundImages.dialogs.BackgroundImageSelectorDialog;
-import pl.szafraniec.ChildrenMotivator.ui.child.dialogs.EditChildDialog;
-import pl.szafraniec.ChildrenMotivator.ui.gradesSchemes.dialogs.EditGradeSchemeDialog;
+import pl.szafraniec.ChildrenMotivator.ui.child.dialogs.ChildDialog;
+import pl.szafraniec.ChildrenMotivator.ui.gradesSchemes.dialogs.GradeSchemeDialog;
 import pl.szafraniec.ChildrenMotivator.ui.gradesSchemes.dialogs.GradeSelectorDialog;
 import pl.szafraniec.ChildrenMotivator.ui.groups.GroupSelectorDialog;
-import pl.szafraniec.ChildrenMotivator.ui.groups.dialogs.EditChildrenGroupDialog;
+import pl.szafraniec.ChildrenMotivator.ui.groups.dialogs.ChildrenGroupDialog;
 import pl.szafraniec.ChildrenMotivator.ui.groups.dialogs.SelectDatesForReportsDialog;
 import pl.szafraniec.ChildrenMotivator.ui.start.dialogs.ConfigurationDialog;
 
@@ -26,13 +26,13 @@ public interface DialogProvider {
 
     ActivityTableSelectorDialog createActivityTableSelectorDialog(ActivitiesTableScheme activitiesTableScheme);
 
-    EditActivityDialog createEditActivityDialog();
+    ActivityDialog createEditActivityDialog();
 
-    EditActivityDialog createEditActivityDialog(String activityName, byte[] fileData);
+    ActivityDialog createEditActivityDialog(String activityName, byte[] fileData);
 
-    EditActivitiesTableSchemeDialog createEditActivitiesTableSchemeDialog();
+    ActivitiesTableSchemeDialog createEditActivitiesTableSchemeDialog();
 
-    EditActivitiesTableSchemeDialog createEditActivitiesTableSchemeDialog(String activitiesTableSchemeName, List<Activity> activities);
+    ActivitiesTableSchemeDialog createEditActivitiesTableSchemeDialog(String activitiesTableSchemeName, List<Activity> activities);
 
     BackgroundImageDialog createBackgroundImageDialog();
 
@@ -40,19 +40,19 @@ public interface DialogProvider {
 
     BackgroundImageSelectorDialog createBackgroundImageSelectorDialog(BackgroundImage backgroundImage);
 
-    EditChildDialog createEditChildDialog();
+    ChildDialog createEditChildDialog();
 
-    EditChildDialog createEditChildDialog(String name, String surname, String pesel, String parentEmail, int id);
+    ChildDialog createEditChildDialog(String name, String surname, String pesel, String parentEmail, int id);
 
-    EditGradeSchemeDialog createEditGradeSchemeDialog();
+    GradeSchemeDialog createEditGradeSchemeDialog();
 
-    EditGradeSchemeDialog createEditGradeSchemeDialog(Integer gradeValue, byte[] fileData, int id);
+    GradeSchemeDialog createEditGradeSchemeDialog(Integer gradeValue, byte[] fileData, int id);
 
     GradeSelectorDialog createGradeSelectorDialog(GradeScheme gradeScheme, String gradeComment);
 
-    EditChildrenGroupDialog createEditChildrenGroupDialog();
+    ChildrenGroupDialog createEditChildrenGroupDialog();
 
-    EditChildrenGroupDialog createEditChildrenGroupDialog(String groupName);
+    ChildrenGroupDialog createEditChildrenGroupDialog(String groupName);
 
     GroupSelectorDialog createGroupSelectorDialog(ChildrenGroup childrenGroup);
 

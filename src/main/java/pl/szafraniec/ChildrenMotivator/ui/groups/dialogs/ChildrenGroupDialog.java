@@ -10,11 +10,11 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 
-public class EditChildrenGroupDialog extends Dialog {
+public class ChildrenGroupDialog extends Dialog {
     private String groupName;
     private String shellName;
 
-    public EditChildrenGroupDialog(Shell shell, String groupName, String shellName) {
+    public ChildrenGroupDialog(Shell shell, String groupName, String shellName) {
         super(shell);
         this.groupName = groupName;
         this.shellName = shellName;

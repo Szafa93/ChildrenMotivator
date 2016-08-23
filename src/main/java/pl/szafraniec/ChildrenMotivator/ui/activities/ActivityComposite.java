@@ -23,7 +23,7 @@ import pl.szafraniec.ChildrenMotivator.services.ActivityService;
 import pl.szafraniec.ChildrenMotivator.ui.AbstractMainComposite;
 import pl.szafraniec.ChildrenMotivator.ui.Fonts;
 import pl.szafraniec.ChildrenMotivator.ui.Images;
-import pl.szafraniec.ChildrenMotivator.ui.activities.dialogs.EditActivityDialog;
+import pl.szafraniec.ChildrenMotivator.ui.activities.dialogs.ActivityDialog;
 import pl.szafraniec.ChildrenMotivator.ui.utils.ImageCanvas;
 
 @Component
@@ -123,7 +123,7 @@ public class ActivityComposite extends AbstractMainComposite {
         addGroupButton.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseUp(MouseEvent e) {
-                EditActivityDialog dialog = new EditActivityDialog(shell, activity.getName(), activity.getImage(), "Edytuj aktywność");
+                ActivityDialog dialog = new ActivityDialog(shell, activity.getName(), activity.getImage(), "Edytuj aktywność");
                 if (Window.OK == dialog.open()) {
                     activity = activityService.editActivity(activity, dialog.getActivityName(), dialog.getImageByte());
 

@@ -26,7 +26,7 @@ import pl.szafraniec.ChildrenMotivator.model.ChildrenGroup;
 import pl.szafraniec.ChildrenMotivator.services.ChildrenGroupService;
 import pl.szafraniec.ChildrenMotivator.ui.AbstractMainComposite;
 import pl.szafraniec.ChildrenMotivator.ui.Fonts;
-import pl.szafraniec.ChildrenMotivator.ui.groups.dialogs.EditChildrenGroupDialog;
+import pl.szafraniec.ChildrenMotivator.ui.groups.dialogs.ChildrenGroupDialog;
 import pl.szafraniec.ChildrenMotivator.ui.services.DialogProvider;
 import pl.szafraniec.ChildrenMotivator.ui.start.StartComposite;
 
@@ -84,7 +84,7 @@ public class ChildrenGroupsComposite extends AbstractMainComposite {
     }
 
     private void addGroup() {
-        EditChildrenGroupDialog dialog = dialogProvider.createEditChildrenGroupDialog();
+        ChildrenGroupDialog dialog = dialogProvider.createEditChildrenGroupDialog();
         if (Window.OK == dialog.open()) {
             ChildrenGroup childrenGroup = addChildrenGroup(dialog.getGroupName());
             createChildrenGroupButton(childrenGroup, childrenGroupComposite);

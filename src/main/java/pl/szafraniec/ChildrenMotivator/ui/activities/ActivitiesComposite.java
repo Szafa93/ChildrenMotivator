@@ -25,7 +25,7 @@ import pl.szafraniec.ChildrenMotivator.services.ActivityService;
 import pl.szafraniec.ChildrenMotivator.ui.AbstractMainComposite;
 import pl.szafraniec.ChildrenMotivator.ui.Fonts;
 import pl.szafraniec.ChildrenMotivator.ui.Images;
-import pl.szafraniec.ChildrenMotivator.ui.activities.dialogs.EditActivityDialog;
+import pl.szafraniec.ChildrenMotivator.ui.activities.dialogs.ActivityDialog;
 import pl.szafraniec.ChildrenMotivator.ui.services.DialogProvider;
 import pl.szafraniec.ChildrenMotivator.ui.start.StartComposite;
 import pl.szafraniec.ChildrenMotivator.ui.utils.ImageCanvas;
@@ -78,7 +78,7 @@ public class ActivitiesComposite extends AbstractMainComposite {
         addActivityButton.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseUp(MouseEvent e) {
-                EditActivityDialog dialog = dialogProvider.createEditActivityDialog();
+                ActivityDialog dialog = dialogProvider.createEditActivityDialog();
                 if (Window.OK == dialog.open()) {
                     Activity activity = activityService.addActivity(dialog.getActivityName(), dialog.getImageByte());
                     createActivityButton(activity, activitiesComposite);

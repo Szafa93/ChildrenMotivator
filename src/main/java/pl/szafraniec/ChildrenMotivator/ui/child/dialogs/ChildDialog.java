@@ -16,7 +16,7 @@ import pl.szafraniec.ChildrenMotivator.services.ChildService;
 
 import java.util.function.Consumer;
 
-public class EditChildDialog extends Dialog {
+public class ChildDialog extends Dialog {
 
     @Autowired
     private ChildService childService;
@@ -32,7 +32,7 @@ public class EditChildDialog extends Dialog {
 
     private String parentEmail;
 
-    public EditChildDialog(Shell parentShell, String name, String surname, String pesel, String parentEmail, String shellName, int id) {
+    public ChildDialog(Shell parentShell, String name, String surname, String pesel, String parentEmail, String shellName, int id) {
         super(parentShell);
         this.name = name;
         this.surname = surname;

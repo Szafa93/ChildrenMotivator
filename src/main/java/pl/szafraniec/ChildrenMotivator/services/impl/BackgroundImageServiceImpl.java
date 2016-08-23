@@ -7,6 +7,7 @@ import pl.szafraniec.ChildrenMotivator.model.BehaviorTable;
 import pl.szafraniec.ChildrenMotivator.model.Child;
 import pl.szafraniec.ChildrenMotivator.model.ChildActivitiesTable;
 import pl.szafraniec.ChildrenMotivator.model.ChildrenGroup;
+import pl.szafraniec.ChildrenMotivator.model.factories.BackgroundImageFactory;
 import pl.szafraniec.ChildrenMotivator.repository.BackgroundImageRepository;
 import pl.szafraniec.ChildrenMotivator.services.BackgroundImageService;
 import pl.szafraniec.ChildrenMotivator.services.ChildrenGroupService;
@@ -31,7 +32,7 @@ public class BackgroundImageServiceImpl implements BackgroundImageService {
 
     @Override
     public BackgroundImage create(String name, byte[] image) {
-        BackgroundImage backgroundImage = BackgroundImage.BackgroundImageFactory.create(name, image);
+        BackgroundImage backgroundImage = BackgroundImageFactory.create(name, image);
         return backgroundImageRepository.saveAndFlush(backgroundImage);
     }
 

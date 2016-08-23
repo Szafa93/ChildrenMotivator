@@ -50,10 +50,4 @@ public class TableCell {
         this.gradeComment = gradeComment;
     }
 
-    public static class TableCellBuilder {
-        public static TableCell create() {
-            TableCell tableCell = new TableCell();
-            return tableCell;
-        }
-    }
 }

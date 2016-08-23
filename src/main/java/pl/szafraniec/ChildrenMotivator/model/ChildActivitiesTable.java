@@ -5,6 +5,8 @@
 */
 package pl.szafraniec.ChildrenMotivator.model;
 
+import pl.szafraniec.ChildrenMotivator.model.factories.ChildActivitiesTableDayFactory;
+
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -18,7 +20,6 @@ import javax.persistence.PrimaryKeyJoinColumn;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -104,17 +105,9 @@ public class ChildActivitiesTable {
                 .limit(daysAmount)
                 .filter(date -> !date.getDayOfWeek().equals(DayOfWeek.SUNDAY) && !date.getDayOfWeek().equals(DayOfWeek.SATURDAY))
                 .filter(date -> !days.stream().map(ChildActivitiesTableDay::getLocalDate).anyMatch(localDate -> localDate.isEqual(date)))
-                .map(date -> ChildActivitiesTableDay.ChildActivitiesTableDayBuilder.create(date, activitiesTableScheme.getListOfActivities()))
+                .map(date -> ChildActivitiesTableDayFactory.create(date, activitiesTableScheme.getListOfActivities()))
                 .collect(Collectors.toList()));
         return this;
     }
 
-    public static class ChildActivitiesTableFactory {
-        public static ChildActivitiesTable create(Child child) {
-            ChildActivitiesTable table = new ChildActivitiesTable();
-            table.child = child;
-            table.days = new ArrayList<>();
-            return table;
-        }
-    }
 }

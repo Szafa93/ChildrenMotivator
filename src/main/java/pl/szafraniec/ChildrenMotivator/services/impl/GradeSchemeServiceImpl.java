@@ -5,6 +5,7 @@ import org.springframework.stereotype.Component;
 import pl.szafraniec.ChildrenMotivator.model.ChildrenGroup;
 import pl.szafraniec.ChildrenMotivator.model.GradeScheme;
 import pl.szafraniec.ChildrenMotivator.model.TableCell;
+import pl.szafraniec.ChildrenMotivator.model.factories.GradeSchemeFactory;
 import pl.szafraniec.ChildrenMotivator.repository.GradeSchemeRepository;
 import pl.szafraniec.ChildrenMotivator.repository.TableCellRepository;
 import pl.szafraniec.ChildrenMotivator.services.ChildrenGroupService;
@@ -34,7 +35,7 @@ public class GradeSchemeServiceImpl implements GradeSchemeService {
 
     @Override
     public GradeScheme create(int value, byte[] image) {
-        GradeScheme gradeScheme = GradeScheme.GradeSchemeFactory.create(value, image);
+        GradeScheme gradeScheme = GradeSchemeFactory.create(value, image);
         return gradeSchemeRepository.saveAndFlush(gradeScheme);
     }
 

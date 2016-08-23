@@ -71,12 +71,4 @@ public class GradeScheme {
         return id;
     }
 
-    public static class GradeSchemeFactory {
-        public static GradeScheme create(int value, byte[] image) {
-            GradeScheme gradeScheme = new GradeScheme();
-            gradeScheme.setImage(image);
-            gradeScheme.setValue(value);
-            return gradeScheme;
-        }
-    }
 }

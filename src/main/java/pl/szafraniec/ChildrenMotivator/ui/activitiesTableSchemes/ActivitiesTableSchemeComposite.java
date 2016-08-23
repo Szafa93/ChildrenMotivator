@@ -27,7 +27,7 @@ import pl.szafraniec.ChildrenMotivator.services.ActivitiesTableSchemeService;
 import pl.szafraniec.ChildrenMotivator.ui.AbstractMainComposite;
 import pl.szafraniec.ChildrenMotivator.ui.Fonts;
 import pl.szafraniec.ChildrenMotivator.ui.Images;
-import pl.szafraniec.ChildrenMotivator.ui.activitiesTableSchemes.dialogs.EditActivitiesTableSchemeDialog;
+import pl.szafraniec.ChildrenMotivator.ui.activitiesTableSchemes.dialogs.ActivitiesTableSchemeDialog;
 import pl.szafraniec.ChildrenMotivator.ui.utils.ImageCanvas;
 
 import java.util.List;
@@ -154,7 +154,7 @@ public class ActivitiesTableSchemeComposite extends AbstractMainComposite {
     }
 
     private void editActivitiesTableScheme() {
-        EditActivitiesTableSchemeDialog dialog = new EditActivitiesTableSchemeDialog(shell, activitiesTableScheme.getName(),
+        ActivitiesTableSchemeDialog dialog = new ActivitiesTableSchemeDialog(shell, activitiesTableScheme.getName(),
                 activitiesTableScheme.getListOfActivities(), "Edytuj schemat");
         applicationContext.getAutowireCapableBeanFactory().autowireBean(dialog);
         if (Window.OK == dialog.open()) {

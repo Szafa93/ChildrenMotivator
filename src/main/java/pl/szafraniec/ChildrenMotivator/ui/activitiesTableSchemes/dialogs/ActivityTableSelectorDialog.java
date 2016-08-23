@@ -1,4 +1,4 @@
-package pl.szafraniec.ChildrenMotivator.ui.activities.dialogs;
+package pl.szafraniec.ChildrenMotivator.ui.activitiesTableSchemes.dialogs;
 
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.layout.GridDataFactory;

@@ -6,7 +6,8 @@ import pl.szafraniec.ChildrenMotivator.model.ActivitiesTableScheme;
 import pl.szafraniec.ChildrenMotivator.model.Activity;
 import pl.szafraniec.ChildrenMotivator.model.Child;
 import pl.szafraniec.ChildrenMotivator.model.ChildActivitiesTable;
-import pl.szafraniec.ChildrenMotivator.model.TableCell;
+import pl.szafraniec.ChildrenMotivator.model.factories.ActivitiesTableSchemeFactory;
+import pl.szafraniec.ChildrenMotivator.model.factories.TableCellFactory;
 import pl.szafraniec.ChildrenMotivator.repository.ActivitiesTableSchemesRepository;
 import pl.szafraniec.ChildrenMotivator.repository.ChildRepository;
 import pl.szafraniec.ChildrenMotivator.services.ActivitiesTableSchemeService;
@@ -31,7 +32,7 @@ public class ActivitiesTableSchemeServiceImpl implements ActivitiesTableSchemeSe
 
     @Override
     public ActivitiesTableScheme create(String name, List<Activity> activities) {
-        ActivitiesTableScheme scheme = ActivitiesTableScheme.ActivitiesTableSchemeFactory.create(name, activities);
+        ActivitiesTableScheme scheme = ActivitiesTableSchemeFactory.create(name, activities);
         return activitiesTableSchemesRepository.saveAndFlush(scheme);
     }
 
@@ -46,7 +47,7 @@ public class ActivitiesTableSchemeServiceImpl implements ActivitiesTableSchemeSe
                     activity -> day.getGrades().remove(activity));
             // add all new activities
             activities.stream().filter(activity -> !day.getGrades().keySet().contains(activity)).collect(Collectors.toList()).forEach(
-                    activity -> day.getGrades().put(activity, TableCell.TableCellBuilder.create()));
+                    activity -> day.getGrades().put(activity, TableCellFactory.create()));
         });
 
         scheme.setChildActivitiesTables(

@@ -7,7 +7,8 @@ import pl.szafraniec.ChildrenMotivator.model.Child;
 import pl.szafraniec.ChildrenMotivator.model.ChildActivitiesTableDay;
 import pl.szafraniec.ChildrenMotivator.model.ChildrenGroup;
 import pl.szafraniec.ChildrenMotivator.model.Holder;
-import pl.szafraniec.ChildrenMotivator.model.TableCell;
+import pl.szafraniec.ChildrenMotivator.model.factories.ChildFactory;
+import pl.szafraniec.ChildrenMotivator.model.factories.TableCellFactory;
 import pl.szafraniec.ChildrenMotivator.repository.ChildRepository;
 import pl.szafraniec.ChildrenMotivator.services.ChildService;
 import pl.szafraniec.ChildrenMotivator.services.ChildrenGroupService;
@@ -66,7 +67,7 @@ public class ChildServiceImpl implements ChildService {
                 .filter(activity -> !oldScheme.getListOfActivities().contains(activity))
                 .forEach(activity -> child.getChildActivitiesTable()
                         .getDays()
-                        .forEach(day -> day.getGrades().put(activity, TableCell.TableCellBuilder.create())));
+                        .forEach(day -> day.getGrades().put(activity, TableCellFactory.create())));
     }
 
     @Override
@@ -100,7 +101,7 @@ public class ChildServiceImpl implements ChildService {
 
     @Override
     public Child create(String name, String surname, String pesel, String parentMail, ChildrenGroup childrenGroup) {
-        Child child = Child.ChildFactory.create(name, surname, pesel, parentMail);
+        Child child = ChildFactory.create(name, surname, pesel, parentMail);
         childrenGroupService.assignChildToGroup(child, childrenGroup);
         return child;
     }

@@ -11,6 +11,8 @@ import pl.szafraniec.ChildrenMotivator.model.ChildrenGroup;
 import pl.szafraniec.ChildrenMotivator.model.GradeScheme;
 import pl.szafraniec.ChildrenMotivator.model.Holder;
 import pl.szafraniec.ChildrenMotivator.model.TableCell;
+import pl.szafraniec.ChildrenMotivator.model.factories.ChildrenGroupFactory;
+import pl.szafraniec.ChildrenMotivator.model.factories.TableCellFactory;
 import pl.szafraniec.ChildrenMotivator.repository.ChildrenGroupRepository;
 import pl.szafraniec.ChildrenMotivator.services.ChildrenGroupService;
 import pl.szafraniec.ChildrenMotivator.services.GradeSchemeService;
@@ -45,7 +47,7 @@ public class ChildrenGroupServiceImpl implements ChildrenGroupService {
         child.getChildrenGroup()
                 .getBehaviorTable()
                 .getDays()
-                .forEach(day -> day.getGrades().put(child, TableCell.TableCellBuilder.create()));
+                .forEach(day -> day.getGrades().put(child, TableCellFactory.create()));
         return child.getChildrenGroup();
     }
 
@@ -79,7 +81,7 @@ public class ChildrenGroupServiceImpl implements ChildrenGroupService {
 
     @Override
     public ChildrenGroup create(String name) {
-        ChildrenGroup childrenGroup = ChildrenGroup.ChildrenGroupFactory.create(name);
+        ChildrenGroup childrenGroup = ChildrenGroupFactory.create(name);
         return childrenGroupRepository.saveAndFlush(childrenGroup);
     }
 

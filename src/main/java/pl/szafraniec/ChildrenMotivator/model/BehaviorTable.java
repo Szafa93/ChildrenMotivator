@@ -5,6 +5,8 @@
  */
 package pl.szafraniec.ChildrenMotivator.model;
 
+import pl.szafraniec.ChildrenMotivator.model.factories.BehaviorTableDayFactory;
+
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -18,7 +20,6 @@ import javax.persistence.PrimaryKeyJoinColumn;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -91,17 +92,9 @@ public class BehaviorTable {
                 .limit(daysAmount)
                 .filter(date -> !date.getDayOfWeek().equals(DayOfWeek.SUNDAY) && !date.getDayOfWeek().equals(DayOfWeek.SATURDAY))
                 .filter(date -> !days.stream().map(BehaviorTableDay::getLocalDate).anyMatch(localDate -> localDate.isEqual(date)))
-                .map(date -> BehaviorTableDay.BehaviorTableDayBuilder.create(date, childrenGroup.getChildren()))
+                .map(date -> BehaviorTableDayFactory.create(date, childrenGroup.getChildren()))
                 .collect(Collectors.toList()));
         return this;
     }
 
-    public static class BehaviorTableFactory {
-        public static BehaviorTable create(ChildrenGroup childrenGroup) {
-            BehaviorTable table = new BehaviorTable();
-            table.childrenGroup = childrenGroup;
-            table.setDays(new ArrayList<>());
-            return table;
-        }
-    }
 }

@@ -26,7 +26,7 @@ import pl.szafraniec.ChildrenMotivator.services.ActivitiesTableSchemeService;
 import pl.szafraniec.ChildrenMotivator.ui.AbstractMainComposite;
 import pl.szafraniec.ChildrenMotivator.ui.Fonts;
 import pl.szafraniec.ChildrenMotivator.ui.Images;
-import pl.szafraniec.ChildrenMotivator.ui.activitiesTableSchemes.dialogs.EditActivitiesTableSchemeDialog;
+import pl.szafraniec.ChildrenMotivator.ui.activitiesTableSchemes.dialogs.ActivitiesTableSchemeDialog;
 import pl.szafraniec.ChildrenMotivator.ui.services.DialogProvider;
 import pl.szafraniec.ChildrenMotivator.ui.start.StartComposite;
 
@@ -81,7 +81,7 @@ public class ActivitiesTableSchemesComposite extends AbstractMainComposite {
         addActivityButton.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseUp(MouseEvent e) {
-                EditActivitiesTableSchemeDialog dialog = dialogProvider.createEditActivitiesTableSchemeDialog();
+                ActivitiesTableSchemeDialog dialog = dialogProvider.createEditActivitiesTableSchemeDialog();
                 applicationContext.getAutowireCapableBeanFactory().autowireBean(dialog);
                 if (Window.OK == dialog.open()) {
                     ActivitiesTableScheme scheme = activitiesTableSchemeService.create(dialog.getActivitiesTableSchemeName(),

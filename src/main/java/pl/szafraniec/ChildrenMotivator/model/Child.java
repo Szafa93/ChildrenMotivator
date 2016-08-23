@@ -118,16 +118,4 @@ public class Child {
         return id;
     }
 
-    public static class ChildFactory {
-
-        public static Child create(String name, String surname, String pesel, String parentMail) {
-            Child child = new Child();
-            child.setName(name);
-            child.setSurname(surname);
-            child.setPesel(pesel);
-            child.setParentEmail(parentMail);
-            child.setChildActivitiesTable(ChildActivitiesTable.ChildActivitiesTableFactory.create(child));
-            return child;
-        }
-    }
 }

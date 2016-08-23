@@ -9,16 +9,16 @@ import pl.szafraniec.ChildrenMotivator.model.Activity;
 import pl.szafraniec.ChildrenMotivator.model.BackgroundImage;
 import pl.szafraniec.ChildrenMotivator.model.ChildrenGroup;
 import pl.szafraniec.ChildrenMotivator.model.GradeScheme;
-import pl.szafraniec.ChildrenMotivator.ui.activities.dialogs.ActivityTableSelectorDialog;
-import pl.szafraniec.ChildrenMotivator.ui.activities.dialogs.EditActivityDialog;
-import pl.szafraniec.ChildrenMotivator.ui.activitiesTableSchemes.dialogs.EditActivitiesTableSchemeDialog;
+import pl.szafraniec.ChildrenMotivator.ui.activities.dialogs.ActivityDialog;
+import pl.szafraniec.ChildrenMotivator.ui.activitiesTableSchemes.dialogs.ActivitiesTableSchemeDialog;
+import pl.szafraniec.ChildrenMotivator.ui.activitiesTableSchemes.dialogs.ActivityTableSelectorDialog;
 import pl.szafraniec.ChildrenMotivator.ui.backgroundImages.dialogs.BackgroundImageDialog;
 import pl.szafraniec.ChildrenMotivator.ui.backgroundImages.dialogs.BackgroundImageSelectorDialog;
-import pl.szafraniec.ChildrenMotivator.ui.child.dialogs.EditChildDialog;
-import pl.szafraniec.ChildrenMotivator.ui.gradesSchemes.dialogs.EditGradeSchemeDialog;
+import pl.szafraniec.ChildrenMotivator.ui.child.dialogs.ChildDialog;
+import pl.szafraniec.ChildrenMotivator.ui.gradesSchemes.dialogs.GradeSchemeDialog;
 import pl.szafraniec.ChildrenMotivator.ui.gradesSchemes.dialogs.GradeSelectorDialog;
 import pl.szafraniec.ChildrenMotivator.ui.groups.GroupSelectorDialog;
-import pl.szafraniec.ChildrenMotivator.ui.groups.dialogs.EditChildrenGroupDialog;
+import pl.szafraniec.ChildrenMotivator.ui.groups.dialogs.ChildrenGroupDialog;
 import pl.szafraniec.ChildrenMotivator.ui.groups.dialogs.SelectDatesForReportsDialog;
 import pl.szafraniec.ChildrenMotivator.ui.services.DialogProvider;
 import pl.szafraniec.ChildrenMotivator.ui.start.dialogs.ConfigurationDialog;
@@ -47,24 +47,24 @@ public class DialogProviderImpl implements DialogProvider {
     }
 
     @Override
-    public EditActivityDialog createEditActivityDialog() {
-        return injectDependency(new EditActivityDialog(shell, "", null, "Dodaj aktywność"));
+    public ActivityDialog createEditActivityDialog() {
+        return injectDependency(new ActivityDialog(shell, "", null, "Dodaj aktywność"));
     }
 
     @Override
-    public EditActivityDialog createEditActivityDialog(String activityName, byte[] fileData) {
-        return injectDependency(new EditActivityDialog(shell, activityName, fileData, "Edytuj aktywność"));
+    public ActivityDialog createEditActivityDialog(String activityName, byte[] fileData) {
+        return injectDependency(new ActivityDialog(shell, activityName, fileData, "Edytuj aktywność"));
     }
 
     @Override
-    public EditActivitiesTableSchemeDialog createEditActivitiesTableSchemeDialog() {
-        return injectDependency(new EditActivitiesTableSchemeDialog(shell, "", new ArrayList<>(), "Dodaj schemat"));
+    public ActivitiesTableSchemeDialog createEditActivitiesTableSchemeDialog() {
+        return injectDependency(new ActivitiesTableSchemeDialog(shell, "", new ArrayList<>(), "Dodaj schemat"));
     }
 
     @Override
-    public EditActivitiesTableSchemeDialog createEditActivitiesTableSchemeDialog(String activitiesTableSchemeName,
+    public ActivitiesTableSchemeDialog createEditActivitiesTableSchemeDialog(String activitiesTableSchemeName,
             List<Activity> activities) {
-        return injectDependency(new EditActivitiesTableSchemeDialog(shell, activitiesTableSchemeName, activities,
+        return injectDependency(new ActivitiesTableSchemeDialog(shell, activitiesTableSchemeName, activities,
                 "Edytuj schemat tabeli aktywności"));
     }
 
@@ -84,23 +84,23 @@ public class DialogProviderImpl implements DialogProvider {
     }
 
     @Override
-    public EditChildDialog createEditChildDialog() {
-        return injectDependency(new EditChildDialog(shell, "", "", "", "", "Wprowadź dane dziecka", -1));
+    public ChildDialog createEditChildDialog() {
+        return injectDependency(new ChildDialog(shell, "", "", "", "", "Wprowadź dane dziecka", -1));
     }
 
     @Override
-    public EditChildDialog createEditChildDialog(String name, String surname, String pesel, String parentEmail, int id) {
-        return injectDependency(new EditChildDialog(shell, name, surname, pesel, parentEmail, "Edytuj dane dziecka", id));
+    public ChildDialog createEditChildDialog(String name, String surname, String pesel, String parentEmail, int id) {
+        return injectDependency(new ChildDialog(shell, name, surname, pesel, parentEmail, "Edytuj dane dziecka", id));
     }
 
     @Override
-    public EditGradeSchemeDialog createEditGradeSchemeDialog() {
-        return injectDependency(new EditGradeSchemeDialog(shell, null, null, "Dodaj ocenę", -1));
+    public GradeSchemeDialog createEditGradeSchemeDialog() {
+        return injectDependency(new GradeSchemeDialog(shell, null, null, "Dodaj ocenę", -1));
     }
 
     @Override
-    public EditGradeSchemeDialog createEditGradeSchemeDialog(Integer gradeValue, byte[] fileData, int id) {
-        return injectDependency(new EditGradeSchemeDialog(shell, gradeValue, fileData, "Edytuj ocenę", id));
+    public GradeSchemeDialog createEditGradeSchemeDialog(Integer gradeValue, byte[] fileData, int id) {
+        return injectDependency(new GradeSchemeDialog(shell, gradeValue, fileData, "Edytuj ocenę", id));
     }
 
     @Override
@@ -109,13 +109,13 @@ public class DialogProviderImpl implements DialogProvider {
     }
 
     @Override
-    public EditChildrenGroupDialog createEditChildrenGroupDialog() {
-        return injectDependency(new EditChildrenGroupDialog(shell, "", "Dodaj grupę"));
+    public ChildrenGroupDialog createEditChildrenGroupDialog() {
+        return injectDependency(new ChildrenGroupDialog(shell, "", "Dodaj grupę"));
     }
 
     @Override
-    public EditChildrenGroupDialog createEditChildrenGroupDialog(String groupName) {
-        return injectDependency(new EditChildrenGroupDialog(shell, groupName, "Edytuj dane grupy"));
+    public ChildrenGroupDialog createEditChildrenGroupDialog(String groupName) {
+        return injectDependency(new ChildrenGroupDialog(shell, groupName, "Edytuj dane grupy"));
     }
 
     @Override

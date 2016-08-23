@@ -28,7 +28,7 @@ import java.io.ByteArrayInputStream;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class EditActivitiesTableSchemeDialog extends Dialog {
+public class ActivitiesTableSchemeDialog extends Dialog {
 
     @Autowired
     private ActivityRepository activityRepository;
@@ -37,7 +37,7 @@ public class EditActivitiesTableSchemeDialog extends Dialog {
     private String shellName;
     private List<Activity> activities;
 
-    public EditActivitiesTableSchemeDialog(Shell shell, String activitiesTableSchemeName, List<Activity> activities, String shellName) {
+    public ActivitiesTableSchemeDialog(Shell shell, String activitiesTableSchemeName, List<Activity> activities, String shellName) {
         super(shell);
         this.activitiesTableSchemeName = activitiesTableSchemeName;
         this.activities = activities;

@@ -25,7 +25,7 @@ import pl.szafraniec.ChildrenMotivator.services.GradeSchemeService;
 import pl.szafraniec.ChildrenMotivator.ui.AbstractMainComposite;
 import pl.szafraniec.ChildrenMotivator.ui.Fonts;
 import pl.szafraniec.ChildrenMotivator.ui.Images;
-import pl.szafraniec.ChildrenMotivator.ui.gradesSchemes.dialogs.EditGradeSchemeDialog;
+import pl.szafraniec.ChildrenMotivator.ui.gradesSchemes.dialogs.GradeSchemeDialog;
 import pl.szafraniec.ChildrenMotivator.ui.services.DialogProvider;
 import pl.szafraniec.ChildrenMotivator.ui.start.StartComposite;
 import pl.szafraniec.ChildrenMotivator.ui.utils.ImageCanvas;
@@ -84,7 +84,7 @@ public class GradesSchemesComposite extends AbstractMainComposite {
     }
 
     private void addGradeScheme() {
-        EditGradeSchemeDialog dialog = dialogProvider.createEditGradeSchemeDialog();
+        GradeSchemeDialog dialog = dialogProvider.createEditGradeSchemeDialog();
         applicationContext.getAutowireCapableBeanFactory().autowireBean(dialog);
         if (Window.OK == dialog.open()) {
             GradeScheme gradeScheme = addGradeScheme(dialog.getGradeValue(), dialog.getImageByte());

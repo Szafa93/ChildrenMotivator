@@ -63,13 +63,4 @@ public class BackgroundImage {
         return id;
     }
 
-    public static class BackgroundImageFactory {
-        public static BackgroundImage create(String name, byte[] image) {
-            BackgroundImage backgroundImage = new BackgroundImage();
-            backgroundImage.setImage(image);
-            backgroundImage.setName(name);
-            return backgroundImage;
-        }
-    }
-
 }

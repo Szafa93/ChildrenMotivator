@@ -20,13 +20,13 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 
-public class EditActivityDialog extends Dialog {
+public class ActivityDialog extends Dialog {
     private String activityName;
     private String shellName;
     private byte[] fileData;
     private ImageCanvas image;
 
-    public EditActivityDialog(Shell shell, String activityName, byte[] fileData, String shellName) {
+    public ActivityDialog(Shell shell, String activityName, byte[] fileData, String shellName) {
         super(shell);
         this.activityName = activityName;
         this.fileData = fileData;

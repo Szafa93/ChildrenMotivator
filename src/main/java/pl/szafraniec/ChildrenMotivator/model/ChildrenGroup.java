@@ -15,7 +15,6 @@ import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.PrimaryKeyJoinColumn;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -77,13 +76,4 @@ public class ChildrenGroup {
         this.behaviorTable = behaviorTable;
     }
 
-    public static class ChildrenGroupFactory {
-        public static ChildrenGroup create(String name) {
-            ChildrenGroup childrenGroup = new ChildrenGroup();
-            childrenGroup.name = name;
-            childrenGroup.behaviorTable = BehaviorTable.BehaviorTableFactory.create(childrenGroup);
-            childrenGroup.children = new ArrayList<>();
-            return childrenGroup;
-        }
-    }
 }

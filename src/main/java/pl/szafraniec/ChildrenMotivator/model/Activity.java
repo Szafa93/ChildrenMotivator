@@ -56,15 +56,6 @@ public class Activity {
         this.image = image;
     }
 
-    public static class ActivityFactory {
-        public static Activity create(String name, byte[] image) {
-            Activity activity = new Activity();
-            activity.setName(name);
-            activity.setImage(image);
-            return activity;
-        }
-    }
-
     @Override
     public boolean equals(Object o) {
         if (this == o)

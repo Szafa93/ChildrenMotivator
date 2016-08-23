@@ -3,6 +3,7 @@ package pl.szafraniec.ChildrenMotivator.services.impl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import pl.szafraniec.ChildrenMotivator.model.Configuration;
+import pl.szafraniec.ChildrenMotivator.model.factories.ConfigurationFactory;
 import pl.szafraniec.ChildrenMotivator.repository.ConfigurationRepository;
 import pl.szafraniec.ChildrenMotivator.services.ConfigurationService;
 
@@ -15,7 +16,7 @@ public class ConfigurationServiceImpl implements ConfigurationService {
     @Override
     public Configuration getConfiguration() {
         if (configurationRepository.count() == 0) {
-            configurationRepository.saveAndFlush(new Configuration());
+            configurationRepository.saveAndFlush(ConfigurationFactory.create());
         }
         return configurationRepository.findAll().get(0);
     }
