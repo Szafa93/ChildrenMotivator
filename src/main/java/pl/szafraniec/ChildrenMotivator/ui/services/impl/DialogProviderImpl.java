@@ -11,14 +11,14 @@ import pl.szafraniec.ChildrenMotivator.model.ChildrenGroup;
 import pl.szafraniec.ChildrenMotivator.model.GradeScheme;
 import pl.szafraniec.ChildrenMotivator.ui.activities.dialogs.ActivityDialog;
 import pl.szafraniec.ChildrenMotivator.ui.activitiesTableSchemes.dialogs.ActivitiesTableSchemeDialog;
-import pl.szafraniec.ChildrenMotivator.ui.activitiesTableSchemes.dialogs.ActivityTableSelectorDialog;
+import pl.szafraniec.ChildrenMotivator.ui.activitiesTableSchemes.dialogs.ActivitiesTableSchemeSelectorDialog;
 import pl.szafraniec.ChildrenMotivator.ui.backgroundImages.dialogs.BackgroundImageDialog;
 import pl.szafraniec.ChildrenMotivator.ui.backgroundImages.dialogs.BackgroundImageSelectorDialog;
 import pl.szafraniec.ChildrenMotivator.ui.child.dialogs.ChildDialog;
 import pl.szafraniec.ChildrenMotivator.ui.gradesSchemes.dialogs.GradeSchemeDialog;
-import pl.szafraniec.ChildrenMotivator.ui.gradesSchemes.dialogs.GradeSelectorDialog;
-import pl.szafraniec.ChildrenMotivator.ui.groups.GroupSelectorDialog;
+import pl.szafraniec.ChildrenMotivator.ui.gradesSchemes.dialogs.GradeSchemeSelectorDialog;
 import pl.szafraniec.ChildrenMotivator.ui.groups.dialogs.ChildrenGroupDialog;
+import pl.szafraniec.ChildrenMotivator.ui.groups.dialogs.ChildrenGroupSelectorDialog;
 import pl.szafraniec.ChildrenMotivator.ui.groups.dialogs.SelectDatesForReportsDialog;
 import pl.szafraniec.ChildrenMotivator.ui.services.DialogProvider;
 import pl.szafraniec.ChildrenMotivator.ui.start.dialogs.ConfigurationDialog;
@@ -42,8 +42,8 @@ public class DialogProviderImpl implements DialogProvider {
     }
 
     @Override
-    public ActivityTableSelectorDialog createActivityTableSelectorDialog(ActivitiesTableScheme activitiesTableScheme) {
-        return injectDependency(new ActivityTableSelectorDialog(shell, activitiesTableScheme));
+    public ActivitiesTableSchemeSelectorDialog createActivitiesTableSchemeSelectorDialog(ActivitiesTableScheme activitiesTableScheme) {
+        return injectDependency(new ActivitiesTableSchemeSelectorDialog(shell, activitiesTableScheme));
     }
 
     @Override
@@ -104,8 +104,8 @@ public class DialogProviderImpl implements DialogProvider {
     }
 
     @Override
-    public GradeSelectorDialog createGradeSelectorDialog(GradeScheme gradeScheme, String gradeComment) {
-        return injectDependency(new GradeSelectorDialog(shell, gradeScheme, gradeComment));
+    public GradeSchemeSelectorDialog createGradeSchemeSelectorDialog(GradeScheme gradeScheme, String gradeComment) {
+        return injectDependency(new GradeSchemeSelectorDialog(shell, gradeScheme, gradeComment));
     }
 
     @Override
@@ -119,8 +119,8 @@ public class DialogProviderImpl implements DialogProvider {
     }
 
     @Override
-    public GroupSelectorDialog createGroupSelectorDialog(ChildrenGroup childrenGroup) {
-        return injectDependency(new GroupSelectorDialog(shell, childrenGroup));
+    public ChildrenGroupSelectorDialog createChildrenGroupSelectorDialog(ChildrenGroup childrenGroup) {
+        return injectDependency(new ChildrenGroupSelectorDialog(shell, childrenGroup));
     }
 
     @Override

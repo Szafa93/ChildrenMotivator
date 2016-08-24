@@ -16,14 +16,13 @@ import pl.szafraniec.ChildrenMotivator.model.GradeScheme;
 import pl.szafraniec.ChildrenMotivator.model.Holder;
 import pl.szafraniec.ChildrenMotivator.model.TableCell;
 import pl.szafraniec.ChildrenMotivator.services.ChildService;
-import pl.szafraniec.ChildrenMotivator.ui.activitiesTableSchemes.ActivityTableComposite;
 
 import java.util.List;
 import java.util.OptionalDouble;
 
 @Component("ActivitiesTableSchemeStatisticsComposite")
 @Scope(scopeName = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
-public class ChildActivitiesTableStatisticsComposite extends ActivityTableComposite {
+public class ChildActivitiesTableStatisticsComposite extends ChildActivitiesTableComposite {
 
     @Autowired
     private ChildService childService;

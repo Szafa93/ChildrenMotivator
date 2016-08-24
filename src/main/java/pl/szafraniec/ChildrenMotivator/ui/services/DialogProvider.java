@@ -7,14 +7,14 @@ import pl.szafraniec.ChildrenMotivator.model.ChildrenGroup;
 import pl.szafraniec.ChildrenMotivator.model.GradeScheme;
 import pl.szafraniec.ChildrenMotivator.ui.activities.dialogs.ActivityDialog;
 import pl.szafraniec.ChildrenMotivator.ui.activitiesTableSchemes.dialogs.ActivitiesTableSchemeDialog;
-import pl.szafraniec.ChildrenMotivator.ui.activitiesTableSchemes.dialogs.ActivityTableSelectorDialog;
+import pl.szafraniec.ChildrenMotivator.ui.activitiesTableSchemes.dialogs.ActivitiesTableSchemeSelectorDialog;
 import pl.szafraniec.ChildrenMotivator.ui.backgroundImages.dialogs.BackgroundImageDialog;
 import pl.szafraniec.ChildrenMotivator.ui.backgroundImages.dialogs.BackgroundImageSelectorDialog;
 import pl.szafraniec.ChildrenMotivator.ui.child.dialogs.ChildDialog;
 import pl.szafraniec.ChildrenMotivator.ui.gradesSchemes.dialogs.GradeSchemeDialog;
-import pl.szafraniec.ChildrenMotivator.ui.gradesSchemes.dialogs.GradeSelectorDialog;
-import pl.szafraniec.ChildrenMotivator.ui.groups.GroupSelectorDialog;
+import pl.szafraniec.ChildrenMotivator.ui.gradesSchemes.dialogs.GradeSchemeSelectorDialog;
 import pl.szafraniec.ChildrenMotivator.ui.groups.dialogs.ChildrenGroupDialog;
+import pl.szafraniec.ChildrenMotivator.ui.groups.dialogs.ChildrenGroupSelectorDialog;
 import pl.szafraniec.ChildrenMotivator.ui.groups.dialogs.SelectDatesForReportsDialog;
 import pl.szafraniec.ChildrenMotivator.ui.start.dialogs.ConfigurationDialog;
 
@@ -24,7 +24,7 @@ public interface DialogProvider {
     ConfigurationDialog createConfigurationDialog(String fromEmail, String smtpHost, String smtpPort, String mailUser,
             String mailPassword, boolean sslConnection);
 
-    ActivityTableSelectorDialog createActivityTableSelectorDialog(ActivitiesTableScheme activitiesTableScheme);
+    ActivitiesTableSchemeSelectorDialog createActivitiesTableSchemeSelectorDialog(ActivitiesTableScheme activitiesTableScheme);
 
     ActivityDialog createActivityDialog();
 
@@ -48,13 +48,13 @@ public interface DialogProvider {
 
     GradeSchemeDialog createGradeSchemeDialog(Integer gradeValue, byte[] fileData, int id);
 
-    GradeSelectorDialog createGradeSelectorDialog(GradeScheme gradeScheme, String gradeComment);
+    GradeSchemeSelectorDialog createGradeSchemeSelectorDialog(GradeScheme gradeScheme, String gradeComment);
 
     ChildrenGroupDialog createChildrenGroupDialog();
 
     ChildrenGroupDialog createChildrenGroupDialog(String groupName);
 
-    GroupSelectorDialog createGroupSelectorDialog(ChildrenGroup childrenGroup);
+    ChildrenGroupSelectorDialog createChildrenGroupSelectorDialog(ChildrenGroup childrenGroup);
 
     SelectDatesForReportsDialog createSelectDatesForReportsDialog();
 }

@@ -1,4 +1,4 @@
-package pl.szafraniec.ChildrenMotivator.ui.activitiesTableSchemes;
+package pl.szafraniec.ChildrenMotivator.ui.child.childActivitiesTable;
 
 import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.layout.GridLayoutFactory;
@@ -48,7 +48,7 @@ import java.util.stream.Stream;
 
 @Component("ActivityTableComposite")
 @Scope(scopeName = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
-public class ActivityTableComposite extends AbstractMainComposite {
+public class ChildActivitiesTableComposite extends AbstractMainComposite {
     protected static final int MARGINS = 25;
 
     protected static final GridData TABLE_CELL_LAYOUT_DATA = GridDataFactory.fillDefaults()
@@ -82,7 +82,7 @@ public class ActivityTableComposite extends AbstractMainComposite {
     protected Button forwardButton;
     protected Image imageData;
 
-    public ActivityTableComposite(Composite parent, Holder<Child> child) {
+    public ChildActivitiesTableComposite(Composite parent, Holder<Child> child) {
         super(parent, SWT.NONE);
         this.child = child;
         DayOfWeek today = LocalDate.now().getDayOfWeek();

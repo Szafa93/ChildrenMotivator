@@ -21,12 +21,12 @@ import pl.szafraniec.ChildrenMotivator.model.Holder;
 import pl.szafraniec.ChildrenMotivator.services.ChildService;
 import pl.szafraniec.ChildrenMotivator.ui.AbstractMainComposite;
 import pl.szafraniec.ChildrenMotivator.ui.Fonts;
-import pl.szafraniec.ChildrenMotivator.ui.activitiesTableSchemes.dialogs.ActivityTableSelectorDialog;
+import pl.szafraniec.ChildrenMotivator.ui.activitiesTableSchemes.dialogs.ActivitiesTableSchemeSelectorDialog;
 import pl.szafraniec.ChildrenMotivator.ui.child.childActivitiesTable.ChildActivitiesTableChartComposite;
 import pl.szafraniec.ChildrenMotivator.ui.child.childActivitiesTable.ChildActivitiesTableStatisticsComposite;
 import pl.szafraniec.ChildrenMotivator.ui.child.dialogs.ChildDialog;
 import pl.szafraniec.ChildrenMotivator.ui.groups.ChildrenGroupComposite;
-import pl.szafraniec.ChildrenMotivator.ui.groups.GroupSelectorDialog;
+import pl.szafraniec.ChildrenMotivator.ui.groups.dialogs.ChildrenGroupSelectorDialog;
 
 @Component
 @Scope(scopeName = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
@@ -254,7 +254,7 @@ public class ChildComposite extends AbstractMainComposite {
     }
 
     private void changeGroup() {
-        GroupSelectorDialog dialog = new GroupSelectorDialog(shell, child.get().getChildrenGroup());
+        ChildrenGroupSelectorDialog dialog = new ChildrenGroupSelectorDialog(shell, child.get().getChildrenGroup());
         applicationContext.getAutowireCapableBeanFactory().autowireBean(dialog);
         if (Window.OK == dialog.open()) {
             child.set(childService.changeGroup(child.get(), dialog.getChildrenGroup()));
@@ -268,7 +268,7 @@ public class ChildComposite extends AbstractMainComposite {
     }
 
     private void selectActivityTable() {
-        ActivityTableSelectorDialog dialog = new ActivityTableSelectorDialog(shell, child.get().getChildActivitiesTable().getActivitiesTableScheme());
+        ActivitiesTableSchemeSelectorDialog dialog = new ActivitiesTableSchemeSelectorDialog(shell, child.get().getChildActivitiesTable().getActivitiesTableScheme());
         applicationContext.getAutowireCapableBeanFactory().autowireBean(dialog);
         if (Window.OK == dialog.open()) {
             child.set(childService.setActivityTable(child.get(), dialog.getActivitiesTableScheme()));

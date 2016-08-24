@@ -22,14 +22,13 @@ import pl.szafraniec.ChildrenMotivator.model.Holder;
 import pl.szafraniec.ChildrenMotivator.model.TableCell;
 import pl.szafraniec.ChildrenMotivator.services.ChildService;
 import pl.szafraniec.ChildrenMotivator.ui.Fonts;
-import pl.szafraniec.ChildrenMotivator.ui.activitiesTableSchemes.ActivityTableComposite;
 import pl.szafraniec.ChildrenMotivator.ui.backgroundImages.dialogs.BackgroundImageSelectorDialog;
-import pl.szafraniec.ChildrenMotivator.ui.gradesSchemes.dialogs.GradeSelectorDialog;
+import pl.szafraniec.ChildrenMotivator.ui.gradesSchemes.dialogs.GradeSchemeSelectorDialog;
 import pl.szafraniec.ChildrenMotivator.ui.utils.ImageCanvas;
 
 @Component("EditActivityTableComposite")
 @Scope(scopeName = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
-public class EditChildActivitiesTableComposite extends ActivityTableComposite {
+public class EditChildActivitiesTableComposite extends ChildActivitiesTableComposite {
 
     @Autowired
     private ChildService childService;
@@ -97,7 +96,7 @@ public class EditChildActivitiesTableComposite extends ActivityTableComposite {
 
             @Override
             public void mouseUp(MouseEvent e) {
-                GradeSelectorDialog dialog = new GradeSelectorDialog(Display.getCurrent().getActiveShell(), grade.getGradeScheme(),
+                GradeSchemeSelectorDialog dialog = new GradeSchemeSelectorDialog(Display.getCurrent().getActiveShell(), grade.getGradeScheme(),
                         grade.getGradeComment());
                 applicationContext.getAutowireCapableBeanFactory().autowireBean(dialog);
                 if (Window.OK == dialog.open()) {

@@ -1,4 +1,4 @@
-package pl.szafraniec.ChildrenMotivator.ui.gradesSchemes.dialogs;
+package pl.szafraniec.ChildrenMotivator.ui.activitiesTableSchemes.dialogs;
 
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.layout.GridDataFactory;
@@ -10,49 +10,39 @@ import org.eclipse.swt.events.ControlAdapter;
 import org.eclipse.swt.events.ControlEvent;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.swt.widgets.Text;
 import org.springframework.beans.factory.annotation.Autowired;
-import pl.szafraniec.ChildrenMotivator.model.GradeScheme;
-import pl.szafraniec.ChildrenMotivator.services.GradeSchemeService;
+import pl.szafraniec.ChildrenMotivator.model.ActivitiesTableScheme;
+import pl.szafraniec.ChildrenMotivator.services.ActivitiesTableSchemeService;
 import pl.szafraniec.ChildrenMotivator.ui.Fonts;
 import pl.szafraniec.ChildrenMotivator.ui.Images;
 
-import java.io.ByteArrayInputStream;
 import java.util.List;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
-public class GradeSelectorDialog extends Dialog {
+public class ActivitiesTableSchemeSelectorDialog extends Dialog {
 
     @Autowired
-    private GradeSchemeService gradeSchemeService;
+    private ActivitiesTableSchemeService activitiesTableSchemeService;
 
-    private GradeScheme gradeScheme;
+    private ActivitiesTableScheme activitiesTableScheme;
 
-    private List<Button> gradeSchemeButtons;
-    private String gradeComment;
+    private List<Button> activitiesTableSchemesButtons;
 
-    public GradeSelectorDialog(Shell shell, GradeScheme gradeScheme, String gradeComment) {
+    public ActivitiesTableSchemeSelectorDialog(Shell shell, ActivitiesTableScheme activitiesTableScheme) {
         super(shell);
-        this.gradeScheme = gradeScheme;
-        if (gradeComment == null) {
-            this.gradeComment = "";
-        } else {
-            this.gradeComment = gradeComment;
-        }
+        this.activitiesTableScheme = activitiesTableScheme;
     }
 
     @Override
     protected void configureShell(Shell shell) {
         super.configureShell(shell);
-        shell.setText("Wybierz ocenę");
+        shell.setText("Wybierz schemat");
     }
 
     @Override
@@ -65,20 +55,10 @@ public class GradeSelectorDialog extends Dialog {
     private void createGroupProperties(Composite parent) {
         Composite groupPropertiesComposite = new Composite(parent, SWT.NONE);
         groupPropertiesComposite.setLayoutData(GridDataFactory.swtDefaults().align(SWT.FILL, SWT.FILL).grab(true, true).create());
-        groupPropertiesComposite.setLayout(GridLayoutFactory.swtDefaults().numColumns(3).create());
-
-        Label labelComment = new Label(groupPropertiesComposite, SWT.NONE);
-        labelComment.setText("Komentarz: ");
-        Text textComment = new Text(groupPropertiesComposite, SWT.BORDER);
-        textComment.setText(gradeComment);
-        textComment.setLayoutData(GridDataFactory.swtDefaults().grab(true, false).align(SWT.FILL, SWT.FILL).create());
-        textComment.addModifyListener(event -> {
-            gradeComment = textComment.getText();
-            getButton(Dialog.OK).setEnabled(checkConstrains());
-        });
+        groupPropertiesComposite.setLayout(GridLayoutFactory.swtDefaults().numColumns(1).create());
 
         Composite gradeSchemeComposite = createGradeSchemeSelectorComposite(groupPropertiesComposite);
-        gradeSchemeComposite.setLayoutData(GridDataFactory.swtDefaults().grab(true, true).align(SWT.FILL, SWT.FILL).span(2, 1).create());
+        gradeSchemeComposite.setLayoutData(GridDataFactory.swtDefaults().grab(true, true).align(SWT.FILL, SWT.FILL).create());
 
         groupPropertiesComposite.layout(true, true);
     }
@@ -93,9 +73,9 @@ public class GradeSelectorDialog extends Dialog {
         activitiesComposite.setLayoutData(GridDataFactory.swtDefaults().grab(true, true).align(SWT.FILL, SWT.FILL).create());
         activitiesComposite.setLayout(GridLayoutFactory.swtDefaults().spacing(25, 25).numColumns(4).create());
 
-        gradeSchemeButtons = gradeSchemeService.findAll().stream().map(
-                gradeScheme -> createGradeSchemeButton(gradeScheme, activitiesComposite, button -> {
-                    gradeSchemeButtons.stream().filter(b -> !b.equals(button)).forEach(b -> b.setSelection(false));
+        activitiesTableSchemesButtons = activitiesTableSchemeService.findAll().stream().map(
+                gradeScheme -> createTableSchemeButton(gradeScheme, activitiesComposite, button -> {
+                    activitiesTableSchemesButtons.stream().filter(b -> !b.equals(button)).forEach(b -> b.setSelection(false));
                 })).collect(Collectors.toList());
 
         activitiesComposite.pack(true);
@@ -107,29 +87,27 @@ public class GradeSelectorDialog extends Dialog {
             }
         });
         scrolledComposite.layout(true, true);
+
         return scrolledComposite;
     }
 
-    private Button createGradeSchemeButton(GradeScheme gradeScheme, Composite parent, Consumer<Button> uncheckAll) {
-        Button gradeSchemeButton = new Button(parent, SWT.CHECK | SWT.BORDER);
-        gradeSchemeButton.setToolTipText(Integer.toString(gradeScheme.getValue()));
+    private Button createTableSchemeButton(ActivitiesTableScheme activitiesTableScheme, Composite parent, Consumer<Button> uncheckAll) {
+        Button gradeSchemeButton = new Button(parent, SWT.CHECK | SWT.BORDER | SWT.WRAP);
+        gradeSchemeButton.setToolTipText(activitiesTableScheme.getName());
+        gradeSchemeButton.setText(activitiesTableScheme.getName());
         gradeSchemeButton.setFont(FontDescriptor.createFrom(Fonts.DEFAULT_FONT_DATA).createFont(gradeSchemeButton.getDisplay()));
-        // TODO uncommect this if you want image as button
-        Image imageData = new Image(getShell().getDisplay(), new ByteArrayInputStream(gradeScheme.getImage()));
-        imageData = Images.resize(getShell().getDisplay(), imageData);
-        gradeSchemeButton.setBackgroundImage(imageData);
-        gradeSchemeButton.setData(gradeScheme);
+        gradeSchemeButton.setData(activitiesTableScheme);
         gradeSchemeButton.setLayoutData(GridDataFactory.swtDefaults().hint(Images.IMAGE_WIDTH, Images.IMAGE_HEIGHT).create());
-        gradeSchemeButton.setSelection(gradeScheme.equals(this.gradeScheme));
+        gradeSchemeButton.setSelection(activitiesTableScheme.equals(this.activitiesTableScheme));
 
         gradeSchemeButton.addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(SelectionEvent e) {
                 if (gradeSchemeButton.getSelection()) {
                     uncheckAll.accept(gradeSchemeButton);
-                    GradeSelectorDialog.this.gradeScheme = gradeScheme;
+                    ActivitiesTableSchemeSelectorDialog.this.activitiesTableScheme = activitiesTableScheme;
                 } else {
-                    GradeSelectorDialog.this.gradeScheme = null;
+                    ActivitiesTableSchemeSelectorDialog.this.activitiesTableScheme = null;
                 }
                 getButton(Dialog.OK).setEnabled(checkConstrains());
             }
@@ -138,7 +116,7 @@ public class GradeSelectorDialog extends Dialog {
     }
 
     private boolean checkConstrains() {
-        return true;
+        return activitiesTableScheme != null;
     }
 
     @Override
@@ -148,11 +126,7 @@ public class GradeSelectorDialog extends Dialog {
         return buttonBar;
     }
 
-    public GradeScheme getGradeScheme() {
-        return gradeScheme;
-    }
-
-    public String getGradeComment() {
-        return gradeComment;
+    public ActivitiesTableScheme getActivitiesTableScheme() {
+        return activitiesTableScheme;
     }
 }

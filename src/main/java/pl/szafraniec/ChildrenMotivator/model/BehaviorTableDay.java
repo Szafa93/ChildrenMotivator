@@ -25,7 +25,6 @@ public class BehaviorTableDay {
     @Column(nullable = false)
     private Date date;
 
-    // unidirectional
     @OneToMany(cascade = CascadeType.ALL)
     @JoinTable(name = "BehaviorTableDay_Grades",
             joinColumns = @JoinColumn(name = "BehaviorTableDay"),

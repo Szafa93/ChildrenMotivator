@@ -1,4 +1,4 @@
-package pl.szafraniec.ChildrenMotivator.ui.groups;
+package pl.szafraniec.ChildrenMotivator.ui.groups.dialogs;
 
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.layout.GridDataFactory;
@@ -18,14 +18,14 @@ import pl.szafraniec.ChildrenMotivator.services.ChildrenGroupService;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-public class GroupSelectorDialog extends Dialog {
+public class ChildrenGroupSelectorDialog extends Dialog {
 
     @Autowired
     private ChildrenGroupService childrenGroupService;
 
     private ChildrenGroup childrenGroup;
 
-    public GroupSelectorDialog(Shell shell, ChildrenGroup childrenGroup) {
+    public ChildrenGroupSelectorDialog(Shell shell, ChildrenGroup childrenGroup) {
         super(shell);
         this.childrenGroup = childrenGroup;
     }
