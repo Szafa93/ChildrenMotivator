@@ -21,7 +21,6 @@ import pl.szafraniec.ChildrenMotivator.services.BackgroundImageService;
 import pl.szafraniec.ChildrenMotivator.ui.AbstractMainComposite;
 import pl.szafraniec.ChildrenMotivator.ui.Fonts;
 import pl.szafraniec.ChildrenMotivator.ui.backgroundImages.dialogs.BackgroundImageDialog;
-import pl.szafraniec.ChildrenMotivator.ui.gradesSchemes.GradesSchemesComposite;
 
 import java.io.ByteArrayInputStream;
 
@@ -122,7 +121,7 @@ public class BackgroundImageComposite extends AbstractMainComposite {
 
     private void removeBackgroundImage() {
         backgroundImageService.remove(backgroundImage);
-        applicationContext.getBean(GradesSchemesComposite.class, shell);
+        applicationContext.getBean(BackgroundImagesComposite.class, shell);
         dispose();
         shell.layout(true, true);
     }
@@ -138,6 +137,7 @@ public class BackgroundImageComposite extends AbstractMainComposite {
 
     private void editBackgroundImage(String name, byte[] imageByte) {
         backgroundImage = backgroundImageService.edit(backgroundImage, name, imageByte);
+        label.setText(backgroundImage.getName());
         imageData = null;
         image.redraw();
     }
