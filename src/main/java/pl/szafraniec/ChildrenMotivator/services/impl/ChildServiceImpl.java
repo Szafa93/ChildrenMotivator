@@ -89,9 +89,9 @@ public class ChildServiceImpl implements ChildService {
 
     @Override
     public Child changeGroup(Child child, ChildrenGroup childrenGroup) {
-        childrenGroupService.removeChildFromGroup(child);
-        childrenGroupService.assignChildToGroup(child, childrenGroup);
-        return childRepository.saveAndFlush(child);
+        Child newChild = childrenGroupService.changeGroup(child, childrenGroup);
+        return childRepository.saveAndFlush(newChild);
+
     }
 
     @Override
@@ -102,8 +102,9 @@ public class ChildServiceImpl implements ChildService {
     @Override
     public Child create(String name, String surname, String pesel, String parentMail, ChildrenGroup childrenGroup) {
         Child child = ChildFactory.create(name, surname, pesel, parentMail);
-        childrenGroupService.assignChildToGroup(child, childrenGroup);
-        return child;
+        Holder<Child> childHolder = Holder.of(child);
+        childrenGroupService.assignChildToGroup(childHolder, childrenGroup);
+        return childRepository.saveAndFlush(childHolder.get());
     }
 
     @Override

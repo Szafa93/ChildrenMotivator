@@ -70,13 +70,31 @@ public class ChildrenGroupServiceImpl implements ChildrenGroupService {
     }
 
     @Override
-    public ChildrenGroup assignChildToGroup(Child child, ChildrenGroup childrenGroup) {
+    public ChildrenGroup assignChildToGroup(Holder<Child> child, ChildrenGroup childrenGroup) {
+        child.get().setChildrenGroup(childrenGroup);
+        childrenGroup.getChildren().add(child.get());
+        generateDaysForChild(child.get());
+        ChildrenGroup group = childrenGroupRepository.save(childrenGroup);
+        child.set(group.getChildren().stream().filter(child1 -> child1.getId() == child.get().getId()
+                || child1.getPesel().equals(child.get().getPesel())).findFirst().get());
+        child.get().setChildrenGroup(group);
+        return group;
+    }
+
+    @Override
+    public Child changeGroup(Child child, ChildrenGroup childrenGroup) {
+        removeDaysForChild(child);
+        ChildrenGroup group = child.getChildrenGroup();
+        group.getChildren().remove(child);
         child.setChildrenGroup(childrenGroup);
         childrenGroup.getChildren().add(child);
         generateDaysForChild(child);
-        ChildrenGroup group = childrenGroupRepository.save(childrenGroup);
-        child.setChildrenGroup(group);
-        return group;
+        ChildrenGroup newGroup = childrenGroupRepository.save(childrenGroup);
+        Child newChild = newGroup.getChildren().stream().filter(child1 -> child1.getId() == child.getId()
+                || child1.getPesel().equals(child.getPesel())).findFirst().get();
+        newChild.setChildrenGroup(newGroup);
+        childrenGroupRepository.save(group);
+        return newChild;
     }
 
     @Override

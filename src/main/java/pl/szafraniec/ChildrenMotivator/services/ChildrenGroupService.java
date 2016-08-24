@@ -14,7 +14,9 @@ public interface ChildrenGroupService {
 
     ChildrenGroup removeChildFromGroup(Child child);
 
-    ChildrenGroup assignChildToGroup(Child child, ChildrenGroup childrenGroup);
+    ChildrenGroup assignChildToGroup(Holder<Child> child, ChildrenGroup childrenGroup);
+
+    Child changeGroup(Child child, ChildrenGroup childrenGroup);
 
     ChildrenGroup create(String name);
 
